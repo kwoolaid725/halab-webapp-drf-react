@@ -2,7 +2,7 @@ from rest_framework import generics
 from ..halab.models import Brand, Product, Test, Post, TestDetailVacuum, CrProductData, VocReviews
 from .serializers import ProductSerializer, BrandSerializer, PostSerializer
 from rest_framework.permissions import IsAdminUser, DjangoModelPermissions, BasePermission, SAFE_METHODS, IsAuthenticatedOrReadOnly, DjangoModelPermissionsOrAnonReadOnly
-
+from rest_framework import viewsets
 
 class PostUserWritePermission(BasePermission):
     # permission_classes = [DjangoModelPermissions]
@@ -15,16 +15,22 @@ class PostUserWritePermission(BasePermission):
             return True
 
         return obj.author == request.user
-class PostList(generics.ListCreateAPIView):
-    permission_classes = [IsAuthenticatedOrReadOnly]
-    queryset = Post.postobjects.all() # custom manager in models.py
-    serializer_class = PostSerializer
-
-
-class PostDetail(generics.RetrieveUpdateDestroyAPIView, PostUserWritePermission):
+class PostList(viewsets.ModelViewSet):
     permission_classes = [PostUserWritePermission]
-    queryset = Post.objects.all()
     serializer_class = PostSerializer
+
+    def get_object(self, queryset=None, **kwargs):
+        item = self.kwargs.get('pk')
+        return generics.get_object_or_404(Post, slug=item)
+    #Define Custom Queryset
+    def get_queryset(self):
+        return Post.objects.all()
+
+
+# class PostDetail(generics.RetrieveUpdateDestroyAPIView, PostUserWritePermission):
+#     permission_classes = [PostUserWritePermission]
+#     queryset = Post.objects.all()
+#     serializer_class = PostSerializer
 
 
 class BrandList(generics.ListCreateAPIView):

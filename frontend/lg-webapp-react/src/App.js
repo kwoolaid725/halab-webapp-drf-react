@@ -11,9 +11,10 @@ import Home from './components/Home/Home';
 import PostLoadingComponent from './components/PostLoading';
 import Posts from './components/Posts';
 import ProductLists from './components/Product/ProductLists'
-import Header from './components/Header';
-import Footer from './components/Footer'
 import Register from './components/Login/register';
+import Login from './components/Login/login';
+import Logout from './components/Login/logout';
+import Single from './components/single';
 
 // const BlogPosts = {
 //   'first-blog-post': {
@@ -102,6 +103,9 @@ function Routes() {
 		},
 		{ path: '/products', element: <ProductLists /> },
 		{ path: '/register', element: <Register /> },
+		{ path: '/login', element: <Login /> },
+		{ path: '/logout', element: <Logout /> },
+		{ path: '/posts/:slug', element: <Single /> },
 	]);
 	return element;
 }
@@ -122,6 +126,12 @@ function App() {
 				</Link>
 				<Link to="/register" style={{ padding: 5 }}>
 					Register
+				</Link>
+				<Link to="/login" style={{ padding: 5 }}>
+					Login
+				</Link>
+				<Link to="/logout" style={{ padding: 5 }}>
+					Logout
 				</Link>
 			</nav>
 			<Routes/>

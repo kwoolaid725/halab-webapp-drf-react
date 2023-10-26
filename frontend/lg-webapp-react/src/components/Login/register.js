@@ -11,13 +11,12 @@ import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
-import { makeStyles } from '@mui/material/styles';
 import Container from '@mui/material/Container';
-
-
+import Card from "@mui/material/Card";
+import { Box } from "@mui/system";
 
 export default function SignUp() {
-	const history = useNavigate();
+	const navigate = useNavigate();
 	const initialFormData = Object.freeze({
 		email: '',
 		username: '',
@@ -45,10 +44,13 @@ export default function SignUp() {
 				password: formData.password,
 			})
 			.then((res) => {
-				history.push('/login');
+				navigate('/login');
 				console.log(res);
 				console.log(res.data);
-			});
+			})
+			.catch((error) => {
+        	console.error('An error occurred:', error);
+		    });
 	};
 
 	// const classes = useStyles();
@@ -56,13 +58,58 @@ export default function SignUp() {
 	return (
 		<Container component="main" maxWidth="xs" sx={{ mt: 8 }}>
 			<CssBaseline />
-			<div sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+			<Card sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
 				<Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}></Avatar>
 				<Typography component="h1" variant="h5">
 					Sign up
 				</Typography>
-				<form noValidate sx={{ width: '100%', mt: 3 }}>
-					{/* ... rest of your form code ... */}
+				<Box component="form" noValidate sx={{ width: '100%', mt: 3 }}>
+					<Grid container spacing={2}>
+						<Grid item xs={12}>
+							<TextField
+								variant="outlined"
+								required
+								fullWidth
+								id="email"
+								label="Email Address"
+								name="email"
+								autoComplete="email"
+								onChange={handleChange}
+							/>
+						</Grid>
+						<Grid item xs={12}>
+							<TextField
+								variant="outlined"
+								required
+								fullWidth
+								id="username"
+								label="Username"
+								name="username"
+								autoComplete="username"
+								onChange={handleChange}
+							/>
+						</Grid>
+						<Grid item xs={12}>
+							<TextField
+								variant="outlined"
+								required
+								fullWidth
+								name="password"
+								label="Password"
+								type="password"
+								id="password"
+								autoComplete="current-password"
+								onChange={handleChange}
+							/>
+						</Grid>
+						<Grid item xs={12}>
+							<FormControlLabel
+								control={<Checkbox value="allowExtraEmails" color="primary" />}
+								label="I want to receive inspiration, marketing promotions and updates via email."
+							/>
+						</Grid>
+					</Grid>
+
 					<Button
 						type="submit"
 						fullWidth
@@ -74,8 +121,8 @@ export default function SignUp() {
 						Sign Up
 					</Button>
 					{/* ... rest of your form code ... */}
-				</form>
-			</div>
+				</Box>
+			</Card>
 		</Container>
 	);
 }

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axiosInstance from '../../axios';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 //MaterialUI
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
@@ -11,31 +11,12 @@ import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
-import { makeStyles } from '@mui/material/styles';
 import Container from '@mui/material/Container';
-
-const useStyles = makeStyles((theme) => ({
-	paper: {
-		marginTop: theme.spacing(8),
-		display: 'flex',
-		flexDirection: 'column',
-		alignItems: 'center',
-	},
-	avatar: {
-		margin: theme.spacing(1),
-		backgroundColor: theme.palette.secondary.main,
-	},
-	form: {
-		width: '100%', // Fix IE 11 issue.
-		marginTop: theme.spacing(1),
-	},
-	submit: {
-		margin: theme.spacing(3, 0, 2),
-	},
-}));
+import Card from "@mui/material/Card";
+import { Box } from "@mui/system";
 
 export default function SignIn() {
-	const history = useHistory();
+	const navigate = useNavigate();
 	const initialFormData = Object.freeze({
 		email: '',
 		password: '',
@@ -64,23 +45,21 @@ export default function SignIn() {
 				localStorage.setItem('refresh_token', res.data.refresh);
 				axiosInstance.defaults.headers['Authorization'] =
 					'JWT ' + localStorage.getItem('access_token');
-				history.push('/');
+				navigate('/');
 				//console.log(res);
 				//console.log(res.data);
 			});
 	};
 
-	const classes = useStyles();
-
 	return (
-		<Container component="main" maxWidth="xs">
+		<Container component="main" maxWidth="xs" sx={{ mt: 8 }}>
 			<CssBaseline />
-			<div className={classes.paper}>
-				<Avatar className={classes.avatar}></Avatar>
+			<Card sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+				<Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}></Avatar>
 				<Typography component="h1" variant="h5">
 					Sign in
 				</Typography>
-				<form className={classes.form} noValidate>
+				<Box component="form" noValidate sx={{ width: '100%', mt: 1 }}>
 					<TextField
 						variant="outlined"
 						margin="normal"
@@ -114,7 +93,7 @@ export default function SignIn() {
 						fullWidth
 						variant="contained"
 						color="primary"
-						className={classes.submit}
+						sx={{ mt: 3, mb: 2 }}
 						onClick={handleSubmit}
 					>
 						Sign In
@@ -131,8 +110,8 @@ export default function SignIn() {
 							</Link>
 						</Grid>
 					</Grid>
-				</form>
-			</div>
+				</Box>
+			</Card>
 		</Container>
 	);
 }
