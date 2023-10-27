@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_filters',
     'rest_framework_simplejwt.token_blacklist',
+    'corsheaders',
 
     # import apps
     'lg-webapp.halab.apps.HalabConfig',
@@ -67,6 +68,7 @@ MIDDLEWARE = [
 
     # corsheaders 10.13.23
     'corsheaders.middleware.CorsMiddleware'
+
 
 ]
 
@@ -166,9 +168,11 @@ REST_FRAMEWORK = {
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CORS_ALLOW_ALL_ORIGINS = [
-    'http://localhost:3000',
-]
+# CORS_ORIGIN_WHITELIST = [
+#     "http://localhost:3000",
+# ]
+
+CORS_ALLOW_ALL_ORIGINS = True
 
 # Custom users model
 AUTH_USER_MODEL = "users.NewUser"

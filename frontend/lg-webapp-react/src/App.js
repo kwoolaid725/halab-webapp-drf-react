@@ -10,6 +10,8 @@ import {
 import Home from './components/Home/Home';
 import PostLoadingComponent from './components/PostLoading';
 import Posts from './components/Posts';
+import PostLists from './components/PostLists';
+
 import ProductLists from './components/Product/ProductLists'
 import Register from './components/Login/register';
 import Login from './components/Login/login';
@@ -65,41 +67,19 @@ import Single from './components/Single';
 //     </div>
 //   );
 // }
-
-function PostLists() {
-  const PostLoading = PostLoadingComponent(Posts);
-    const [appState, setAppState] = useState({
-      loading: false,
-      posts: null,
-    });
-
-    useEffect(() => {
-      setAppState({ loading: true });
-      const apiUrl = `http://127.0.0.1:8000/api/posts/`;
-      fetch(apiUrl)
-        .then((data) => data.json())
-        .then((posts) => {
-          setAppState({ loading: false, posts: posts });
-        });
-    }, [setAppState]);
-    return (
-		<div className="App">
-			<h1>Latest Posts</h1>
-			<PostLoading isLoading={appState.loading} posts={appState.posts} />
-		</div>
-	);
-}
+//
 
 
 function Routes() {
 	const element = useRoutes([
 		{ path: '/', element: <Home /> },
-		{ path: '/posts', element: <PostLists />,
-		  children: [
-				{ index: true, element: <PostLists /> },
-				{ path: ':slug', element: <Single /> }
-			],
-		},
+		{ path: '/posts', element: <PostLists /> },
+		// 	children: [
+		// 		{ path: ':slug', element: <Single /> },
+		// 	],
+		// },
+		{ path: '/post/:slug', element: <Single /> },
+
 		{ path: '/products', element: <ProductLists /> },
 		{ path: '/register', element: <Register /> },
 		{ path: '/login', element: <Login /> },

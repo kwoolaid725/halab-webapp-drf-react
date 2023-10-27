@@ -21,7 +21,7 @@ const Posts = (props) => {
 								<Card sx={{ bgcolor: (theme) => theme.palette.grey[200] }}>
 									<Link
 										color="textPrimary"
-										href={'post/'+ post.slug}
+										href={`/post/${post.slug}`}
 										sx={{ padding: (theme) => theme.spacing(1, 0, 1.5) }}
 									>
 										<CardMedia

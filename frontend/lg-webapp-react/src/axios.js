@@ -14,11 +14,10 @@ const axiosInstance = axios.create({
 		accept: 'application/json',
 	},
 });
+
 axiosInstance.interceptors.response.use(
-	(response) => {
-		return response;
-	},
-	async function (error) {
+	response => response,
+	async error => {
 		const originalRequest = error.config;
 
 		if (typeof error.response === 'undefined') {
@@ -48,27 +47,22 @@ axiosInstance.interceptors.response.use(
 			if (refreshToken) {
 				const tokenParts = JSON.parse(atob(refreshToken.split('.')[1]));
 
-				// exp date in token is expressed in seconds, while now() returns milliseconds:
 				const now = Math.ceil(Date.now() / 1000);
 				console.log(tokenParts.exp);
 
 				if (tokenParts.exp > now) {
-					return axiosInstance
-						.post('/token/refresh/', { refresh: refreshToken })
-						.then((response) => {
-							localStorage.setItem('access_token', response.data.access);
-							localStorage.setItem('refresh_token', response.data.refresh);
+					try {
+						const response = await axiosInstance.post('/token/refresh/', { refresh: refreshToken });
+						localStorage.setItem('access_token', response.data.access);
+						localStorage.setItem('refresh_token', response.data.refresh);
 
-							axiosInstance.defaults.headers['Authorization'] =
-								'JWT ' + response.data.access;
-							originalRequest.headers['Authorization'] =
-								'JWT ' + response.data.access;
+						axiosInstance.defaults.headers['Authorization'] = 'JWT ' + response.data.access;
+						originalRequest.headers['Authorization'] = 'JWT ' + response.data.access;
 
-							return axiosInstance(originalRequest);
-						})
-						.catch((err) => {
-							console.log(err);
-						});
+						return axiosInstance(originalRequest);
+					} catch (err) {
+						console.log(err);
+					}
 				} else {
 					console.log('Refresh token is expired', tokenParts.exp, now);
 					window.location.href = '/login/';
@@ -79,12 +73,8 @@ axiosInstance.interceptors.response.use(
 			}
 		}
 
-		// specific error handling done elsewhere
-		return Promise.reject(error);
-	}
+        return Promise.reject(error);
+    }
 );
-
-
-
 
 export default axiosInstance;

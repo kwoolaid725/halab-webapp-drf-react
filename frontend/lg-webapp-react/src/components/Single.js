@@ -14,7 +14,7 @@ export default function Post() {
 	const [data, setData] = useState({ posts: [] });
 
 	useEffect(() => {
-	axiosInstance.get(slug)
+	axiosInstance(`/posts/${slug}/`)
 		.then((res) => {
 			console.log(res.data);
 			setData({ posts: res.data });
@@ -38,8 +38,7 @@ export default function Post() {
 							color="textPrimary"
 							gutterBottom
 						>
-							dafaf
-							{data.post.title}
+							{data.posts.title}
 						</Typography>
 						<Typography
 							variant="h5"
@@ -47,7 +46,7 @@ export default function Post() {
 							color="textSecondary"
 							paragraph
 						>
-							{data.post.excerpt}
+							{data.posts.excerpt}
 						</Typography>
 					</Container>
 				</Box>
