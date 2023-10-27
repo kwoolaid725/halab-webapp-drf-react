@@ -3,6 +3,7 @@ from ..halab.models import Brand, Product, Test, Post, TestDetailVacuum, CrProdu
 from .serializers import ProductSerializer, BrandSerializer, PostSerializer
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, DjangoModelPermissions, BasePermission, SAFE_METHODS, IsAuthenticatedOrReadOnly, DjangoModelPermissionsOrAnonReadOnly
 from rest_framework import viewsets
+from rest_framework import filters
 
 class PostUserWritePermission(BasePermission):
     # permission_classes = [DjangoModelPermissions]
@@ -15,22 +16,52 @@ class PostUserWritePermission(BasePermission):
             return True
 
         return obj.author == request.user
-class PostList(viewsets.ModelViewSet):
-    permission_classes = [PostUserWritePermission]
+
+class PostList(generics.ListAPIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
     serializer_class = PostSerializer
 
-    def get_object(self, queryset=None, **kwargs):
-        item = self.kwargs.get('pk')
-        return generics.get_object_or_404(Post, slug=item)
-    #Define Custom Queryset
     def get_queryset(self):
+        user = self.request.user
+        # return Post.objects.filter(author=user)
+        return Post.objects.all()
+
+class PostDetail(generics.RetrieveAPIView):
+   serializer_class = PostSerializer
+   lookup_field = 'slug'
+   def get_queryset(self):
+        # slug = self.request.query_params.get('slug', None)
+        # print(slug)
+        # above works when url is like '/' for post list
+
         return Post.objects.all()
 
 
-# class PostDetail(generics.RetrieveUpdateDestroyAPIView, PostUserWritePermission):
+class PostListDetailfilter(generics.ListAPIView):
+
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['^slug']
+
+    # '^' starts-with search.
+    # '=' exact matches.
+    # '@' full-text search (currently only supported Django's PostgreSQL backend).
+    # '$' regex search.
+
+
+# class PostList(viewsets.ModelViewSet):
 #     permission_classes = [PostUserWritePermission]
-#     queryset = Post.objects.all()
 #     serializer_class = PostSerializer
+#
+#     def get_object(self, queryset=None, **kwargs):
+#         item = self.kwargs.get('pk')
+#         return generics.get_object_or_404(Post, slug=item)
+#     #Define Custom Queryset
+#     def get_queryset(self):
+#         return Post.objects.all()
+
+
 
 
 class BrandList(generics.ListCreateAPIView):
