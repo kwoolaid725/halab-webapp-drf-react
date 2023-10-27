@@ -1,7 +1,7 @@
 from rest_framework import generics
 from ..halab.models import Brand, Product, Test, Post, TestDetailVacuum, CrProductData, VocReviews
 from .serializers import ProductSerializer, BrandSerializer, PostSerializer
-from rest_framework.permissions import IsAdminUser, DjangoModelPermissions, BasePermission, SAFE_METHODS, IsAuthenticatedOrReadOnly, DjangoModelPermissionsOrAnonReadOnly
+from rest_framework.permissions import IsAuthenticated, IsAdminUser, DjangoModelPermissions, BasePermission, SAFE_METHODS, IsAuthenticatedOrReadOnly, DjangoModelPermissionsOrAnonReadOnly
 from rest_framework import viewsets
 
 class PostUserWritePermission(BasePermission):

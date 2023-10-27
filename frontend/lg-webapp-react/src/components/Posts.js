@@ -5,6 +5,7 @@ import CardMedia from '@mui/material/CardMedia';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
+import Link from '@mui/material/Link';
 
 const Posts = (props) => {
 	const { posts } = props;
@@ -18,12 +19,18 @@ const Posts = (props) => {
 							// Enterprise card is full width at sm breakpoint
 							<Grid item key={post.id} xs={12} md={4}>
 								<Card sx={{ bgcolor: (theme) => theme.palette.grey[200] }}>
-									<CardMedia
-										component="img"
-										height="140"
-										image="https://source.unsplash.com/random"
-										alt="random"
-									/>
+									<Link
+										color="textPrimary"
+										href={'post/'+ post.slug}
+										sx={{ padding: (theme) => theme.spacing(1, 0, 1.5) }}
+									>
+										<CardMedia
+											component="img"
+											height="140"
+											image="https://source.unsplash.com/random"
+											alt="random"
+										/>
+									</Link>
 									<CardContent>
 										<Typography gutterBottom variant="h5" component="div">
 											{post.title.substr(0, 50)}...

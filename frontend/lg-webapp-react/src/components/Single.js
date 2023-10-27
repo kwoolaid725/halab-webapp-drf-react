@@ -11,16 +11,19 @@ import { Box } from "@mui/system";
 
 export default function Post() {
 	const { slug } = useParams();
-
-
 	const [data, setData] = useState({ posts: [] });
 
 	useEffect(() => {
-		axiosInstance.get(slug).then((res) => {
-			setData({ posts: res.data });
+	axiosInstance.get(slug)
+		.then((res) => {
 			console.log(res.data);
+			setData({ posts: res.data });
+		})
+		.catch((error) => {
+			console.error("Error fetching data: ", error);
+			// handle error appropriately
 		});
-	}, [setData]);
+}, [setData, slug]);
 
 	return (
 	<Container component="main" maxWidth="xs" sx={{ mt: 8 }}>
@@ -35,7 +38,8 @@ export default function Post() {
 							color="textPrimary"
 							gutterBottom
 						>
-							{data.posts.title}
+							dafaf
+							{data.post.title}
 						</Typography>
 						<Typography
 							variant="h5"
@@ -43,7 +47,7 @@ export default function Post() {
 							color="textSecondary"
 							paragraph
 						>
-							{data.posts.excerpt}
+							{data.post.excerpt}
 						</Typography>
 					</Container>
 				</Box>

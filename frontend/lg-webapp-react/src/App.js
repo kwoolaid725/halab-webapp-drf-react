@@ -14,7 +14,7 @@ import ProductLists from './components/Product/ProductLists'
 import Register from './components/Login/register';
 import Login from './components/Login/login';
 import Logout from './components/Login/logout';
-import Single from './components/single';
+import Single from './components/Single';
 
 // const BlogPosts = {
 //   'first-blog-post': {
@@ -94,18 +94,17 @@ function PostLists() {
 function Routes() {
 	const element = useRoutes([
 		{ path: '/', element: <Home /> },
-		{ path: '/posts',
-			element: <PostLists />,
-		  // children: [
-			// 	{ index: true, element: <PostLists /> },
-			// 	{ path: ':slug', element: <Post /> }
-			// ],
+		{ path: '/posts', element: <PostLists />,
+		  children: [
+				{ index: true, element: <PostLists /> },
+				{ path: ':slug', element: <Single /> }
+			],
 		},
 		{ path: '/products', element: <ProductLists /> },
 		{ path: '/register', element: <Register /> },
 		{ path: '/login', element: <Login /> },
 		{ path: '/logout', element: <Logout /> },
-		{ path: '/posts/:slug', element: <Single /> },
+		// { path: '/post/:slug', element: <Single /> },
 	]);
 	return element;
 }
