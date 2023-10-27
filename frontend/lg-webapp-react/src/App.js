@@ -18,6 +18,9 @@ import Login from './components/Login/login';
 import Logout from './components/Login/logout';
 import Single from './components/Single';
 
+// import SearchBar from "material-ui-search-bar";
+import { useNavigate } from 'react-router-dom';
+
 // const BlogPosts = {
 //   'first-blog-post': {
 //     title: 'First Blog Post',
@@ -88,6 +91,24 @@ function Routes() {
 	]);
 	return element;
 }
+// function Navigation() {
+// 	const navigate = useNavigate();
+// 	const [data, setData] = useState({ search: '' });
+//
+// 	const goSearch = (search) => {
+// 		navigate('/search/' + search);
+// 		window.location.reload();
+// 	};
+// 	return (
+// 			<SearchBar
+// 					value={data.search}
+// 					onChange={(newValue) => setData({ search: newValue })}
+// 					onRequestSearch={() => goSearch(data.search)}
+// 					/>
+// 	);
+// }
+
+
 
 
 function App() {
@@ -112,6 +133,8 @@ function App() {
 				<Link to="/logout" style={{ padding: 5 }}>
 					Logout
 				</Link>
+
+				{/*<Navigation/>*/}
 			</nav>
 			<Routes/>
 		</Router>
