@@ -8,15 +8,19 @@ import {
   useParams } from 'react-router-dom';
 
 import Home from './components/Home/Home';
-import PostLoadingComponent from './components/PostLoading';
-import Posts from './components/Posts';
-import PostLists from './components/PostLists';
+import PostLists from './components/Post/PostLists';
 
 import ProductLists from './components/Product/ProductLists'
-import Register from './components/Login/register';
-import Login from './components/Login/login';
-import Logout from './components/Login/logout';
-import Single from './components/Single';
+import Register from './components/Auth/Register';
+import Login from './components/Auth/Login';
+import Logout from './components/Auth/Logout';
+import Single from './components/Post/Single';
+import Admin from './Admin';
+import CreatePost from './components/Admin/CreatePost';
+import DeletePost from './components/Admin/DeletePost';
+import EditPost from './components/Admin/EditPost';
+
+
 
 // import SearchBar from "material-ui-search-bar";
 import { useNavigate } from 'react-router-dom';
@@ -82,6 +86,10 @@ function Routes() {
 		// 	],
 		// },
 		{ path: '/post/:slug', element: <Single /> },
+		{ path: '/admin', element: <Admin /> },
+		{ path: '/admin/create', element: <CreatePost /> },
+		{ path: '/admin/delete/:id', element: <DeletePost /> },
+		{ path: '/admin/edit/:id', element: <EditPost /> },
 
 		{ path: '/products', element: <ProductLists /> },
 		{ path: '/register', element: <Register /> },

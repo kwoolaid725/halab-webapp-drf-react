@@ -78,7 +78,7 @@ class Product(models.Model):
         ordering = ['-created_at']
 
     def __str__(self):
-        return f'{str(self.category)} - {self.brand} {self.model_name}' # will give error in admin
+        return f'{str(self.category)} - {self.brand} {self.model_name}' # will give error in Admin
 
 class Sample(models.Model):
     PRODUCT_STAGE = [

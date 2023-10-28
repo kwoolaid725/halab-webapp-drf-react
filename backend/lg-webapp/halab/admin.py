@@ -1,7 +1,7 @@
 from django.contrib import admin
 from . import models
 
-# @admin.register(models.Product)
+# @Admin.register(models.Product)
 
 admin.site.register(models.Brand)
 admin.site.register(models.Product)

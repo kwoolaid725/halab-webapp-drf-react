@@ -1,4 +1,4 @@
-import PostLoadingComponent from '../PostLoading'
+import PostLoadingComponent from '../Post/PostLoading'
 import Products from './Products'
 import React, {
   useEffect,

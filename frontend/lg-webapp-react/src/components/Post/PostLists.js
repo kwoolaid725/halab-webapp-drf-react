@@ -1,7 +1,7 @@
 import PostLoadingComponent from "./PostLoading";
 import Posts from "./Posts";
 import React, { useEffect, useState } from "react";
-import axiosInstance from "../axios";
+import axiosInstance from "../../axios";
 
 function PostLists() {
   const PostLoading = PostLoadingComponent(Posts);
