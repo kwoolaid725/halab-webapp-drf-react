@@ -14,10 +14,10 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import EditIcon from '@mui/icons-material/Edit';
 import Button from '@mui/material/Button';
 
-const AdminPosts = (props) => {
-	const { posts } = props;
+const Products = (props) => {
+	const { products } = props;
 
-	if (!posts || posts.length === 0) return <p>Can not find any posts, sorry</p>;
+	if (!products || products.length === 0) return <p>Cannot find any products, sorry</p>;
 	return (
 		<React.Fragment>
 			<Container maxWidth="md" component="main">
@@ -28,40 +28,41 @@ const AdminPosts = (props) => {
 								<TableRow>
 									<TableCell>Id</TableCell>
 									<TableCell align="left">Category</TableCell>
-									<TableCell align="left">Title</TableCell>
-									<TableCell align="left">Action</TableCell>
+									<TableCell align="left">Brand</TableCell>
+									<TableCell align="left">Model Name</TableCell>
+									<TableCell align="left">Release Date</TableCell>
 								</TableRow>
 							</TableHead>
 							<TableBody>
-								{posts.map((post) => {
+								{products.map((product) => {
 									return (
 										<TableRow>
 											<TableCell component="th" scope="row">
-												{post.id}
+												{product.id}
 											</TableCell>
-											<TableCell align="left">{post.category}</TableCell>
-
+											<TableCell align="left">{product.category}</TableCell>
+                      <TableCell align="left">{product.brand}</TableCell>
 											<TableCell align="left">
 												<Link
 													color="textPrimary"
-													href={'/post/' + post.slug}
+													href={'/product/' + product.slug}
 													className={classes.link}
 												>
-													{post.title}
+													{product.model_name}
 												</Link>
 											</TableCell>
 
 											<TableCell align="left">
 												<Link
 													color="textPrimary"
-													href={'/admin/posts/edit/' + post.id}
+													href={'/admin/products/edit/' + product.id}
 													className={classes.link}
 												>
 													<EditIcon></EditIcon>
 												</Link>
 												<Link
 													color="textPrimary"
-													href={'/admin/posts/delete/' + post.id}
+													href={'/admin/products/delete/' + product.id}
 													className={classes.link}
 												>
 													<DeleteForeverIcon></DeleteForeverIcon>
@@ -73,11 +74,11 @@ const AdminPosts = (props) => {
 								<TableRow>
 									<TableCell colSpan={4} align="right">
 										<Button
-											href={'/admin/posts/create'}
+											href={'/admin/products/create'}
 											variant="contained"
 											color="primary"
 										>
-											New Post
+											Add New Product
 										</Button>
 									</TableCell>
 								</TableRow>
@@ -89,4 +90,4 @@ const AdminPosts = (props) => {
 		</React.Fragment>
 	);
 };
-export default AdminPosts;
+export default Products;

@@ -2,7 +2,14 @@ from django.db import models
 # from django.contrib.auth.models import User
 from django.utils import timezone
 from django.conf import settings
+from django.utils.translation import gettext_lazy as _
 
+
+def upload_to_post(instance, filename):
+    return 'posts/{filename}'.format(filename=filename)
+
+def upload_to_product(instance, filename):
+    return 'products/{filename}'.format(filename=filename)
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
@@ -25,6 +32,8 @@ class Post(models.Model):
     category = models.ForeignKey(
         Category, on_delete=models.PROTECT, default=1)
     title = models.CharField(max_length=250)
+    image = models.ImageField(
+        _("Image"), upload_to=upload_to_post, default='posts/default.jpg')
     excerpt = models.TextField(null=True, blank=True)
     content = models.TextField()
     slug = models.SlugField(max_length=250, unique_for_date='published')
@@ -70,7 +79,8 @@ class Product(models.Model):
     color = models.CharField(max_length=50, null=True, blank=True)
     release_date = models.DateField(null=True, blank=True)
     created_at = models.DateTimeField(default=timezone.now)
-    image = models.ImageField(upload_to='vacuum_images', null=True, blank=True)
+    image = models.ImageField(
+        _("Image"), upload_to=upload_to_product, default='product/default.jpg')
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='products', default="")
 
 

@@ -1,0 +1,16 @@
+/* styles.module.css */
+.paper {
+	margin-top: 8rem; /* Adjust according to your theme spacing */
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.form {
+	width: 100%;
+	margin-top: 3rem; /* Adjust according to your theme spacing */
+}
+
+.submit {
+	margin: 3rem 0 2rem; /* Adjust according to your theme spacing */
+}

@@ -5,6 +5,8 @@ import CardMedia from '@mui/material/CardMedia';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
+import Link from '@mui/material/Link';
+import classes from './Products.module.css';
 
 const Products = (props) => {
 	const { products } = props;
@@ -17,18 +19,34 @@ const Products = (props) => {
 						return (
 							// Enterprise card is full width at sm breakpoint
 							<Grid item key={product.id} xs={12} md={4}>
-								<Card sx={{ bgcolor: (theme) => theme.palette.grey[200] }}>
-									<CardMedia
-										component="img"
-										height="140"
-										image="https://source.unsplash.com/random"
-										alt="random"
-									/>
-									<CardContent>
-										<Typography gutterBottom variant="h5" component="div">
-											{product.brand.substr(0, 50)}
+								<Card className={classes.card}>
+									<Link
+										color="textPrimary"
+										href={`/product/${product.slug}`}
+										className={classes.link}
+									>
+										<CardMedia
+											component="img"
+											height="140"
+											image={product.image}
+											title="Image title"
+											className={classes.cardMedia}
+										/>
+									</Link>
+									<CardContent classeName={classes.cardContent}>
+										<Typography
+											gutterBottom
+											variant="h5"
+											component="div"
+											className={classes.productTitle}
+										>
+											{product.brand.substr(0, 50)}...
 										</Typography>
-										<Typography variant="body2" color="text.secondary">
+										<Typography
+											variant="body2"
+											color="text.secondary"
+											className={classes.productText}
+										>
 											{product.model_name.substr(0, 60)}...
 										</Typography>
 									</CardContent>
