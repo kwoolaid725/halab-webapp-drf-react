@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axiosInstance from '../../axios';
 import { useNavigate, useParams } from 'react-router-dom';
-//MaterialUI
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
@@ -13,7 +12,7 @@ export default function Create() {
 	const handleSubmit = (e) => {
 		e.preventDefault();
 		axiosInstance
-			.delete('admin/posts/delete/' + id + '/')
+			.delete('admin/products/delete/' + id + '/')
 			.catch(function (error) {
 				if (error.response) {
 					console.log(error.response.data);

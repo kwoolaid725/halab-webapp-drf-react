@@ -4,6 +4,9 @@ from .serializers import ProductSerializer, BrandSerializer, PostSerializer
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, DjangoModelPermissions, BasePermission, SAFE_METHODS, IsAuthenticatedOrReadOnly, DjangoModelPermissionsOrAnonReadOnly
 from rest_framework import viewsets, filters, generics, permissions
 from django.shortcuts import get_object_or_404
+from rest_framework.views import APIView
+from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.response import Response
 
 class PostUserWritePermission(BasePermission):
     # permission_classes = [DjangoModelPermissions]
@@ -60,27 +63,37 @@ class PostListDetailfilter(generics.ListAPIView):
 
 # Post Admin
 
-class CreatePost(generics.CreateAPIView):
-    permission_classes = [permissions.IsAuthenticated]
-    queryset = Post.objects.all()
-    serializer_class = PostSerializer
-
+# class CreatePost(generics.CreateAPIView):
+#     # permission_classes = [permissions.IsAuthenticated]
+#     queryset = Post.objects.all()
+#     serializer_class = PostSerializer
 
     # def perform_create(self, serializer):
     #     serializer.save(author=self.request.user)
 
+class CreatePost(APIView):
+    # permission_classes = [permissions.IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]  # you typically want to use both in order to fully support all possible client upload scenarios.
+    def post(self, request, format=None):
+        print(request.data)
+        serializer = PostSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=200)
+        else:
+            return Response(serializer.errors, status=400)
 class AdminPostDetail(generics.RetrieveAPIView):
-    permission_classes = [permissions.IsAuthenticated]
+    # permission_classes = [permissions.IsAuthenticated]
     queryset = Post.objects.all()
     serializer_class = PostSerializer
 
 class EditPost(generics.UpdateAPIView):
-    permission_classes = [permissions.IsAuthenticated]
+    # permission_classes = [permissions.IsAuthenticated]
     queryset = Post.objects.all()
     serializer_class = PostSerializer
 
 class DeletePost(generics.DestroyAPIView):
-    permission_classes = [permissions.IsAuthenticated]
+    # permission_classes = [permissions.IsAuthenticated]
     queryset = Post.objects.all()
     serializer_class = PostSerializer
 
@@ -109,18 +122,65 @@ class BrandDetail(generics.RetrieveUpdateDestroyAPIView):
     pass
 
 
+class ProductList(generics.ListAPIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    serializer_class = ProductSerializer
 
-class ProductList(generics.ListCreateAPIView):
-    # permission_classes = [IsAuthenticatedOrReadOnly]
+    def get_queryset(self):
+        user = self.request.user
+        # return Post.objects.filter(author=user)
+        return Product.objects.all()
+
+
+class ProductDetail(generics.RetrieveAPIView):
+
+    serializer_class = ProductSerializer
+
+    def get_object(self, queryset=None, **kwargs):
+        item = self.kwargs.get('slug')
+        return get_object_or_404(Product, slug=item)
+
+
+# search post
+class ProductListDetailfilter(generics.ListAPIView):
+
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['^slug']
+
+    # '^' starts-with search.
+    # '=' exact matches.
+    # '@' full-text search (currently only supported Django's PostgreSQL backend).
+    # '$' regex search.
+
+# Product Admin
+
+class CreateProduct(APIView):
+    # permission_classes = [permissions.IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]  # you typically want to use both in order to fully support all possible client upload scenarios.
+    def post(self, request, format=None):
+        print(request.data)
+        serializer = ProductSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=200)
+        else:
+            return Response(serializer.errors, status=400)
+class AdminProductDetail(generics.RetrieveAPIView):
+    # permission_classes = [permissions.IsAuthenticated]
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
 
-class ProductDetail(generics.RetrieveUpdateDestroyAPIView, PostUserWritePermission):
-    # permission_classes = [DjangoModelPermissions] # View-level permissions
+class EditProduct(generics.UpdateAPIView):
+    # permission_classes = [permissions.IsAuthenticated]
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
 
-
+class DeleteProduct(generics.DestroyAPIView):
+    # permission_classes = [permissions.IsAuthenticated]
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
 
 
 

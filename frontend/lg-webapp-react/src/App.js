@@ -11,14 +11,20 @@ import Home from './components/Home/Home';
 import PostLists from './components/Post/PostLists';
 
 import ProductLists from './components/Product/ProductLists'
+import SingleProduct from './components/Product/SingleProduct'
 import Register from './components/Auth/Register';
 import Login from './components/Auth/Login';
 import Logout from './components/Auth/Logout';
 import Single from './components/Post/Single';
-import Admin from './Admin';
+import AdminPosts from './components/Admin/AdminPosts';
 import CreatePost from './components/Admin/CreatePost';
 import DeletePost from './components/Admin/DeletePost';
 import EditPost from './components/Admin/EditPost';
+import ProductCreate from './components/Admin/ProductCreate';
+import ProductDelete from './components/Admin/ProductDelete';
+import ProductEdit from './components/Admin/ProductEdit';
+
+import Admin from './Admin';
 
 
 
@@ -87,11 +93,16 @@ function Routes() {
 		// },
 		{ path: '/post/:slug', element: <Single /> },
 		{ path: '/admin', element: <Admin /> },
-		{ path: '/admin/create', element: <CreatePost /> },
-		{ path: '/admin/delete/:id', element: <DeletePost /> },
-		{ path: '/admin/edit/:id', element: <EditPost /> },
+		{ path: '/admin/posts/create', element: <CreatePost /> },
+		{ path: '/admin/posts/delete/:id', element: <DeletePost /> },
+		{ path: '/admin/posts/edit/:id', element: <EditPost /> },
 
 		{ path: '/products', element: <ProductLists /> },
+		{ path: '/products/:slug', element: <SingleProduct /> },
+		{ path: '/admin/products/create', element: <ProductCreate /> },
+		{ path: '/admin/products/delete/:id', element: <ProductDelete /> },
+		{ path: '/admin/products/edit/:id', element: <ProductEdit /> },
+
 		{ path: '/register', element: <Register /> },
 		{ path: '/login', element: <Login /> },
 		{ path: '/logout', element: <Logout /> },
@@ -115,9 +126,6 @@ function Routes() {
 // 					/>
 // 	);
 // }
-
-
-
 
 function App() {
 	return (

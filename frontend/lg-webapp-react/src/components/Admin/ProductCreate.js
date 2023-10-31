@@ -9,10 +9,11 @@ import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
+import { DateField } from '@mui/x-date-pickers/DateField';
 import classes from './CreatePost.module.css';
 
 
-export default function Create() {
+export default function ProductCreate() {
 	function slugify(string) {
 		const a =
 			'àáâäæãåāăąçćčđďèéêëēėęěğǵḧîïíīįìłḿñńǹňôöòóœøōõőṕŕřßśšşșťțûüùúūǘůűųẃẍÿýžźż·/_,:;';
@@ -34,32 +35,32 @@ export default function Create() {
 
 	const navigate = useNavigate();
 	const initialFormData = Object.freeze({
-		title: '',
+		brand: '',
+		model_name: '',
 		slug: '',
-		excerpt: '',
-		content: '',
+		color: '',
 	});
 
-	const [postData, updateFormData] = useState(initialFormData);
-	const [postImage, setPostImage] = useState(null);
+	const [productData, updateFormData] = useState(initialFormData);
+	const [productImage, setProductImage] = useState(null);
 
 	const handleChange = (e) => {
 		if ([e.target.name] == 'image') {
-			setPostImage({
+			setProductImage({
 							image: e.target.files,
 			});
 			console.log(e.target.files);
 		}
-		if ([e.target.name] == 'title') {
+		if ([e.target.name] == 'model_name') {
 			updateFormData({
-				...postData,
+				...productData,
 				// Trimming any whitespace
 				[e.target.name]: e.target.value.trim(),
 				['slug']: slugify(e.target.value.trim()),
 			});
 		} else {
 			updateFormData({
-				...postData,
+				...productData,
 				// Trimming any whitespace
 				[e.target.name]: e.target.value.trim(),
 			});
@@ -69,13 +70,14 @@ export default function Create() {
 	const handleSubmit = (e) => {
 					e.preventDefault();
 					let formData = new FormData();
-					formData.append('title', postData.title);
-					formData.append('slug', postData.slug);
+					formData.append('category', productData.category);
+					formData.append('brand', productData.brand);
+					formData.append('slug', productData.slug);
 					formData.append('author', 1);
-					formData.append('excerpt', postData.excerpt);
-					formData.append('content', postData.content);
-					formData.append('image', postImage.image[0]);
-					axiosInstance.post(`admin/posts/create/`, formData,{
+					formData.append('color', productData.color);
+					// formData.append('release_date', productData.release_date);
+					formData.append('image', productImage.image[0]);
+					axiosInstance.post(`admin/products/create/`, formData,{
 									headers: {
 										'Content-Type': 'multipart/form-data'
 									}
@@ -84,22 +86,6 @@ export default function Create() {
 					window.location.reload();
 	};
 
-	// const config = { headers: { 'Content-Type': 'multipart/form-data' } };
-	// const URL = 'http://127.0.0.1:8000/api/admin/create/';
-	// let formData = new FormData();
-	// formData.append('title', postData.title);
-	// formData.append('slug', postData.slug);
-	// formData.append('author', 1);
-	// formData.append('excerpt', postData.excerpt);
-	// formData.append('content', postData.content);
-	// formData.append('image', postimage.image[0]);
-	// axios
-	// 	.post(URL, formData, config)
-	// 	.then((res) => {
-	// 		console.log(res.data);
-	// 	})
-	// 	.catch((err) => console.log(err));
-
 
 	return (
 		<Container component="main" maxWidth="xs">
@@ -107,7 +93,7 @@ export default function Create() {
 			<div className={classes.paper}>
 				<Avatar className={classes.avatar}></Avatar>
 				<Typography component="h1" variant="h5">
-					Create New Post
+					Create New Product
 				</Typography>
 				<form className={classes.form} noValidate>
 					<Grid container spacing={2}>
@@ -116,10 +102,10 @@ export default function Create() {
 								variant="outlined"
 								required
 								fullWidth
-								id="title"
-								label="Post Title"
-								name="title"
-								autoComplete="title"
+								id="brand"
+								label="Brand"
+								name="brand"
+								autoComplete="brand"
 								onChange={handleChange}
 							/>
 						</Grid>
@@ -128,10 +114,10 @@ export default function Create() {
 								variant="outlined"
 								required
 								fullWidth
-								id="excerpt"
-								label="Post Excerpt"
-								name="excerpt"
-								autoComplete="excerpt"
+								id="model_name"
+								label="Model Name"
+								name="model_name"
+								autoComplete="model_name"
 								onChange={handleChange}
 								multiline
 								rows={4}
@@ -146,7 +132,7 @@ export default function Create() {
 								label="slug"
 								name="slug"
 								autoComplete="slug"
-								value={postData.slug}
+								value={productData.slug}
 								onChange={handleChange}
 							/>
 						</Grid>
@@ -155,19 +141,33 @@ export default function Create() {
 								variant="outlined"
 								required
 								fullWidth
-								id="content"
-								label="content"
-								name="content"
-								autoComplete="content"
+								id="color"
+								label="color"
+								name="color"
+								autoComplete="color"
 								onChange={handleChange}
 								multiline
 								rows={4}
 							/>
 						</Grid>
+            {/*<Grid item xs={12}>*/}
+						{/*	<DateField*/}
+						{/*		variant="outlined"*/}
+						{/*		required*/}
+						{/*		fullWidth*/}
+						{/*		id="color"*/}
+						{/*		label="color"*/}
+						{/*		name="color"*/}
+						{/*		autoComplete="color"*/}
+						{/*		onChange={handleChange}*/}
+						{/*		multiline*/}
+						{/*		rows={4}*/}
+						{/*	/>*/}
+						{/*</Grid>*/}
 						<input
 							accept="image/*"
 							className={classes.input}
-							id="post-image"
+							id="product-image"
 							onChange={handleChange}
 							name="image"
 							type="file"
@@ -181,7 +181,7 @@ export default function Create() {
 						className={classes.submit}
 						onClick={handleSubmit}
 					>
-						Create Post
+						Create Product
 					</Button>
 				</form>
 			</div>

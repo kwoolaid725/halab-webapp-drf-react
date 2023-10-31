@@ -27,8 +27,8 @@ const Posts = (props) => {
 										<CardMedia
 											component="img"
 											height="140"
-											image="https://source.unsplash.com/random"
-											alt="random"
+											image={post.image}
+											title="Image title"
 										/>
 									</Link>
 									<CardContent>

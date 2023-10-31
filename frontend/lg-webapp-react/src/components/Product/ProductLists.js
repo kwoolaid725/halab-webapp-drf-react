@@ -4,6 +4,7 @@ import React, {
   useEffect,
   useState
 } from 'react'
+import axiosInstance from '../../axios'
 
 function ProductLists() {
   const PostLoading = PostLoadingComponent(Products);
@@ -12,21 +13,28 @@ function ProductLists() {
       products: null,
     });
 
-    useEffect(() => {
-      setAppState({ loading: true });
-      const apiUrl = `http://127.0.0.1:8000/api/products/`;
-      fetch(apiUrl)
-        .then((data) => data.json())
-        .then((products) => {
-          setAppState({ loading: false, products: products });
-        });
-    }, [setAppState]);
-    return (
-		<div className="App">
-			<h1>Latest Products</h1>
-			<PostLoading isLoading={appState.loading} products={appState.products} />
-		</div>
-	);
+    // Fetch posts from the API
+  const fetchProducts = async () => {
+    try {
+      const res = await axiosInstance.get('/products/');
+      const allProducts = res.data;
+      setAppState({ loading: false, products: allProducts });
+      console.log(res.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  return (
+    <div className="App">
+      <h1>Products</h1>
+      <PostLoading isLoading={appState.loading} products={appState.products} />
+    </div>
+  );
 }
 
 export default ProductLists;
