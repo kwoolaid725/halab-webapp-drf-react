@@ -1,25 +1,9 @@
 from rest_framework import serializers
 from rest_framework.fields import ReadOnlyField
-from ..halab.models import Brand, Product, Post
+from ..halab.models import Category, Brand, Product, Post, Sample
 from django.conf import settings
 
 # is it like schema in fastapi?
-
-class BrandSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Brand
-        fields = "__all__"
-class ProductSerializer(serializers.ModelSerializer):
-    brand = ReadOnlyField(source='brand.name')
-
-    class Meta:
-        model = Product
-        fields = "__all__"
-
-class PostSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Post
-        fields = ('category', 'id', 'title', 'image', 'slug', 'author', 'excerpt', 'content', 'status')
 
 class UserRegisterSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(required=True)
@@ -30,3 +14,54 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         model = settings.AUTH_USER_MODEL
         fields = ('email', 'user_name', 'first_name')
         extra_kwargs = {'password': {'write_only': True}}
+
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = "__all__"
+
+class PostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Post
+        fields = ('category', 'id', 'title', 'image', 'slug', 'author', 'excerpt', 'content', 'status')
+
+
+class BrandSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Brand
+        fields = "__all__"
+class ProductSerializer(serializers.ModelSerializer):
+    brand = serializers.CharField(source='brand.name')
+    category = serializers.CharField(source='category.name')
+
+    class Meta:
+        model = Product
+        fields = ('id', 'category', 'brand', 'model_name', 'slug', 'color', 'release_date', 'image', 'owner')
+
+    def create(self, validated_data):
+        brand_name = validated_data.pop('brand')['name']
+        brand, created = Brand.objects.get_or_create(name=brand_name)  # create brand if not exist
+
+        category_name = validated_data.pop('category')['name']
+        category, created = Category.objects.get_or_create(name=category_name)  # create category if not exist
+
+        product = Product.objects.create(brand=brand, category=category, **validated_data)
+        return product
+
+
+class SampleSerializer(serializers.ModelSerializer):
+    # select from product table
+    product = serializers.SlugRelatedField(
+        queryset=Product.objects.all(),
+        slug_field='model_name'
+    )
+
+    class Meta:
+        model = Sample
+        fields = ('id', 'inv_no', 'product', 'product_stage', 'remarks', 'serial_no', 'owner')
+
+# SlugRelatedField is used to represent the related Product model. The queryset argument is required, and should be a queryset that includes all items you might want to refer to. The slug_field is the field on the related object that is used to represent it.
+#
+# When deserializing, the SlugRelatedField will lookup an object based on this slug_field. This means that you should ensure that the slug_field used has unique values to avoid multiple objects returning during the lookup.
+#
+# Please replace 'model_name' with the actual field name in your Product model that you want to use for selection. If you want to use a different field for selection, just change 'model_name' to your desired field name.

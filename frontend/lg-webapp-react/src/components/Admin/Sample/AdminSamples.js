@@ -1,5 +1,5 @@
 import React from 'react';
-import classes from './AdminPosts.module.css';
+import classes from './AdminSamples.module.css';
 
 import Container from '@mui/material/Container';
 import Link from '@mui/material/Link';
@@ -14,10 +14,10 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import EditIcon from '@mui/icons-material/Edit';
 import Button from '@mui/material/Button';
 
-const Products = (props) => {
-	const { products } = props;
+const AdminSamples = (props) => {
+	const { samples } = props;
 
-	if (!products || products.length === 0) return <p>Cannot find any products, sorry</p>;
+	if (!samples || samples.length === 0) return <p>Cannot find any samples, sorry</p>;
 	return (
 		<React.Fragment>
 			<Container maxWidth="md" component="main">
@@ -27,42 +27,43 @@ const Products = (props) => {
 							<TableHead>
 								<TableRow>
 									<TableCell>Id</TableCell>
-									<TableCell align="left">Category</TableCell>
-									<TableCell align="left">Brand</TableCell>
-									<TableCell align="left">Model Name</TableCell>
-									<TableCell align="left">Release Date</TableCell>
+									<TableCell align="left">Product</TableCell>
+									<TableCell align="left">Inventory Number</TableCell>
+									<TableCell align="left">Serial Number</TableCell>
+									<TableCell align="left">Remarks</TableCell>
 								</TableRow>
 							</TableHead>
 							<TableBody>
-								{products.map((product) => {
+								{samples.map((sample) => {
 									return (
 										<TableRow>
 											<TableCell component="th" scope="row">
-												{product.id}
+												{sample.id}
 											</TableCell>
-											<TableCell align="left">{product.category}</TableCell>
-                      <TableCell align="left">{product.brand}</TableCell>
+                      						<TableCell align="left">{sample.product}</TableCell>
 											<TableCell align="left">
 												<Link
 													color="textPrimary"
-													href={'/product/' + product.slug}
+													href={'/sample/' + sample.inv_no}
 													className={classes.link}
 												>
-													{product.model_name}
+													{sample.inv_no}
 												</Link>
 											</TableCell>
+											<TableCell align="left">{sample.serial_no}</TableCell>
+											<TableCell align="left">{sample.remarks}</TableCell>
 
 											<TableCell align="left">
 												<Link
 													color="textPrimary"
-													href={'/admin/products/edit/' + product.id}
+													href={'/admin/samples/edit/' + sample.id}
 													className={classes.link}
 												>
 													<EditIcon></EditIcon>
 												</Link>
 												<Link
 													color="textPrimary"
-													href={'/admin/products/delete/' + product.id}
+													href={'/admin/samples/delete/' + sample.id}
 													className={classes.link}
 												>
 													<DeleteForeverIcon></DeleteForeverIcon>
@@ -78,7 +79,7 @@ const Products = (props) => {
 											variant="contained"
 											color="primary"
 										>
-											Add New Product
+											Add New Sample
 										</Button>
 									</TableCell>
 								</TableRow>
@@ -90,4 +91,4 @@ const Products = (props) => {
 		</React.Fragment>
 	);
 };
-export default Products;
+export default AdminSamples;

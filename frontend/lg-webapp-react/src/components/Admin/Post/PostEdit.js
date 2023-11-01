@@ -1,18 +1,17 @@
-import React, { useState } from 'react';
-import axiosInstance from '../../axios';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import axiosInstance from '../../../axios';
+import { useNavigate, useParams } from 'react-router-dom';
 //MaterialUI
-import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import classes from './CreatePost.module.css';
+import classes from './PostEdit.module.css';
 
 
-export default function Create() {
+export default function PostEdit() {
 	function slugify(string) {
 		const a =
 			'àáâäæãåāăąçćčđďèéêëēėęěğǵḧîïíīįìłḿñńǹňôöòóœøōõőṕŕřßśšşșťțûüùúūǘůűųẃẍÿýžźż·/_,:;';
@@ -32,82 +31,65 @@ export default function Create() {
 			.replace(/-+$/, ''); // Trim - from end of text
 	}
 
+
 	const navigate = useNavigate();
+	const { id } = useParams();
 	const initialFormData = Object.freeze({
+		id: '',
 		title: '',
 		slug: '',
 		excerpt: '',
 		content: '',
 	});
 
-	const [postData, updateFormData] = useState(initialFormData);
-	const [postImage, setPostImage] = useState(null);
+	const [formData, updateFormData] = useState(initialFormData);
+
+	useEffect(() => {
+		axiosInstance.get('admin/posts/edit/postdetail/' + id + '/').then((res) => {
+			updateFormData({
+				...formData,
+				['title']: res.data.title,
+				['excerpt']: res.data.excerpt,
+				['slug']: res.data.slug,
+				['content']: res.data.content,
+			});
+			console.log(res.data);
+		});
+	}, [updateFormData]);
 
 	const handleChange = (e) => {
-		if ([e.target.name] == 'image') {
-			setPostImage({
-							image: e.target.files,
-			});
-			console.log(e.target.files);
-		}
-		if ([e.target.name] == 'title') {
-			updateFormData({
-				...postData,
-				// Trimming any whitespace
-				[e.target.name]: e.target.value.trim(),
-				['slug']: slugify(e.target.value.trim()),
-			});
-		} else {
-			updateFormData({
-				...postData,
-				// Trimming any whitespace
-				[e.target.name]: e.target.value.trim(),
-			});
-		}
+		updateFormData({
+			...formData,
+			// Trimming any whitespace
+			[e.target.name]: e.target.value.trim(),
+		});
 	};
 
 	const handleSubmit = (e) => {
-					e.preventDefault();
-					let formData = new FormData();
-					formData.append('title', postData.title);
-					formData.append('slug', postData.slug);
-					formData.append('author', 1);
-					formData.append('excerpt', postData.excerpt);
-					formData.append('content', postData.content);
-					formData.append('image', postImage.image[0]);
-					axiosInstance.post(`admin/posts/create/`, formData,{
-									headers: {
-										'Content-Type': 'multipart/form-data'
-									}
-					});
-					navigate('/admin/');
-					window.location.reload();
-	};
+		e.preventDefault();
+		console.log(formData);
 
-	// const config = { headers: { 'Content-Type': 'multipart/form-data' } };
-	// const URL = 'http://127.0.0.1:8000/api/admin/create/';
-	// let formData = new FormData();
-	// formData.append('title', postData.title);
-	// formData.append('slug', postData.slug);
-	// formData.append('author', 1);
-	// formData.append('excerpt', postData.excerpt);
-	// formData.append('content', postData.content);
-	// formData.append('image', postimage.image[0]);
-	// axios
-	// 	.post(URL, formData, config)
-	// 	.then((res) => {
-	// 		console.log(res.data);
-	// 	})
-	// 	.catch((err) => console.log(err));
+		axiosInstance.put(`admin/posts/edit/` + id + '/', {
+			title: formData.title,
+			// fordata.slug to slugify(formData.title) to prevent user from changing
+			slug: slugify(formData.title),
+			author: 1,
+			excerpt: formData.excerpt,
+			content: formData.content,
+		});
+		navigate({
+			pathname: '/admin/',
+		});
+		window.location.reload();
+	};
 
 
 	return (
-		<Container component="main" maxWidth="xs">
+		<Container component="main" maxWidth="sm">
 			<CssBaseline />
 			<div className={classes.paper}>
-				<Avatar className={classes.avatar}></Avatar>
 				<Typography component="h1" variant="h5">
-					Create New Post
+					Edit Post
 				</Typography>
 				<form className={classes.form} noValidate>
 					<Grid container spacing={2}>
@@ -120,6 +102,7 @@ export default function Create() {
 								label="Post Title"
 								name="title"
 								autoComplete="title"
+								value={formData.title}
 								onChange={handleChange}
 							/>
 						</Grid>
@@ -132,9 +115,10 @@ export default function Create() {
 								label="Post Excerpt"
 								name="excerpt"
 								autoComplete="excerpt"
+								value={formData.excerpt}
 								onChange={handleChange}
 								multiline
-								rows={4}
+								rows={8}
 							/>
 						</Grid>
 						<Grid item xs={12}>
@@ -146,7 +130,7 @@ export default function Create() {
 								label="slug"
 								name="slug"
 								autoComplete="slug"
-								value={postData.slug}
+								value={formData.slug}
 								onChange={handleChange}
 							/>
 						</Grid>
@@ -159,19 +143,12 @@ export default function Create() {
 								label="content"
 								name="content"
 								autoComplete="content"
+								value={formData.content}
 								onChange={handleChange}
 								multiline
-								rows={4}
+								rows={8}
 							/>
 						</Grid>
-						<input
-							accept="image/*"
-							className={classes.input}
-							id="post-image"
-							onChange={handleChange}
-							name="image"
-							type="file"
-						/>
 					</Grid>
 					<Button
 						type="submit"
@@ -181,7 +158,7 @@ export default function Create() {
 						className={classes.submit}
 						onClick={handleSubmit}
 					>
-						Create Post
+						Update Post
 					</Button>
 				</form>
 			</div>

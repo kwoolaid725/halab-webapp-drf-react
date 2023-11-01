@@ -1,7 +1,8 @@
 from django.urls import path
-from .views import (ProductList, ProductDetail, CreateProduct, AdminProductDetail, EditProduct,
-                    DeleteProduct, BrandList, PostList, PostDetail, PostListDetailfilter,
-                    CreatePost, AdminPostDetail, EditPost, DeletePost)
+from .views import (ProductList, ProductDetail, CreateProduct, AdminProductDetail, EditProduct, DeleteProduct,
+                    CategoryList, BrandList, PostList, PostDetail, PostListDetailfilter,
+                    CreatePost, AdminPostDetail, EditPost, DeletePost,
+                    SampleList, CreateSample, AdminSampleDetail, EditSample, DeleteSample)
 from rest_framework.routers import DefaultRouter
 
 app_name = 'halab_api'
@@ -22,6 +23,9 @@ urlpatterns = [
     path('admin/posts/edit/<int:pk>/', EditPost.as_view(), name='post_editpost'),
     path('admin/posts/delete/<int:pk>/', DeletePost.as_view(), name='post_deletepost'),
 
+    # Category URLs
+    path('categories/', CategoryList.as_view(), name='category_listcreate'),
+    # Brand URLs
     path('brands/', BrandList.as_view(), name='brand_detailcreate'),
     # Product URLs
     path('products/', ProductList.as_view(), name='product_listcreate'),
@@ -31,5 +35,14 @@ urlpatterns = [
     path('admin/products/edit/productdetail/<int:pk>/', AdminProductDetail.as_view(), name='product_admindetailproduct'),
     path('admin/products/edit/<int:pk>/', EditProduct.as_view(), name='product_editproduct'),
     path('admin/products/delete/<int:pk>/', DeleteProduct.as_view(), name='product_deleteproduct'),
+    # Sample URLs
+    path('samples/', SampleList.as_view(), name='sample_listsample'),
+
+    # Sample Admin URLs
+    path('admin/samples/create/', CreateSample.as_view(), name='sample_createsample'),
+    path('admin/samples/edit/sampledetail/<str:inv_no>/', AdminSampleDetail.as_view(), name='sample_admindetailsample'),
+    path('admin/samples/edit/<str:inv_no>/', EditSample.as_view(), name='sample_editsample'),
+    path('admin/samples/delete/<str:inv_no>/', DeleteSample.as_view(), name='sample_deletesample'),
+
 
 ]

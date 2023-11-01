@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import axiosInstance from '../../axios';
+import axiosInstance from '../../../axios';
 import { useNavigate, useParams } from 'react-router-dom';
 //MaterialUI
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 
-export default function Create() {
+export default function PostDelete() {
 	const navigate = useNavigate();
 	const { id } = useParams();
 
