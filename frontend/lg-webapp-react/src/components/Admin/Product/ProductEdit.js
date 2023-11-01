@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import axiosInstance from '../../axios';
+import axiosInstance from '../../../axios';
 import { useNavigate, useParams } from 'react-router-dom';
-//MaterialUI
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import classes from './EditPost.module.css';
-
+import classes from './ProductEdit.module.css';
 
 export default function Create() {
 	function slugify(string) {
@@ -45,11 +43,11 @@ export default function Create() {
 	const [formData, updateFormData] = useState(initialFormData);
 
 	useEffect(() => {
-		axiosInstance.get('admin/posts/edit/postdetail/' + id + '/').then((res) => {
+		axiosInstance.get('admin/products/edit/productdetail/' + id + '/').then((res) => {
 			updateFormData({
 				...formData,
-				['title']: res.data.title,
-				['excerpt']: res.data.excerpt,
+				['brand']: res.data.brand,
+				['model_name']: res.data.model_name,
 				['slug']: res.data.slug,
 				['content']: res.data.content,
 			});

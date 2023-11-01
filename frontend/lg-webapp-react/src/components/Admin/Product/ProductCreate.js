@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import axiosInstance from '../../axios';
+import React, { useState, useEffect } from 'react';
+import axiosInstance from '../../../axios';
 import { useNavigate } from 'react-router-dom';
 //MaterialUI
 import Avatar from '@mui/material/Avatar';
@@ -10,8 +10,11 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { DateField } from '@mui/x-date-pickers/DateField';
-import classes from './CreatePost.module.css';
-
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import classes from './ProductCreate.module.css';
+import axios from "axios";
+import InputLabel from "@mui/material/InputLabel";
 
 export default function ProductCreate() {
 	function slugify(string) {
@@ -35,15 +38,32 @@ export default function ProductCreate() {
 
 	const navigate = useNavigate();
 	const initialFormData = Object.freeze({
-		brand: '',
+		category: '',
+		brand_id: '',
 		model_name: '',
 		slug: '',
 		color: '',
+		release_date: '',
+		owner_id: 1,
 	});
 
 	const [productData, updateFormData] = useState(initialFormData);
 	const [productImage, setProductImage] = useState(null);
+	const [categories, setCategories] = useState([]);
 
+
+		//useEffect to get all categories
+	useEffect(() => {
+		// Make API call here after category selection
+		axios.get(`http://localhost:8000/api/categories/`)
+			.then(response => {
+				setCategories(response.data);
+
+			})
+			.catch(error => {
+				console.error('There was an error!', error);
+			});
+	}, []);
 	const handleChange = (e) => {
 		if ([e.target.name] == 'image') {
 			setProductImage({
@@ -72,10 +92,11 @@ export default function ProductCreate() {
 					let formData = new FormData();
 					formData.append('category', productData.category);
 					formData.append('brand', productData.brand);
+					formData.append('model_name', productData.model_name);
 					formData.append('slug', productData.slug);
-					formData.append('author', 1);
+					formData.append('owner', 1);
 					formData.append('color', productData.color);
-					// formData.append('release_date', productData.release_date);
+					formData.append('release_date', productData.release_date);
 					formData.append('image', productImage.image[0]);
 					axiosInstance.post(`admin/products/create/`, formData,{
 									headers: {
@@ -87,6 +108,9 @@ export default function ProductCreate() {
 	};
 
 
+
+
+
 	return (
 		<Container component="main" maxWidth="xs">
 			<CssBaseline />
@@ -96,7 +120,27 @@ export default function ProductCreate() {
 					Create New Product
 				</Typography>
 				<form className={classes.form} noValidate>
-					<Grid container spacing={2}>
+					 <Grid container spacing={2}>
+						<Grid item xs={12}>
+							 <InputLabel id="brand-label">Category</InputLabel>
+								<Select
+									variant="outlined"
+									required
+									fullWidth
+									id="category"
+									label="Category"
+									name="category"
+									autoComplete="category"
+									value={productData.category}
+									onChange={handleChange}
+								>
+									{categories.map((option) => (
+										<MenuItem key={option.id} value={option.name}>
+											{option.name}
+										</MenuItem>
+									))}
+								</Select>
+                        	</Grid>
 						<Grid item xs={12}>
 							<TextField
 								variant="outlined"
@@ -147,18 +191,46 @@ export default function ProductCreate() {
 								autoComplete="color"
 								onChange={handleChange}
 								multiline
-								rows={4}
+
 							/>
 						</Grid>
-            {/*<Grid item xs={12}>*/}
+						<Grid item xs={12}>
+							<TextField
+								variant="outlined"
+								required
+								fullWidth
+								id="release_date"
+								label="Release Date"
+								name="release_date"
+								autoComplete="release_date"
+								onChange={handleChange}
+								multiline
+
+							/>
+						</Grid>
+						{/*<Grid item xs={12}>*/}
+						{/*	<TextField*/}
+						{/*		variant="outlined"*/}
+						{/*		required*/}
+						{/*		fullWidth*/}
+						{/*		id="owner_id"*/}
+						{/*		label="Owner ID"*/}
+						{/*		name="owner_id"*/}
+						{/*		autoComplete="owner_id"*/}
+						{/*		onChange={handleChange}*/}
+						{/*		multiline*/}
+
+						{/*	/>*/}
+						{/*</Grid>*/}
+            			{/*<Grid item xs={12}>*/}
 						{/*	<DateField*/}
 						{/*		variant="outlined"*/}
 						{/*		required*/}
 						{/*		fullWidth*/}
-						{/*		id="color"*/}
-						{/*		label="color"*/}
-						{/*		name="color"*/}
-						{/*		autoComplete="color"*/}
+						{/*		id="release_date"*/}
+						{/*		label="release_date"*/}
+						{/*		name="release_date"*/}
+						{/*		autoComplete="release_date"*/}
 						{/*		onChange={handleChange}*/}
 						{/*		multiline*/}
 						{/*		rows={4}*/}

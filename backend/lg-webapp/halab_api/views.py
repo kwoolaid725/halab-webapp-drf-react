@@ -1,6 +1,6 @@
 from rest_framework import generics
-from ..halab.models import Brand, Product, Test, Post, TestDetailVacuum, CrProductData, VocReviews
-from .serializers import ProductSerializer, BrandSerializer, PostSerializer
+from ..halab.models import Category, Brand, Product,Post, Sample, Test, TestDetailVacuum, CrProductData, VocReviews
+from .serializers import ProductSerializer, BrandSerializer, PostSerializer, SampleSerializer, CategorySerializer
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, DjangoModelPermissions, BasePermission, SAFE_METHODS, IsAuthenticatedOrReadOnly, DjangoModelPermissionsOrAnonReadOnly
 from rest_framework import viewsets, filters, generics, permissions
 from django.shortcuts import get_object_or_404
@@ -19,6 +19,13 @@ class PostUserWritePermission(BasePermission):
             return True
 
         return obj.author == request.user
+
+
+class CategoryList(generics.ListCreateAPIView):
+
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+
 
 # Display Posts
 class PostList(generics.ListAPIView):
@@ -123,13 +130,21 @@ class BrandDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 class ProductList(generics.ListAPIView):
-    permission_classes = [IsAuthenticatedOrReadOnly]
     serializer_class = ProductSerializer
 
     def get_queryset(self):
-        user = self.request.user
-        # return Post.objects.filter(author=user)
-        return Product.objects.all()
+        """
+        Optionally restricts the returned products to a given category and brand,
+        by filtering against `category` and `brand` query parameters in the URL.
+        """
+        queryset = Product.objects.all()
+        category = self.request.query_params.get('category', None)
+        brand = self.request.query_params.get('brand', None)
+        if category is not None:
+            queryset = queryset.filter(category=category)
+        if brand is not None:
+            queryset = queryset.filter(brand__name=brand)
+        return queryset
 
 
 class ProductDetail(generics.RetrieveAPIView):
@@ -181,6 +196,33 @@ class DeleteProduct(generics.DestroyAPIView):
     # permission_classes = [permissions.IsAuthenticated]
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+
+
+class SampleList(generics.ListCreateAPIView):
+    queryset = Sample.objects.all()
+    serializer_class = SampleSerializer
+    pass
+
+class CreateSample(generics.CreateAPIView):
+    # permission_classes = [permissions.IsAuthenticated]
+    queryset = Sample.objects.all()
+    serializer_class = SampleSerializer
+
+
+class AdminSampleDetail(generics.RetrieveAPIView):
+    # permission_classes = [permissions.IsAuthenticated]
+    queryset = Sample.objects.all()
+    serializer_class = SampleSerializer
+
+class EditSample(generics.UpdateAPIView):
+    # permission_classes = [permissions.IsAuthenticated]
+    queryset = Sample.objects.all()
+    serializer_class = SampleSerializer
+
+class DeleteSample(generics.DestroyAPIView):
+    # permission_classes = [permissions.IsAuthenticated]
+    queryset = Sample.objects.all()
+    serializer_class = SampleSerializer
 
 
 

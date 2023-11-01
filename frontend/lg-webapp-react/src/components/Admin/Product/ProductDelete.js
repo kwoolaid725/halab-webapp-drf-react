@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axiosInstance from '../../axios';
+import axiosInstance from '../../../axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';

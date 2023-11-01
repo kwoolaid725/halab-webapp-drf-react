@@ -12,10 +12,11 @@ def upload_to_product(instance, filename):
     return 'products/{filename}'.format(filename=filename)
 
 class Category(models.Model):
+    product_group = models.CharField(max_length=100, default="")
     name = models.CharField(max_length=100)
 
     def __str__(self):
-        return self.name
+        return f'{self.product_group} - {self.name}'
 
 class Post(models.Model):
 
@@ -52,30 +53,32 @@ class Post(models.Model):
         return self.title
 
 
-PRODUCT_CATEGORY = [
-    ('VACUUM', (
-        ('VAC_CORDLESS_STICK', 'Cordless Stick Vacuum'),
-        ('VAC_CORDLESS_MOP', 'Cordless Mop/Wet Vacuum'),
-        ('VAC_CORDED_UPRIGHT', 'Corded Upright Vacuum'),
-        ('VAC_CORDED_STICK', 'Corded Stick Vacuum'),
-        ('VAC_CORDED_CANISTER', 'Corded Canister Vacuum'),
-        ('VAC_ROBOT', 'Robot Vacuum'),
-        ('VAC_ROBOT_MOP', 'Robot Mop')
-    )),
-]
+# PRODUCT_CATEGORY = [
+#     ('VACUUM', (
+#         ('VAC_CORDLESS_STICK', 'Cordless Stick Vacuum'),
+#         ('VAC_CORDLESS_MOP', 'Cordless Mop/Wet Vacuum'),
+#         ('VAC_CORDED_UPRIGHT', 'Corded Upright Vacuum'),
+#         ('VAC_CORDED_STICK', 'Corded Stick Vacuum'),
+#         ('VAC_CORDED_CANISTER', 'Corded Canister Vacuum'),
+#         ('VAC_ROBOT', 'Robot Vacuum'),
+#         ('VAC_ROBOT_MOP', 'Robot Mop')
+#     )),
+# ]
 
 class Brand(models.Model):
-    name = models.CharField(max_length=20)
-    country = models.CharField(max_length=100)
+    name = models.CharField(max_length=20, unique=True)
+    country_of_origin = models.CharField(max_length=100)
 
     def __str__(self):
         return self.name
 
 class Product(models.Model):
 
-    category = models.CharField(max_length=50, choices=PRODUCT_CATEGORY)
+    category = models.ForeignKey(
+        Category, on_delete=models.PROTECT)
     brand = models.ForeignKey(Brand, on_delete=models.CASCADE)
     model_name = models.CharField(max_length=100)
+    slug = models.SlugField(max_length=250, default="")
     color = models.CharField(max_length=50, null=True, blank=True)
     release_date = models.DateField(null=True, blank=True)
     created_at = models.DateTimeField(default=timezone.now)
@@ -99,9 +102,10 @@ class Sample(models.Model):
     inv_no = models.IntegerField()
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     product_stage = models.CharField(max_length=3, choices=PRODUCT_STAGE)
+    serial_no = models.CharField(max_length=100, null=True, blank=True)
     created_at = models.DateTimeField(default=timezone.now)
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='vacuum_inventories')
-    remark = models.CharField(max_length=200, null=True, blank=True)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='samples')
+    remarks = models.CharField(max_length=200, null=True, blank=True)
 
 
     def __str__(self):
@@ -124,7 +128,8 @@ class Test(models.Model):
 
     description = models.CharField(max_length=100)
     test_category = models.CharField(max_length=100, choices=TEST_CATEGORY)
-    product_category = models.CharField(max_length=100, choices=PRODUCT_CATEGORY)
+    product_category = models.ForeignKey(
+        Category, on_delete=models.PROTECT, default=1)
     samples = models.ManyToManyField(Sample)
     test_status = models.CharField(max_length=20, choices=TEST_STATUS, default='PENDING')
     testers = models.ManyToManyField(settings.AUTH_USER_MODEL)
@@ -142,6 +147,7 @@ class Test(models.Model):
         return self.description
 
 class TestDetailVacuum(models.Model):
+
     test = models.ForeignKey(Test, on_delete=models.CASCADE)
     sample = models.ForeignKey(Sample, on_delete=models.CASCADE)
     test_target = models.CharField(max_length=100, null=True, blank=True)
@@ -162,7 +168,8 @@ class TestDetailVacuum(models.Model):
 
 class CrProductData(models.Model):
 
-    category = models.CharField(max_length=100, choices=PRODUCT_CATEGORY)
+    category = models.ForeignKey(
+        Category, on_delete=models.PROTECT, default=1)
     subcategory = models.CharField(max_length=100)
     date = models.DateField(null=True, blank=True)
     ranking = models.IntegerField(null=True, blank=True)
