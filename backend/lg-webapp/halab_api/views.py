@@ -1,6 +1,6 @@
 from rest_framework import generics
 from ..halab.models import Category, Brand, Product,Post, Sample, Test, TestDetailVacuum, CrProductData, VocReviews
-from .serializers import ProductSerializer, BrandSerializer, PostSerializer, SampleSerializer, CategorySerializer
+from .serializers import ProductSerializer, BrandSerializer, PostSerializer, SampleSerializer, CategorySerializer, TestSerializer
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, DjangoModelPermissions, BasePermission, SAFE_METHODS, IsAuthenticatedOrReadOnly, DjangoModelPermissionsOrAnonReadOnly
 from rest_framework import viewsets, filters, generics, permissions
 from django.shortcuts import get_object_or_404
@@ -224,6 +224,40 @@ class DeleteSample(generics.DestroyAPIView):
     queryset = Sample.objects.all()
     serializer_class = SampleSerializer
 
+
+# Test
+class TestList(generics.ListCreateAPIView):
+    queryset = Test.objects.all()
+    serializer_class = TestSerializer
+    pass
+
+class CreateTest(APIView):
+    # permission_classes = [permissions.IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]  # you typically want to use both in order to fully support all possible client upload scenarios.
+    def post(self, request, format=None):
+        print(request.data)
+        serializer = TestSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=200)
+        else:
+            return Response(serializer.errors, status=400)
+
+
+class AdminTestDetail(generics.RetrieveAPIView):
+    # permission_classes = [permissions.IsAuthenticated]
+    queryset = Test.objects.all()
+    serializer_class = TestSerializer
+
+class EditTest(generics.UpdateAPIView):
+    # permission_classes = [permissions.IsAuthenticated]
+    queryset = Test.objects.all()
+    serializer_class = SampleSerializer
+
+class DeleteTest(generics.DestroyAPIView):
+    # permission_classes = [permissions.IsAuthenticated]
+    queryset = Test.objects.all()
+    serializer_class = SampleSerializer
 
 
 """ Concrete View Classes

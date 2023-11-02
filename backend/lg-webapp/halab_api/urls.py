@@ -2,7 +2,8 @@ from django.urls import path
 from .views import (ProductList, ProductDetail, CreateProduct, AdminProductDetail, EditProduct, DeleteProduct,
                     CategoryList, BrandList, PostList, PostDetail, PostListDetailfilter,
                     CreatePost, AdminPostDetail, EditPost, DeletePost,
-                    SampleList, CreateSample, AdminSampleDetail, EditSample, DeleteSample)
+                    SampleList, CreateSample, AdminSampleDetail, EditSample, DeleteSample,
+                    TestList, CreateTest, AdminTestDetail, EditTest, DeleteTest)
 from rest_framework.routers import DefaultRouter
 
 app_name = 'halab_api'
@@ -44,5 +45,12 @@ urlpatterns = [
     path('admin/samples/edit/<str:inv_no>/', EditSample.as_view(), name='sample_editsample'),
     path('admin/samples/delete/<str:inv_no>/', DeleteSample.as_view(), name='sample_deletesample'),
 
+    # Test URLs
+    path('tests/', TestList.as_view(), name='sample_listtest'),
 
+    # Sample Admin URLs
+    path('admin/tests/create/', CreateTest.as_view(), name='sample_createtest'),
+    path('admin/tests/edit/testdetail/<int:pk>/', AdminTestDetail.as_view(), name='sample_admindetailtest'),
+    path('admin/tests/edit/<int:pk>/', EditTest.as_view(), name='sample_edittest'),
+    path('admin/tests/delete/<int:pk>/', DeleteTest.as_view(), name='sample_deletetest'),
 ]
