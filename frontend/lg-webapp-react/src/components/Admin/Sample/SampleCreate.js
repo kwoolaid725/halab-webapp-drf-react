@@ -22,12 +22,12 @@ export default function SampleCreate() {
 
 	const navigate = useNavigate();
 	const initialFormData = Object.freeze({
-        product: '',
-		inv_no: '',
-		product_stage: '',
+		  product: '',
+			inv_no: '',
+			product_stage: '',
 	    remarks: '',
 	    serial_no: '',
-		owner: 1,
+			owner: 1,
 	});
 
 	const [sampleData, updateFormData] = useState(initialFormData);
@@ -43,6 +43,8 @@ export default function SampleCreate() {
 		axios.get(`http://localhost:8000/api/categories/`)
 			.then(response => {
 				setCategories(response.data);
+
+				// console.log(categories);
 			})
 			.catch(error => {
 				console.error('There was an error!', error);
@@ -109,7 +111,7 @@ export default function SampleCreate() {
 					formData.append('product_stage', sampleData.product_stage);
 					formData.append('serial_no', sampleData.serial_no);
 					formData.append('remarks', sampleData.remarks);
-					formData.append('owner', 10);
+					formData.append('owner', 1);
 
 
 					axiosInstance.post(`admin/samples/create/`, formData);
@@ -148,7 +150,7 @@ export default function SampleCreate() {
 									<InputLabel id="category-label">Category</InputLabel>
 									<Select value={selectedCategory} onChange={(event) => handleSelectionChange(event, 'category')}>
 										{categories.map((option) => (
-										<MenuItem key={option.id} value={option.name}>
+										<MenuItem key={option.id} value={option.id}>
 											{option.name}
 										</MenuItem>
 									))}
@@ -244,20 +246,7 @@ export default function SampleCreate() {
 
 								/>
 							</Grid>
-							<Grid item xs={12}>
-								<TextField
-									variant="outlined"
-									required
-									fullWidth
-									id="release_date"
-									label="Release Date"
-									name="release_date"
-									autoComplete="release_date"
-									onChange={handleChange}
 
-
-								/>
-						</Grid>
 						{/*<Grid item xs={12}>*/}
 						{/*	<TextField*/}
 						{/*		variant="outlined"*/}

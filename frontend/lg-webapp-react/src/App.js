@@ -29,6 +29,14 @@ import SampleCreate from './components/Admin/Sample/SampleCreate';
 import SampleDelete from './components/Admin/Sample/SampleDelete';
 import SampleEdit from './components/Admin/Sample/SampleEdit';
 import AdminSamplesList from './components/Admin/Sample/AdminSamplesList';
+import AdminTestsList from './components/Admin/Test/AdminTestsList';
+import TestCreate from './components/Admin/Test/TestCreate';
+import TestDelete from './components/Admin/Test/TestDelete';
+import TestEdit from './components/Admin/Test/TestEdit';
+
+
+
+
 
 function Routes() {
 	const element = useRoutes([
@@ -54,6 +62,12 @@ function Routes() {
 		{ path: '/admin/samples/delete/:id', element: <SampleDelete /> },
 		{ path: '/admin/samples/edit/:id', element: <SampleEdit /> },
 
+		{ path: '/admin/tests', element: <AdminTestsList /> },
+		{ path: '/admin/tests/create', element: <TestCreate /> },
+		{ path: '/admin/tests/delete/:id', element: <TestDelete /> },
+		{ path: '/admin/tests/edit/:id', element: <TestEdit /> },
+
+
 		{ path: '/register', element: <Register /> },
 		{ path: '/login', element: <Login /> },
 		{ path: '/logout', element: <Logout /> },
@@ -78,7 +92,6 @@ function App() {
 				<Link to="/admin" style={{ padding: 5 }}>
 					BG Lab
 				</Link>
-
 				<Link to="/register" style={{ padding: 5 }}>
 					Register
 				</Link>

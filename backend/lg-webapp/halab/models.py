@@ -3,6 +3,7 @@ from django.db import models
 from django.utils import timezone
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
+from django.core.files.storage import FileSystemStorage
 
 
 def upload_to_post(instance, filename):
@@ -10,6 +11,11 @@ def upload_to_post(instance, filename):
 
 def upload_to_product(instance, filename):
     return 'products/{filename}'.format(filename=filename)
+
+def upload_to_test(instance, filename):
+    return 'tests/{filename}'.format(filename=filename)
+
+fs = FileSystemStorage(location='media/attachments/')
 
 class Category(models.Model):
     product_group = models.CharField(max_length=100, default="")
@@ -137,8 +143,9 @@ class Test(models.Model):
     last_updated = models.DateTimeField(auto_now=True)
     due_date = models.DateField(null=True, blank=True)
     completion_date = models.DateField(null=True, blank=True)
-    remark = models.CharField(max_length=200, null=True, blank=True)
+    remarks = models.CharField(max_length=200, null=True, blank=True)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='tests')
+    attachment = models.FileField(upload_to=upload_to_test, storage=fs, default="")
 
     class Meta:
         ordering = ['-created_at']
@@ -160,7 +167,7 @@ class TestDetailVacuum(models.Model):
     units = models.CharField(max_length=10, null=True, blank=True)
     created_at = models.DateTimeField(default=timezone.now)
     last_updated = models.DateTimeField(auto_now=True)
-    remark = models.CharField(max_length=200, null=True, blank=True)
+    remarks = models.CharField(max_length=200, null=True, blank=True)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='test_detail_vacuums')
 
     def __str__(self):

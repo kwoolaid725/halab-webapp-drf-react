@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from rest_framework.fields import ReadOnlyField
-from ..halab.models import Category, Brand, Product, Post, Sample
+from ..halab.models import Category, Brand, Product, Post, Sample, Test
 from django.conf import settings
 
 # is it like schema in fastapi?
@@ -59,6 +59,17 @@ class SampleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Sample
         fields = ('id', 'inv_no', 'product', 'product_stage', 'remarks', 'serial_no', 'owner')
+
+class TestSerializer(serializers.ModelSerializer):
+    product_category = serializers.CharField(source='product_category.name')
+
+    class Meta:
+        model = Test
+        fields = ('id', 'test_category', 'product_category', 'description', 'test_status', 'due_date', 'completion_date', 'remarks', 'owner', 'attachment')
+
+    # def create(self, validated_data):
+    #     category_name = validated_data.pop('category')['name']
+    #     category_name, created = Category.objects.get_or_create(name=category_name)  # create brand if not exist
 
 # SlugRelatedField is used to represent the related Product model. The queryset argument is required, and should be a queryset that includes all items you might want to refer to. The slug_field is the field on the related object that is used to represent it.
 #
