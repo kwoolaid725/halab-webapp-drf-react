@@ -34,6 +34,7 @@ import TestCreate from './components/Admin/Test/TestCreate';
 import TestDelete from './components/Admin/Test/TestDelete';
 import TestEdit from './components/Admin/Test/TestEdit';
 import CollapsibleTable from "./components/Admin/Test/TestDetail";
+import CollapsibleTable_CR from "./components/Admin/Test/CR/CRCordlessTest";
 
 
 
@@ -66,6 +67,7 @@ function Routes() {
 		{ path: '/admin/tests/delete/:id', element: <TestDelete /> },
 		{ path: '/admin/tests/edit/:id', element: <TestEdit /> },
 		{ path: '/admin/tests/testdetails', element: <CollapsibleTable /> },
+		{ path: '/admin/tests/crcordless', element: <CollapsibleTable_CR /> },
 
 
 		{ path: '/register', element: <Register /> },
