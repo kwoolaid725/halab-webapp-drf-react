@@ -18,24 +18,24 @@ import InputLabel from '@mui/material/InputLabel';
 
 
 
-export default function SampleCreate() {
+export default function TestCreate() {
 
 	const navigate = useNavigate();
 	const initialFormData = Object.freeze({
-		  product: '',
-			inv_no: '',
-			product_stage: '',
-	    remarks: '',
-	    serial_no: '',
-			owner: 1,
+		  test_category: '',
+		  product_category: '',
+		  description: '',
+		  test_status: '',
+	      due_date: '',
+		  remarks: '',
+		  owner: 1,
 	});
 
-	const [sampleData, updateFormData] = useState(initialFormData);
-	const [products, setProducts] = useState([]);
-	const [selectedCategory, setSelectedCategory] = useState('');
-	const [selectedBrand, setSelectedBrand] = useState('');
+	const [testData, updateFormData] = useState(initialFormData);
+	const [testAttachment, setTestAttachment] = useState([]);
 	const [categories, setCategories] = useState([]);
-	const [brands, setBrands] = useState([]);
+
+
 
 	//useEffect to get all categories
 	useEffect(() => {
@@ -43,60 +43,24 @@ export default function SampleCreate() {
 		axios.get(`http://localhost:8000/api/categories/`)
 			.then(response => {
 				setCategories(response.data);
-
-				// console.log(categories);
+				console.log(categories);
 			})
 			.catch(error => {
 				console.error('There was an error!', error);
 			});
 	}, []);
 
-
-
-	//useEffect to get all brands
-	useEffect(() => {
-		// Make API call here after category selection
-		axios.get(`http://localhost:8000/api/brands/`)
-			.then(response => {
-				setBrands(response.data);
-
-			})
-			.catch(error => {
-				console.error('There was an error!', error);
-			});
-	}, []);
-
-
-
-	const handleSelectionChange = (event, type) => {
-		let selectedValue = event.target.value;
-		let category = selectedCategory;
-		let brand = selectedBrand;
-
-		if (type === 'category') {
-			setSelectedCategory(selectedValue);
-			category = selectedValue;
-		} else if (type === 'brand') {
-			setSelectedBrand(selectedValue);
-			brand = selectedValue;
-		}
-
-		// Make API call here after selection
-		axios.get(`http://localhost:8000/api/products/?category=${category}&brand=${brand}`)
-			.then(response => {
-				setProducts(response.data);
-			})
-			.catch(error => {
-				console.error('There was an error!', error);
-			});
-	};
 
 
 	const handleChange = (e) => {
-
-		 {
+		if ([e.target.name] == 'attachment') {
+			setTestAttachment({
+							attachment: e.target.files,
+			});
+			console.log(e.target.files);
+		}else {
 			updateFormData({
-				...sampleData,
+				...testData,
 				// Trimming any whitespace
 				[e.target.name]: e.target.value.trim(),
 			});
@@ -104,35 +68,72 @@ export default function SampleCreate() {
 	};
 
 	const handleSubmit = (e) => {
-					e.preventDefault();
-					let formData = new FormData();
-					formData.append('inv_no', sampleData.inv_no);
-					formData.append('product', sampleData.product);
-					formData.append('product_stage', sampleData.product_stage);
-					formData.append('serial_no', sampleData.serial_no);
-					formData.append('remarks', sampleData.remarks);
-					formData.append('owner', 1);
+		e.preventDefault();
+		let formData = new FormData();
+		formData.append('test_category', testData.test_category);
+		formData.append('product_category', testData.product_category);
+		formData.append('description', testData.description);
+		// test_status set to "Open" by default
+		formData.append('test_status', "PENDING");
+		formData.append('due_date', testData.due_date);
+		formData.append('remarks', testData.remarks);
+		formData.append('owner', 1);
+		// formData.append('attachment', testAttachment.attachment[0]);
 
-
-					axiosInstance.post(`admin/samples/create/`, formData);
-					navigate('/admin/');
+		// 				axiosInstance.post(`admin/tests/create/`, formData,{
+		// 								headers: {
+		// 									'Content-Type': 'multipart/form-data'
+		// 								}
+		// 				});
+		axiosInstance.post(`admin/tests/create/`, formData);
+		navigate('/admin/tests');
 					window.location.reload();
 	};
 
 
-    const PRODUCT_STAGE_CATEGORY = [
-    {
-        value: 'MP',
-        label: 'MP'
-    },
-    {
-        value: 'DV',
-        label: 'DV'
-    },
+	// };
+
+
+
+    const TEST_CATEGORY = [
+		{
+			value: 'CR',
+			label: 'CR'
+		},
+		{
+			value: 'RU',
+			label: 'Real-Use'
+		},
+		 {
+			value: 'FT',
+			label: 'Field Test'
+		},
+		 {
+			value: 'CRDI',
+			label: 'CRDI'
+		},
     // Add more categories as needed
 	];
 
-
+	const TEST_STATUS = [
+		{
+			value: 'Open',
+			label: 'Open'
+		},
+		{
+			value: 'In Progress',
+			label: 'In Progress'
+		},
+		 {
+			value: 'Closed',
+			label: 'Closed'
+		},
+		{
+			value: 'Cancelled',
+			label: 'Cancelled'
+		}
+	// Add more categories as needed
+	];
 
 
 	return (
@@ -141,94 +142,81 @@ export default function SampleCreate() {
 			<div className={classes.paper}>
 				<Avatar className={classes.avatar}></Avatar>
 				<Typography component="h1" variant="h5">
-					Create New Product
+					Create New Test
 				</Typography>
 				<form className={classes.form} noValidate>
 					 <Grid container spacing={2}>
 						 <Grid item xs={12}>
-								<FormControl variant="outlined" fullWidth required>
-									<InputLabel id="category-label">Category</InputLabel>
-									<Select value={selectedCategory} onChange={(event) => handleSelectionChange(event, 'category')}>
-										{categories.map((option) => (
-										<MenuItem key={option.id} value={option.id}>
-											{option.name}
-										</MenuItem>
-									))}
-										{/* Add more categories as needed */}
-									</Select>
-								</FormControl>
 								 <FormControl variant="outlined" fullWidth required>
-									 <InputLabel id="brand-label">Brand</InputLabel>
-										<Select value={selectedBrand} onChange={(event) => handleSelectionChange(event, 'brand')}>
-											{brands.map((option) => (
-												<MenuItem key={option.id} value={option.name}>
-													{option.name}
-												</MenuItem>
-											))}
-									</Select>
-								 </FormControl>
-								 <FormControl variant="outlined" fullWidth required>
-									<InputLabel id="product-label">Product</InputLabel>
-									<Select
-										labelId="product-label"
-										id="product"
-										name="product"
-										value={sampleData.product}
-										onChange={handleChange}
-										label="Product"
-									>
-										{products.map((option) => (
-											<MenuItem key={option.id} value={option.model_name}>
-												{option.model_name}
-											</MenuItem>
-										))}
-									</Select>
-								 </FormControl>
-								 <FormControl variant="outlined" fullWidth required>
-										<InputLabel id="product-label">Product Stage</InputLabel>
+										<InputLabel id="product-label">Test Category</InputLabel>
 											<Select
 												variant="outlined"
 												required
 												fullWidth
-												id="product_stage"
-												label="Product Stage"
-												name="product_stage"
-												autoComplete="product_stage"
+												id="test_category"
+												label="Test Category"
+												name="test_category"
+												autoComplete="test_category"
+												value={testData.test_category}
 												onChange={handleChange}
 											>
-											{PRODUCT_STAGE_CATEGORY.map((option) => (
+											{TEST_CATEGORY.map((option) => (
 													<MenuItem key={option.value} value={option.value}>
 														{option.label}
 													</MenuItem>
 											))}
 											</Select>
 								 </FormControl>
-							</Grid>
-							<Grid item xs={12}>
+								 <FormControl variant="outlined" fullWidth required>
+									 <InputLabel id="brand-label">Product Category</InputLabel>
+										<Select
+											variant="outlined"
+											required
+											fullWidth
+											id="product_category"
+											label="Category"
+											name="product_category"
+											autoComplete="product_category"
+											value={testData.product_category}
+											onChange={handleChange}
+										>
+											{categories.map((option) => (
+												<MenuItem key={option.id} value={option.name}>
+													{option.name}
+												</MenuItem>
+											))}
+										</Select>
+								 </FormControl>
+								 <Grid item xs={12}>
 									<TextField
 										variant="outlined"
 										required
 										fullWidth
-										id="inv_no"
-										label="Inventory Number"
-										name="inv_no"
-										autoComplete="inv_no"
+										id="description"
+										label="Description"
+										name="description"
+										autoComplete="description"
+										value={testData.description}
 										onChange={handleChange}
+										multiline
+										rows={4}
 									>
 									</TextField>
-								</Grid>
+	                             </Grid>
 
-
+							</Grid>
 							<Grid item xs={12}>
 								<TextField
 									variant="outlined"
 									required
 									fullWidth
-									id="serial_no"
-									label="Serial Number"
-									name="serial_no"
-									autoComplete="serial_no"
+									id="due_date"
+									label="Due Date"
+									name="due_date"
+									autoComplete="due_date"
 									onChange={handleChange}
+									multiline
+
 								/>
 							</Grid>
 							<Grid item xs={12}>
@@ -246,35 +234,15 @@ export default function SampleCreate() {
 
 								/>
 							</Grid>
+							{/*<input*/}
+							{/*	accept=*/}
+							{/*	className={classes.input}*/}
+							{/*	id="test-attachement"*/}
+							{/*	onChange={handleChange}*/}
+							{/*	name="attachment"*/}
+							{/*	type="file"*/}
+							{/*/>*/}
 
-						{/*<Grid item xs={12}>*/}
-						{/*	<TextField*/}
-						{/*		variant="outlined"*/}
-						{/*		required*/}
-						{/*		fullWidth*/}
-						{/*		id="owner_id"*/}
-						{/*		label="Owner ID"*/}
-						{/*		name="owner_id"*/}
-						{/*		autoComplete="owner_id"*/}
-						{/*		onChange={handleChange}*/}
-						{/*		multiline*/}
-
-						{/*	/>*/}
-						{/*</Grid>*/}
-            			{/*<Grid item xs={12}>*/}
-						{/*	<DateField*/}
-						{/*		variant="outlined"*/}
-						{/*		required*/}
-						{/*		fullWidth*/}
-						{/*		id="release_date"*/}
-						{/*		label="release_date"*/}
-						{/*		name="release_date"*/}
-						{/*		autoComplete="release_date"*/}
-						{/*		onChange={handleChange}*/}
-						{/*		multiline*/}
-						{/*		rows={4}*/}
-						{/*	/>*/}
-						{/*</Grid>*/}
 
 					</Grid>
 					<Button
