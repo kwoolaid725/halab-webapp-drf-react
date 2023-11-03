@@ -10,12 +10,12 @@
 	background-color: #cfd8dc; /* This is a light grey color, you might need to adjust this according to your theme palette */
 }
 
-.productTitle {
+.testTitle {
 	font-size: 16px;
 	text-align: left;
 }
 
-.productText {
+.testText {
 	display: flex;
 	justify-content: left;
 	align-items: baseline;
@@ -23,3 +23,4 @@
 	text-align: left;
 	margin-bottom: 2rem; /* You might need to adjust this according to your theme spacing */
 }
+

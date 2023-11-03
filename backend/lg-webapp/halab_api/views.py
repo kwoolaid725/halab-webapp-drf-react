@@ -231,17 +231,22 @@ class TestList(generics.ListCreateAPIView):
     serializer_class = TestSerializer
     pass
 
-class CreateTest(APIView):
+# class CreateTest(APIView):
+#     # permission_classes = [permissions.IsAuthenticated]
+#     parser_classes = [MultiPartParser, FormParser]  # you typically want to use both in order to fully support all possible client upload scenarios.
+#     def post(self, request, format=None):
+#         print(request.data)
+#         serializer = TestSerializer(data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data, status=200)
+#         else:
+#             return Response(serializer.errors, status=400)
+#
+class CreateTest(generics.CreateAPIView):
     # permission_classes = [permissions.IsAuthenticated]
-    parser_classes = [MultiPartParser, FormParser]  # you typically want to use both in order to fully support all possible client upload scenarios.
-    def post(self, request, format=None):
-        print(request.data)
-        serializer = TestSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=200)
-        else:
-            return Response(serializer.errors, status=400)
+    queryset = Test.objects.all()
+    serializer_class = TestSerializer
 
 
 class AdminTestDetail(generics.RetrieveAPIView):

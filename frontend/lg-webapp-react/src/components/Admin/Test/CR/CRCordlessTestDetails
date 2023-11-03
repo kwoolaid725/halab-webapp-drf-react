@@ -1,0 +1,63 @@
+
+
+
+
+
+function createData(test_target, test_group, test_measure, sample, brush_type) {
+  return {
+    test_target, //name
+    test_group,
+    test_measure,
+    sample,
+    brush_type,
+    history:
+      {
+        sand: [
+          {
+            date: '2020-01-05',
+            tester: 'Ashley',
+            run: 1,
+            soil_weight: 40,
+            vac_weight_i: 100,
+            vac_weight_f: 130,
+            vac_weight_diff: 30,
+            pickup: 75,
+            images: 'upload',
+          },
+          {
+            date: '2020-01-02',
+            tester: 'James',
+            run: 2,
+            soil_weight: 40,
+            vac_weight_i: 100,
+            vac_weight_f: 140,
+            vac_weight_diff: 40,
+            pickup: 100,
+            images: 'upload',
+          },
+        ],
+        cheerios: [
+          {
+            date: '2020-01-05',
+            tester: 'Ashley',
+            soil_weight: 25,
+            vac_weight_i: 100,
+            vac_weight_f: 125,
+            vac_weight_diff: 25,
+            pickup: 100,
+            amount: 3,
+          },
+          {
+            date: '2020-01-02',
+            tester: 'James',
+            soil_weight: 25,
+            vac_weight_i: 100,
+            vac_weight_f: 120,
+            vac_weight_diff: 20,
+            pickup: 80,
+            amount: 3,
+          },
+        ],
+      },
+  };
+}

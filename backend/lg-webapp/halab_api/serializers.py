@@ -62,14 +62,19 @@ class SampleSerializer(serializers.ModelSerializer):
 
 class TestSerializer(serializers.ModelSerializer):
     product_category = serializers.CharField(source='product_category.name')
+    created_at = serializers.DateTimeField(read_only=True)
+    completion_date = serializers.DateField(read_only=True) #Change to DateTimeField Later 11.2.2023
 
     class Meta:
         model = Test
-        fields = ('id', 'test_category', 'product_category', 'description', 'test_status', 'due_date', 'completion_date', 'remarks', 'owner', 'attachment')
+        fields = ('id', 'test_category', 'product_category', 'description', 'test_status', 'created_at','due_date','completion_date',  'remarks', 'owner')
+    #
+    def create(self, validated_data):
+        category_name = validated_data.pop('product_category')['name']
+        category, created = Category.objects.get_or_create(name=category_name)  # create brand if not exist
 
-    # def create(self, validated_data):
-    #     category_name = validated_data.pop('category')['name']
-    #     category_name, created = Category.objects.get_or_create(name=category_name)  # create brand if not exist
+        test = Test.objects.create(product_category=category, **validated_data)
+        return test
 
 # SlugRelatedField is used to represent the related Product model. The queryset argument is required, and should be a queryset that includes all items you might want to refer to. The slug_field is the field on the related object that is used to represent it.
 #

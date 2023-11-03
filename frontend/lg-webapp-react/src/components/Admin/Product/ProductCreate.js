@@ -44,12 +44,13 @@ export default function ProductCreate() {
 		slug: '',
 		color: '',
 		release_date: '',
-		owner_id: 1,
+		owner: 1,
 	});
 
 	const [productData, updateFormData] = useState(initialFormData);
 	const [productImage, setProductImage] = useState(null);
 	const [categories, setCategories] = useState([]);
+	const [brands, setBrands] = useState([]);
 
 
 		//useEffect to get all categories
@@ -64,6 +65,22 @@ export default function ProductCreate() {
 				console.error('There was an error!', error);
 			});
 	}, []);
+
+		//useEffect to get all brands
+	useEffect(() => {
+		// Make API call here after category selection
+		axios.get(`http://localhost:8000/api/brands/`)
+			.then(response => {
+				setBrands(response.data);
+
+			})
+			.catch(error => {
+				console.error('There was an error!', error);
+			});
+	}, []);
+
+
+
 	const handleChange = (e) => {
 		if ([e.target.name] == 'image') {
 			setProductImage({
@@ -109,8 +126,6 @@ export default function ProductCreate() {
 
 
 
-
-
 	return (
 		<Container component="main" maxWidth="xs">
 			<CssBaseline />
@@ -142,7 +157,8 @@ export default function ProductCreate() {
 								</Select>
                         	</Grid>
 						<Grid item xs={12}>
-							<TextField
+							<InputLabel id="brand-label">Brand</InputLabel>
+							<Select
 								variant="outlined"
 								required
 								fullWidth
@@ -150,8 +166,15 @@ export default function ProductCreate() {
 								label="Brand"
 								name="brand"
 								autoComplete="brand"
+								value={productData.brand}
 								onChange={handleChange}
-							/>
+							>
+								{brands.map((option) => (
+										<MenuItem key={option.id} value={option.name}>
+											{option.name}
+										</MenuItem>
+									))}
+							</Select>
 						</Grid>
 						<Grid item xs={12}>
 							<TextField

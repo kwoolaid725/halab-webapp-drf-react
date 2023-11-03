@@ -4,6 +4,8 @@ from django.utils import timezone
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 from django.core.files.storage import FileSystemStorage
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 
 
 def upload_to_post(instance, filename):
@@ -153,25 +155,56 @@ class Test(models.Model):
     def __str__(self):
         return self.description
 
+
 class TestDetailVacuum(models.Model):
 
     test = models.ForeignKey(Test, on_delete=models.CASCADE)
     sample = models.ForeignKey(Sample, on_delete=models.CASCADE)
     test_target = models.CharField(max_length=100, null=True, blank=True)
     test_group = models.CharField(max_length=100, null=True, blank=True)
-    test_case = models.CharField(max_length=100, null=True, blank=True)
+    test_case = models.CharField(max_length=100, default="NA")
     tester = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     brush_type = models.CharField(max_length=50, null=True, blank=True)
     test_measure = models.CharField(max_length=100, null=True, blank=True)
     value = models.FloatField(null=True, blank=True)
     units = models.CharField(max_length=10, null=True, blank=True)
+    run = models.IntegerField(default=1)
     created_at = models.DateTimeField(default=timezone.now)
     last_updated = models.DateTimeField(auto_now=True)
     remarks = models.CharField(max_length=200, null=True, blank=True)
+
+    #multiple images
+
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='test_detail_vacuums')
 
     def __str__(self):
         return f'{self.test} - {self.sample}'
+
+    # sort by test.test_category, test_product_category
+    # class Meta:
+    #     ordering = ['test__test_category', 'test__product_category']
+    #
+
+class TestImage(models.Model):
+    image = models.ImageField(upload_to='images/tests/')
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey('content_type', 'object_id')
+
+# test_detail_vacuum = TestDetailVacuum.objects.get(id=1)
+# image1 = TestImage.objects.create(content_object=test_detail_vacuum)
+#
+# test_detail_washer = TestDetailWasher.objects.get(id=1)
+# image2 = TestImage.objects.create(content_object=test_detail_washer)
+
+
+# class TestMeasure(models.Model):
+#
+#     description = models.CharField(max_length=100)
+#
+#     def __str__(self):
+#         return self.description
+#
 
 class CrProductData(models.Model):
 
