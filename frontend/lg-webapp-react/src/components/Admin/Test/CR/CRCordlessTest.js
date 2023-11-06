@@ -14,6 +14,8 @@ import Paper from '@mui/material/Paper';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import TextField from "@mui/material/TextField";
+import Bare from "./CRCordlessBare";
+
 
 // 1. Create Test
 //   1.1 Select Test Category
@@ -143,7 +145,20 @@ let data = createData( '1-1','Bare Floor', 'Sand', test_measure_bare, 'NA', 1, 1
 let flattenedData = flattenData(data);
 console.log(flattenedData);
 
+
+// sub_id, crated, last_updated, tester, soil_weight, vac_weight_i, vac_weight_f, vac_weight_diff, pickup, remarks, images
+
+
+
+
 function Row(props) {
+  const datad = {
+    id: 1,
+    test_target: 'Bare Floor', // bare
+    test_group: 'Sand', // sand
+
+  }
+
 
   const { row } = props;
   // const {  } = props;
@@ -281,6 +296,7 @@ function Row(props) {
                           />
                       </TableCell>
                       <TableCell>{data.images}</TableCell>
+                      <Bare/>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -305,34 +321,13 @@ function Row(props) {
                     <TableCell>Pickup %</TableCell>
                     <TableCell>Upload Images</TableCell>
                     <TableCell>Remarks</TableCell>
-
                   </TableRow>
                 </TableHead>
-                <TableBody>
-                  {data.test_measure.Cheerios && data.test_measure.Cheerios.map((cheerios) => (
-                    <TableRow key={data.id}>
-                      <TableCell component="th" scope="row">
-                        {data.id}
-                      </TableCell>
-                      <TableCell>{data.created_at}</TableCell>
-                      <TableCell>{data.last_updated}</TableCell>
-                      <TableCell>{data.tester}</TableCell>
-                      <TableCell>{cheerios.soil_weight}</TableCell>
-                      <TableCell>{data.run}</TableCell>
-                      <TableCell>{cheerios.vac_weight_i}</TableCell>
-                      <TableCell>{cheerios.vac_weight_f}</TableCell>
-                      <TableCell>{cheerios.vac_weight_diff}</TableCell>
-                      <TableCell>
-                        {Math.round(cheerios.vac_weight_diff / cheerios.soil_weight * 100)}
-                      </TableCell>
-                      <TableCell>{data.images}</TableCell>
-                      <TableCell>{data.remarks}</TableCell>
-
-                    </TableRow>
-                  ))}
-                </TableBody>
+                <Bare {...datad}/>
               </Table>
             </Box>
+            <TableCell>{row.created_at}</TableCell>
+            <TableCell>{row.last_updated}</TableCell>
           </Collapse>
         </TableCell>
       </TableRow>
