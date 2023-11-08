@@ -14,7 +14,8 @@ import Paper from '@mui/material/Paper';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import TextField from "@mui/material/TextField";
-import BareAddRow from './CRCordlessBareAddRow'
+import BareAddRow from './CRCordlessBareAddRow';
+import CRBareData from "./CRCordlessBareDataCreate";
 
 
 // 1. Create Test
@@ -296,7 +297,6 @@ function Row(props) {
                           />
                       </TableCell>
                       <TableCell>{data.images}</TableCell>
-                    <BareAddRow />
                     </TableRow>
                   ))}
                 </TableBody>
@@ -323,7 +323,7 @@ function Row(props) {
                     <TableCell>Remarks</TableCell>
                   </TableRow>
                 </TableHead>
-                <BareForm {...datad}/>
+                <CRBareData />
               </Table>
             </Box>
             <TableCell>{row.created_at}</TableCell>

@@ -3,7 +3,17 @@ import TableBody from '@mui/material/TableBody'
 import TableRow from '@mui/material/TableRow'
 import TableCell from '@mui/material/TableCell'
 
-const BareAddRow = ( { handleInput }) => {
+
+
+// component for adding CR Bare Floor Data to the table
+
+const data = {
+    id: 1,
+    test_group: 'CR Cordless Bare Floor',
+    length: 2
+
+};
+const BareAddRow = ( { onSubmit }) => {
 
   const initialFormData = Object.freeze({
       subId: '',
@@ -19,135 +29,149 @@ const BareAddRow = ( { handleInput }) => {
   });
 
 
-  const [formData, updateFormData] = useState(initialFormData);
-  const [row, setRow] = useState([]);
+  // const [formData, updateFormData] = useState(initialFormData);
+  // const [row, setRow] = useState([]);
+  const [input, setInput] = useState([]);
   const addRow = () => {
-    const newRow = {...formData, id:`${props.id}-${props.test_group}-${rows.length + 1}`};
+    const newRow = {...initialFormData, id:`${data.id}-${data.test_group}-${data.length + 1}`};
       // created_at: new Date().toISOString(),
       // last_updated: new Date().toISOString()};
-      setRow([...row, newRow]);
-  };
-    const removeRow = (index) => {
-    setRow(row.filter((_, i) => i !== index));
+      setInput([...input, newRow]);
   };
 
-  const handleInputChange = (e, index) => {
-    const { name, value } = e.target;
-    const list = [...rows];
-    list[index][name] = value;
-    setRows(list);
-    // console.log(rows);
-
-  }
-
-  const handleSubmit = (index) => {
-    const list = [...rows];
-    list[index].last_updated = new Date().toISOString();
-    setRows(list);
+   const handleSubmit = () => {
+    onSubmit(input);
+    setInput("");
   };
+
+  //   const removeRow = (index) => {
+  //   setRow(row.filter((_, i) => i !== index));
+  // };
+
+  // const handleInputChange = (e, index) => {
+  //   const { name, value } = e.target;
+  //   const list = [...rows];
+  //   list[index][name] = value;
+  //   setRows(list);
+  //   // console.log(rows);
+  //
+  // }
+
+  // const handleSubmit = (index) => {
+  //   const list = [...rows];
+  //   list[index].last_updated = new Date().toISOString();
+  //   setRows(list);
+  // };
 
 
   return (
       <TableBody>
-        {rows.map((row, index) => (
-          <TableRow key={row.id}>
+        {/*{rows.map((row, index) => (*/}
+        {/*  <TableRow key={row.id}>*/}
+          <TableRow>
             {/* Your TableCell components */}
             <TableCell>
               <input
                 name="id"
-                value={row.id}
-                onChange={e => handleInputChange(e, index)}
+                value={input.id}
+                onChange={e => setInput(e.target.value)}
               />
             </TableCell>
             <TableCell>
               <input
                 name="created_at"
-                value={row.created_at}
-                onChange={e => handleInputChange(e, index)}
+                value={input.created_at}
+                onChange={e => setInput(e.target.value)}
+                disabled
               />
             </TableCell>
             <TableCell>
               <input
                 name="last_updated"
-                value={row.last_updated}
-                onChange={e => handleInputChange(e, index)}
+                value={input.last_updated}
+                onChange={e => setInput(e.target.value)}
               />
             </TableCell>
             <TableCell>
               <input
                 name="tester"
-                value={row.tester}
-                onChange={e => handleInputChange(e, index)}
+                value={input.tester}
+                onChange={e => setInput(e.target.value)}
               />
             </TableCell>
             <TableCell>
               <input
                 name="run"
-                value={row.run}
-                onChange={e => handleInputChange(e, index)}
+                value={input.run}
+                onChange={e => setInput(e.target.value)}
               />
             </TableCell>
             <TableCell>
               <input
                 name="soil_weight"
-                value={row.soil_weight}
-                onChange={e => handleInputChange(e, index)}
+                value={input.soil_weight}
+                onChange={e => setInput(e.target.value)}
+                disabled
               />
             </TableCell>
              <TableCell>
               <input
                 name="vac_weight_i"
-                value={row.vac_weight_i}
-                onChange={e => handleInputChange(e, index)}
+                value={input.vac_weight_i}
+                onChange={e => setInput(e.target.value)}
               />
             </TableCell>
             <TableCell>
               <input
                 name="vac_weight_f"
-                value={row.vac_weight_f}
-                onChange={e => handleInputChange(e, index)}
+                value={input.vac_weight_f}
+                onChange={e => setInput(e.target.value)}
               />
             </TableCell>
             <TableCell>
               <input
                 name="vac_weight_diff"
-                value={row.vac_weight_diff}
-                onChange={e => handleInputChange(e, index)}
+                value={input.vac_weight_diff}
+                onChange={e => setInput(e.target.value)}
               />
             </TableCell>
             <TableCell>
               <input
                 name="pickup"
-                value={row.pickup}
-                onChange={e => handleInputChange(e, index)}
+                value={input.pickup}
+                onChange={e => setInput(e.target.value)}
               />
             </TableCell>
             <TableCell>
               <input
                 name="remarks"
-                value={row.remarks}
-                onChange={e => handleInputChange(e, index)}
+                value={input.remarks}
+                onChange={e => setInput(e.target.value)}
               />
             </TableCell>
             <TableCell>
               <input
                 name="images"
-                value={row.images}
-                onChange={e => handleInputChange(e, index)}
+                value={input.images}
+                onChange={e => setInput(e.target.value)}
               />
             </TableCell>
-            <TableCell>
-              <button onClick={() => handleSubmit(index)}>
-                Submit
-              </button>
-            </TableCell>
-            <TableCell>
-              <button onClick={() => removeRow(index)}>
-                Remove
-              </button>
-            </TableCell>
+              <TableCell>
+                  <button onClick={handleSubmit}>Submit</button>
+              </TableCell>
+            {/*<TableCell>*/}
+            {/*  <button onClick={() => handleSubmit(index)}>*/}
+            {/*    Submit*/}
+            {/*  </button>*/}
+            {/*</TableCell>*/}
+            {/*<TableCell>*/}
+            {/*  <button onClick={() => removeRow(index)}>*/}
+            {/*    Remove*/}
+            {/*  </button>*/}
+            {/*</TableCell>*/}
           </TableRow>
-        ))}
+        {/*))}*/}
+
         <button type="button" onClick={addRow}>
         Add New
       </button>
