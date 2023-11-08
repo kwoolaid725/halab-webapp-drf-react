@@ -1,6 +1,6 @@
 from rest_framework import generics
 from ..halab.models import Category, Brand, Product,Post, Sample, Test, TestDetailVacuum, CrProductData, VocReviews
-from .serializers import ProductSerializer, BrandSerializer, PostSerializer, SampleSerializer, CategorySerializer, TestSerializer
+from .serializers import ProductSerializer, BrandSerializer, PostSerializer, SampleSerializer, CategorySerializer, TestSerializer, TestDetailVacuumSerializer
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, DjangoModelPermissions, BasePermission, SAFE_METHODS, IsAuthenticatedOrReadOnly, DjangoModelPermissionsOrAnonReadOnly
 from rest_framework import viewsets, filters, generics, permissions
 from django.shortcuts import get_object_or_404
@@ -264,6 +264,16 @@ class DeleteTest(generics.DestroyAPIView):
     queryset = Test.objects.all()
     serializer_class = SampleSerializer
 
+
+class TestDetailVacuumList(generics.ListCreateAPIView):
+    queryset = TestDetailVacuum.objects.all()
+    serializer_class = TestDetailVacuumSerializer
+    pass
+
+class TestDetailVacuumCreate(generics.CreateAPIView):
+    # permission_classes = [permissions.IsAuthenticated]
+    queryset = TestDetailVacuum.objects.all()
+    serializer_class = TestDetailVacuumSerializer
 
 """ Concrete View Classes
 #CreateAPIView

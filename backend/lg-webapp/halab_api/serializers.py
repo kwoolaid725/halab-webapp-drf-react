@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from rest_framework.fields import ReadOnlyField
-from ..halab.models import Category, Brand, Product, Post, Sample, Test
+from ..halab.models import Category, Brand, Product, Post, Sample, Test, TestDetailVacuum
 from django.conf import settings
 
 # is it like schema in fastapi?
@@ -76,6 +76,24 @@ class TestSerializer(serializers.ModelSerializer):
         test = Test.objects.create(product_category=category, **validated_data)
         return test
 
+class TestDetailVacuumSerializer(serializers.ModelSerializer):
+    test = serializers.IntegerField(source='test.id')
+    sample = serializers.CharField(source='sample.inv_no')
+    created_at = serializers.DateTimeField(read_only=True)
+    last_updated = serializers.DateTimeField(read_only=True)
+
+    class Meta:
+        model = TestDetailVacuum
+        fields = ('id', 'test', 'tester', 'sample', 'brush_type', 'test_target', 'test_group',  'test_case', 'test_measure', 'run', 'value', 'units', 'remarks', 'owner','created_at','last_updated')
+
+    def create(self, validated_data):
+        test_id = validated_data.pop('test')['id']
+        test, created = Test.objects.get_or_create(id=test_id)
+        sample_id = validated_data.pop('sample')['inv_no']
+        sample, created = Sample.objects.get_or_create(inv_no=sample_id)
+
+        testdetailvacuum = TestDetailVacuum.objects.create(test=test, sample=sample, **validated_data)
+        return testdetailvacuum
 # SlugRelatedField is used to represent the related Product model. The queryset argument is required, and should be a queryset that includes all items you might want to refer to. The slug_field is the field on the related object that is used to represent it.
 #
 # When deserializing, the SlugRelatedField will lookup an object based on this slug_field. This means that you should ensure that the slug_field used has unique values to avoid multiple objects returning during the lookup.

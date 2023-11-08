@@ -3,7 +3,9 @@ from .views import (ProductList, ProductDetail, CreateProduct, AdminProductDetai
                     CategoryList, BrandList, PostList, PostDetail, PostListDetailfilter,
                     CreatePost, AdminPostDetail, EditPost, DeletePost,
                     SampleList, CreateSample, AdminSampleDetail, EditSample, DeleteSample,
-                    TestList, CreateTest, AdminTestDetail, EditTest, DeleteTest)
+                    TestList, CreateTest, AdminTestDetail, EditTest, DeleteTest,
+                    TestDetailVacuumList, TestDetailVacuumCreate
+                    )
 from rest_framework.routers import DefaultRouter
 
 app_name = 'halab_api'
@@ -53,4 +55,6 @@ urlpatterns = [
     path('admin/tests/edit/testdetail/<int:pk>/', AdminTestDetail.as_view(), name='sample_admindetailtest'),
     path('admin/tests/edit/<int:pk>/', EditTest.as_view(), name='sample_edittest'),
     path('admin/tests/delete/<int:pk>/', DeleteTest.as_view(), name='sample_deletetest'),
+
+    path('admin/tests/vacuum/testdetail/', TestDetailVacuumCreate.as_view(), name='sample_createtestdetailvacuum'),
 ]
