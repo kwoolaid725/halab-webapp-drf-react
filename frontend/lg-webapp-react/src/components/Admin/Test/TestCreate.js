@@ -26,7 +26,7 @@ export default function TestCreate() {
 		  product_category: '',
 		  description: '',
 		  test_status: '',
-			due_date: '',
+		  due_date: '',
 		  remarks: '',
 		  owner: 1,
 	});

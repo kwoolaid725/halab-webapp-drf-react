@@ -1,4 +1,6 @@
-import Input from '../DataInput.jsx';
+import { useState } from 'react';
+
+import Input from '../../../UI/DataInput.jsx';
 import { isEmail, isNotEmpty, hasMinLength } from '../../../../util/validation.js';
 import { useInput } from '../../../../hooks/useInput.js';
 import TableRow from "@mui/material/TableRow";
@@ -6,7 +8,6 @@ import TableCell from "@mui/material/TableCell";
 import TableBody from "@mui/material/TableBody";
 import React from "react";
 import axiosInstance from "../../../../axios";
-
 
 
 const initialData = {
@@ -21,7 +22,10 @@ const initialData = {
 
 }
 
+
+
 export default function CRBareData() {
+
     const {
       value: testerValue,
       handleInputChange: handleTesterChange,
@@ -71,10 +75,7 @@ export default function CRBareData() {
       hasError: remarksHasError,
     } = useInput('', (value) => isNotEmpty(value));
 
-    function handleSubmit(event) {
-        event.preventDefault();
-
-        const test_measure = {
+     const test_measure = {
             soil_weight: {
                 value: soilwtValue,
                 units: 'g'
@@ -96,6 +97,10 @@ export default function CRBareData() {
                 units: '%'
             },
         };
+
+    function handleSubmit(event) {
+        event.preventDefault();
+
         // Create an array to hold all the new data
 
         for (let measure in test_measure) {
@@ -114,11 +119,9 @@ export default function CRBareData() {
                 run: Number(runValue),
                 remarks: remarksValue,
                 owner: initialData.owner,
-
-
             }
 
-            allNewData.push(newData);
+            // allNewData.push(newData);
             // console.log(allNewData);
              axiosInstance.post(`admin/tests/vacuum/testdetail/`, newData);
 
@@ -126,20 +129,18 @@ export default function CRBareData() {
 
         }
 
-
-
   return (
     <form onSubmit={handleSubmit}>
       <TableBody>
         {/*{rows.map((row, index) => (*/}
-        {/*  <TableRow key={row.id}>*/}
-          <TableRow>
+          <TableRow >
             {/* Your TableCell components */}
             <TableCell>
                 <Input
                   label="Row ID"
                   id="id"
                   name="id"
+                  // value={row.id}
                   disabled
                 />
             </TableCell>
@@ -149,6 +150,7 @@ export default function CRBareData() {
                   id="created_at"
                   type="date"
                   name="created_at"
+                  // value={row.created_at}
                   disabled
                 />
             </TableCell>
@@ -158,6 +160,7 @@ export default function CRBareData() {
                   id="last_updated"
                   type="date"
                   name="last_updated"
+                  // value={row.last_updated}
                   disabled
                 />
             </TableCell>
@@ -276,12 +279,9 @@ export default function CRBareData() {
             {/*  </button>*/}
             {/*</TableCell>*/}
           </TableRow>
-        {/*))}*/}
+          {/*))}*/}
         <button onClick={handleSubmit}>
             Submit
-        </button>
-        <button type="button" >
-        Add New
         </button>
     </TableBody>
     </form>
