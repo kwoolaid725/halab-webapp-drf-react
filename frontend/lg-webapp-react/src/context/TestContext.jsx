@@ -4,7 +4,7 @@ const TableContext = createContext({
   items: [],
   addItem: (item) => {},
   removeItem: (id) => {},
-  clearTable: () => {},
+  // clearTable: () => {},
 });
 
 function tableReducer(state, action) {

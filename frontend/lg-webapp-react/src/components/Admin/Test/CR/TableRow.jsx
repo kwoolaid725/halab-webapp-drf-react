@@ -1,21 +1,31 @@
-import { currencyFormatter } from '../util/formatting.js';
-
+// tableRow to be added to the table in the TestContext.jsx
+//
 export default function TableRow({
-  tester,
-  quantity,
-  price,
-  onIncrease,
-  onDecrease,
+   test,
+   slug,
+   tester,
+   test_target,
+   test_group,
+   test_case,
+   sample,
+   brush_type,
+   test_measure,
+   value,
+   units,
+   run,
+   remarks,
+   owner,
+   addItem,
+   removeItem,
 }) {
   return (
-    <li className="cart-item">
+    <li className="cr-vacuum-item">
       <p>
-        {name} - {quantity} x {currencyFormatter.format(price)}
+        {test} {slug} {tester} {test_target} {test_group} {test_case} {sample} {brush_type} {test_measure} {value} {units} {run} {remarks} {owner}
       </p>
-      <p className="cart-item-actions">
-        <button onClick={onDecrease}>-</button>
-        <span>{quantity}</span>
-        <button onClick={onIncrease}>+</button>
+      <p className="cr-vacuum-actions">
+        <button onClick={addItem}>-</button>
+        <button onClick={removeItem}>+</button>
       </p>
     </li>
   );

@@ -5,6 +5,7 @@ import { useContext } from 'react';
 // import Button from './UI/Button.jsx';
 // import { currencyFormatter } from '../util/formatting.js';
 // import UserProgressContext from '../store/UserProgressContext.jsx';
+import Button from '@mui/material/Button';
 import TableContext from '../../../../context/TestContext.jsx';
 import TableRow from './TableRow.jsx';
 
@@ -12,47 +13,47 @@ export default function Table() {
   const tableCtx = useContext(TableContext);
   // const userProgressCtx = useContext(UserProgressContext);
 
-  const cartTotal = cartCtx.items.reduce(
-    (totalPrice, item) => totalPrice + item.quantity * item.price,
-    0
-  );
+const tableTotal = tableCtx.items.reduce(
+  (total, item) => total + item.test,
+  0
+);
 
-  function handleCloseCart() {
-    userProgressCtx.hideCart();
-  }
-
-  function handleGoToCheckout() {
-    userProgressCtx.showCheckout();
-  }
 
   return (
-    <Modal
-      className="cart"
-      open={userProgressCtx.progress === 'cart'}
-      onClose={userProgressCtx.progress === 'cart' ? handleCloseCart : null}
-    >
+    <div>
       <h2>Your Cart</h2>
       <ul>
-        {cartCtx.items.map((item) => (
-          <CartItem
+        {tableCtx.items.map((item) => (
+          <TableRow
             key={item.id}
-            name={item.name}
-            quantity={item.quantity}
-            price={item.price}
-            onIncrease={() => cartCtx.addItem(item)}
-            onDecrease={() => cartCtx.removeItem(item.id)}
+            test={item.test}
+            slug={item.slug}
+            tester={item.tester}
+            test_target={item.test_target}
+            test_group={item.test_group}
+            test_case={item.test_case}
+            sample={item.sample}
+            brush_type={item.brush_type}
+            test_measure={item.test_measure}
+            run={item.run}
+            value={item.value}
+            units={item.units}
+            owner={item.owner}
+            remarks={item.remarks}
+            onIncrease={() => tableCtx.addItem(item)}
+            onDecrease={() => tableCtx.removeItem(item.id)}
           />
         ))}
       </ul>
-      <p className="cart-total">{currencyFormatter.format(cartTotal)}</p>
+      <p className="cart-total">{tableTotal}</p>
       <p className="modal-actions">
-        <Button textOnly onClick={handleCloseCart}>
+        <Button textOnly>
           Close
         </Button>
-        {cartCtx.items.length > 0 && (
-          <Button onClick={handleGoToCheckout}>Go to Checkout</Button>
+        {tableCtx.items.length > 0 && (
+          <Button>Go to Checkout</Button>
         )}
       </p>
-    </Modal>
+    </div>
   );
 }

@@ -12,7 +12,7 @@ const Add = () => {
   return (
     <div>
       <button onClick={handleAddClick}>Add</button>
-      {showDataPost && <DataPostComponent />}
+      {/*{showDataPost && <DataPostComponent />}*/}
     </div>
   );
 };
