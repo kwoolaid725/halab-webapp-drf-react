@@ -6,7 +6,7 @@ import Paper from "@mui/material/Paper";
 
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
-import classes from "./App.module.css";
+// import classes from "./App.module.css";
 
 function Admin() {
     return(
@@ -17,7 +17,7 @@ function Admin() {
 						<Link
 							color="textPrimary"
 							href={'/admin/posts/'}
-							className={classes.link}
+							// className={classes.link}
 						>
 							Posts
 						</Link>
@@ -26,7 +26,7 @@ function Admin() {
 						<Link
 							color="textPrimary"
 							href={'/admin/products/'}
-							className={classes.link}
+							// className={classes.link}
 						>
 							Products
 						</Link>
@@ -35,7 +35,7 @@ function Admin() {
 						<Link
 							color="textPrimary"
 							href={'/admin/samples/'}
-							className={classes.link}
+							// className={classes.link}
 						>
 							Samples
 						</Link>
@@ -44,7 +44,7 @@ function Admin() {
 						<Link
 							color="textPrimary"
 							href={'/admin/tests/'}
-							className={classes.link}
+							// className={classes.link}
 						>
 							Tests
 						</Link>

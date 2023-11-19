@@ -39,6 +39,8 @@ import CRBareData from "./components/Admin/Test/CR/CRCordlessBareDataCreate";
 import Table from "./components/Admin/Test/CR/Table";
 import TestLists from "./components/Test/TestLists";
 import SingleTest from "./components/Test/SingleTest";
+import TestDetailsTableRow from './components/Test/TestDetailsTableRow'
+import TestDetailsTable from './components/Test/TestDetailsTable'
 
 
 function Routes() {
@@ -75,6 +77,8 @@ function Routes() {
 		{ path: '/admin/tests/crcordless', element: <CollapsibleTable_CR /> },
 		{ path: '/admin/tests/baredata', element: <CRBareData /> },
 		{ path: '/admin/tests/table', element: <Table /> },
+		{ path: '/admin/tests/testtable', element: <TestDetailsTable /> },
+		{ path: '/admin/tests/testrow', element: <TestDetailsTableRow /> },
 
 
 		{ path: '/register', element: <Register /> },

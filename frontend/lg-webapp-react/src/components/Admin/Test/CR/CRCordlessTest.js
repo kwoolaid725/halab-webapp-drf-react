@@ -144,7 +144,7 @@ function createData1(test_id, test_category, product_category, description, samp
 
 let data = createData( '1-1','Bare Floor', 'Sand', test_measure_bare, 'NA', 1, 1, '2021-10-10', '2021-10-10', 'NA');
 let flattenedData = flattenData(data);
-console.log(flattenedData);
+// console.log(flattenedData);
 
 
 // sub_id, crated, last_updated, tester, soil_weight, vac_weight_i, vac_weight_f, vac_weight_diff, pickup, remarks, images

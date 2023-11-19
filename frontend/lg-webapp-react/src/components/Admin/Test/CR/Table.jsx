@@ -6,7 +6,7 @@ import { useContext } from 'react';
 // import { currencyFormatter } from '../util/formatting.js';
 // import UserProgressContext from '../store/UserProgressContext.jsx';
 import Button from '@mui/material/Button';
-import TableContext from '../../../../context/TestContext.jsx';
+import TableContext from '../../../../store/TestContext.jsx';
 import TableRow from './TableRow.jsx';
 
 export default function Table() {
