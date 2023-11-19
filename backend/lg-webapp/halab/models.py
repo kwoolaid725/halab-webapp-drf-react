@@ -159,6 +159,7 @@ class Test(models.Model):
 class TestDetailVacuum(models.Model):
 
     test = models.ForeignKey(Test, on_delete=models.CASCADE)
+    slug = models.SlugField(max_length=100, default="")
     sample = models.ForeignKey(Sample, on_delete=models.CASCADE)
     test_target = models.CharField(max_length=100, null=True, blank=True)
     test_group = models.CharField(max_length=100, null=True, blank=True)
