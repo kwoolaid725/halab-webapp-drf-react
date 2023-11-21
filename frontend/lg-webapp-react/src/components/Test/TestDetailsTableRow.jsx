@@ -1,89 +1,6 @@
 import React from 'react';
 import { BsFillTrashFill, BsFillPencilFill } from 'react-icons/bs';
-
-
-const testData = {
-  Bare: [
-      {
-      Sand: [
-        {
-          soil_weight: {
-              value: '40',
-              units: 'g'
-          },
-          vac_weight_i: {
-              value: '',
-              units: 'g'
-          },
-          vac_weight_f: {
-              value: '',
-              units: 'g'
-          },
-          vac_weight_diff: {
-              value: '',
-              units: 'g'
-          },
-          pickup: {
-              value: '',
-              units: '%'
-          }
-        }
-        ]
-      },
-      {
-        Rice: [
-          {
-            soil_weight: {
-              value: '40',
-              units: 'g'
-            },
-            vac_weight_i: {
-              value: '',
-              units: 'g'
-            },
-            vac_weight_f: {
-              value: '',
-              units: 'g'
-            },
-            vac_weight_diff: {
-              value: '',
-              units: 'g'
-            },
-            pickup: {
-              value: '',
-              units: '%'
-            }
-          }
-        ]
-      },
-      {
-        Cheerios: [
-          {
-            soil_weight: {
-                value: '40',
-                units: 'g'
-            },
-            vac_weight_i: {
-                value: '',
-                units: 'g'
-            },
-            vac_weight_f: {
-                value: '',
-                units: 'g'
-            },
-            vac_weight_diff: {
-                value: '',
-                units: 'g'
-            },
-            pickup: {
-                value: '',
-                units: '%'
-            }
-          }
-        ]
-      }
-  ]};
-const TestDetailsTableRow = ({ rows, deleteRow, editRow, testGroup, testMeasures  }) => {
+const TestDetailsTableRow = ({ rows, testGroup, testMeasures, addRow  }) => {
   console.log('testMeasures:', testMeasures);
   let keys = Object.keys(testMeasures);
   let values = [];
@@ -112,22 +29,29 @@ const TestDetailsTableRow = ({ rows, deleteRow, editRow, testGroup, testMeasures
         <tbody>
         {rows && rows.map((row, idx) =>  {
           return (
-            <tr key={idx}>
-              <td>{row.id}</td>
-              <td>{row.tester}</td>
-              <td>{testGroup}</td>
-              {values}
-              <td>{row.run}</td>
-              <td>{row.remarks}</td>
-              <td>{row.created_at}</td>
-              <td>{row.last_updated}</td>
-              <td>
-                <span>
-                  <BsFillTrashFill />
-                  <BsFillPencilFill />
-                </span>
-              </td>
-            </tr>
+            <>
+              <tr key={idx}>
+                <td>{row.id}</td>
+                <td>{row.tester}</td>
+                <td>{testGroup}</td>
+                {values}
+                <td>{row.run}</td>
+                <td>{row.remarks}</td>
+                <td>{row.created_at}</td>
+                <td>{row.last_updated}</td>
+                <td>
+                  <span>
+                    <BsFillTrashFill />
+                    <BsFillPencilFill />
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td colSpan={9}>
+                  <button onClick={addRow}>Add</button>
+                </td>
+              </tr>
+            </>
           );
         })}
         </tbody>
