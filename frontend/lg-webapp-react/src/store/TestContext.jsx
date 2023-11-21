@@ -58,7 +58,7 @@ function TestReducer(state, action) {
 }
 
 export function TestContextProvider({ children }) {
-  const [test, dispatchTestAction] = useReducer(testReducer, { items: [] });
+  const [test, dispatchTestAction] = useReducer(TestReducer, { items: [] });
 
   function addItem(item) {
     dispatchTestAction({ type: 'ADD_ITEM', item });

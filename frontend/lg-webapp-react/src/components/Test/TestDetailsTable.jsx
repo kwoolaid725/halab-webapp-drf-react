@@ -17,30 +17,6 @@ import TextField from "@mui/material/TextField";
 import TestDetailsTableRow from './TestDetailsTableRow';
 // import CRBareData from "./CRCordlessBareDataCreate";
 
-function flattenData(data) {
-  let flattenedData = [];
-
-  for (let measure in data.test_measure) {
-    data.test_measure[measure].forEach(item => {
-      for (let key in item) {
-        if (item[key] !== '') {
-          let flatItem = {
-            test_target: data.test_target,
-            test_group: data.test_group,
-            sample: data.sample,
-            brush_type: data.brush_type,
-            test_measure: key,
-            value: item[key]
-          };
-          flattenedData.push(flatItem);
-        }
-      }
-    });
-  }
-
-  return flattenedData;
-}
-
 let test_measure_bare = {
   Bare: [
       {
@@ -124,50 +100,7 @@ let test_measure_bare = {
   ]};
 
 
-function createData( id, test_target, test_group, test_measure,test_case,tester, run, created_at, last_updated, remarks) {
-  return {
-    id, // test_id + '-' + auto increment
-    test_target, // bare
-    test_group, // sand
-    test_measure, // pickup
-    test_case, // NA
-    tester,// 1
-    run,
-    created_at,
-    last_updated,
-    remarks
-  };
-}
-
-function createData1(test_id, test_category, product_category, description, sample, inv_no, brush_type, owner) {
-  return {
-    test_id,
-    test_category,
-    product_category,
-    description,
-    sample,
-    inv_no,
-    brush_type,
-    owner,
-  };
-}
-// test_category, product_category, description,
-// test_id, tester, sample, brush_type, owner
-// test_target, test_group, test_measure, value, units, date, remarks,
-
-
-let data = createData( '1-1','Bare Floor', 'Sand', test_measure_bare, 'NA', 1, 1, '2021-10-10', '2021-10-10', 'NA');
-
-let flattenedData = flattenData(data);
-console.log(flattenedData);
-
-
-// sub_id, crated, last_updated, tester, soil_weight, vac_weight_i, vac_weight_f, vac_weight_diff, pickup, remarks, images
-
-
-
-
-function Row(props) {
+export default function TestDetailsTable(props) {
   const [modalOpen, setModalOpen] = useState(false);
   const [rows, setRows] = useState([
     {
@@ -185,12 +118,46 @@ function Row(props) {
 
   ]);
   const [rowToEdit, setRowToEdit] = useState(null);
-
-
   const { row } = props;
-  // const {  } = props;
   const [open, setOpen] = useState(false);
+  const [groupStates, setGroupStates] = useState({});
 
+  useEffect(() => {
+      const initialRow = {
+      slug: '',
+      tester: '',
+      test_group: '',
+      test_measure: '',
+      value: '',
+      units: '',
+      run: '',
+      remarks: '',
+      created: '',
+      updated: ''
+  };
+  const initialGroupStates = {};
+
+  test_measure_bare.Bare.forEach((item) => {
+    const group = Object.keys(item)[0];
+    initialGroupStates[group] = [initialRow];
+  });
+
+  setGroupStates(initialGroupStates);
+  }, []);
+
+ const addRow = (group) => {
+  const newRow = {
+      slug: '',
+      tester: '',
+      test_group: '',
+      test_measure: '',
+      value: '',
+      units: '',
+      run: '',
+      remarks: '',
+      created: '',
+      updated: ''
+  };
   const handleDeleteRow = (targetIndex) => {
     setRows(rows.filter((_, idx) => idx !== targetIndex));
   };
@@ -212,8 +179,6 @@ function Row(props) {
           })
         );
   };
-
-
 
   return (
     <React.Fragment>
@@ -270,7 +235,7 @@ function Row(props) {
                     <Typography variant="h6" gutterBottom component="div">
                       {group}
                     </Typography>
-                  <TestDetailsTableRow rows={flattenedData} testGroup={group} testMeasures={measures} deleteRow={handleDeleteRow} editRow={handleEditRow}  />
+                  <TestDetailsTableRow rows={groupStates[group] || []} testGroup={group} testMeasures={measures} addRow={() => addRow(group)} deleteRow={handleDeleteRow} editRow={handleEditRow}  />
                   </div>
                 )})
                 }
@@ -280,46 +245,8 @@ function Row(props) {
       </TableRow>
     </React.Fragment>
   );
-}
+}}
 
 
-const testData = [
-  createData1(1,'CR','Stick Vacuum (Cordless)', 'test1', 'LG A9',1234, 'DMS', 1),
-  createData1(1, 'CR','Stick Vacuum (Cordless)', 'test1', 'Dyson Gen5', 1111, 'Carpet', 1),
 
-];
 
-let sandKeys = Object.keys(test_measure_bare.Bare[0].Sand[0]);
-// console.log(sandKeys);
-
-const TestDetailsTable = () => {
-  return (
-     <Box sx={{ margin: 1 }}>
-       <TableContainer component={Paper}>
-        <Table aria-label="collapsible table">
-          <TableHead>
-            <TableRow>
-              <TableCell />
-              <TableCell>Test ID</TableCell>
-              <TableCell>Test Category</TableCell>
-              <TableCell>Product Category</TableCell>
-              <TableCell>Description</TableCell>
-              <TableCell>Test Sample</TableCell>
-              <TableCell>Inv. No.</TableCell>
-              <TableCell>Brush Type</TableCell>
-              <TableCell>Owner</TableCell>
-              {/*<TableCell align="left">Protein&nbsp;(g)</TableCell>*/}
-            </TableRow>
-          </TableHead>
-          <TableBody className="table-body">
-            {testData.map((data) => (
-              <Row key={data.name} row={data} />
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </Box>
-  );
-}
-
-export default TestDetailsTable;
