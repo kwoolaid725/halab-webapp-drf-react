@@ -41,6 +41,7 @@ import TestLists from "./components/Test/TestLists";
 import SingleTest from "./components/Test/SingleTest";
 import TestDetailsTableRow from './components/Test/TestDetailsTableRow'
 import TestDetailsTable from './components/Test/TestDetailsTable'
+import TestDetails from './components/Test/TestDetails'
 
 
 function Routes() {
@@ -76,7 +77,7 @@ function Routes() {
 		{ path: '/admin/tests/testdetails', element: <CollapsibleTable /> },
 		{ path: '/admin/tests/crcordless', element: <CollapsibleTable_CR /> },
 		{ path: '/admin/tests/baredata', element: <CRBareData /> },
-		{ path: '/admin/tests/table', element: <Table /> },
+		{ path: '/admin/tests/test', element: <TestDetails /> },
 		{ path: '/admin/tests/testtable', element: <TestDetailsTable /> },
 		{ path: '/admin/tests/testrow', element: <TestDetailsTableRow /> },
 

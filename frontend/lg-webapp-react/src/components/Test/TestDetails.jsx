@@ -1,8 +1,8 @@
 import { useState } from "react";
 
-import "./App.css";
+// import "./App.css";
 import { TestDetailsTableRow } from "./TestDetailsTableRow";
-import { TestDetailsTable } from "./TestDetailsTable";
+import  TestDetailsTable  from "./TestDetailsTable";
 import { TestDetailsHeader } from "./TestDetailsHeader";
 import { TestModal } from "./TestModal";
 

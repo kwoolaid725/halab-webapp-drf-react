@@ -1,19 +1,28 @@
 import React, { useState } from "react";
 
-import "./Modal.css";
+import "./TestModal.css";
 
 export const TestModal = ({ closeModal, onSubmit, defaultValue }) => {
   const [formState, setFormState] = useState(
     defaultValue || {
-      page: "",
-      description: "",
-      status: "live",
+      slug: "",
+      test_group: "",
+      tester: "",
+      soil_weight: "",
+      vac_weight_i: "",
+      vac_weight_f: "",
+      vac_weight_diff: "",
+      pickup: "",
+      run: "",
+      remarks: "",
+      created_at: "",
+      last_updated: "",
     }
   );
   const [errors, setErrors] = useState("");
 
   const validateForm = () => {
-    if (formState.page && formState.description && formState.status) {
+    if (formState.tester && formState.test_group && formState.run) {
       setErrors("");
       return true;
     } else {
@@ -52,28 +61,88 @@ export const TestModal = ({ closeModal, onSubmit, defaultValue }) => {
       <div className="modal">
         <form>
           <div className="form-group">
-            <label htmlFor="page">Page</label>
-            <input name="page" onChange={handleChange} value={formState.page} />
+            <label htmlFor="slug">Row ID</label>
+            <input
+              name="slug"
+              onChange={handleChange}
+              value={formState.slug} />
           </div>
           <div className="form-group">
-            <label htmlFor="description">Description</label>
-            <textarea
-              name="description"
+            <label htmlFor="test_group">Test Group</label>
+            <input
+              name="test_group"
               onChange={handleChange}
-              value={formState.description}
-            />
+              value={formState.test_group} />
           </div>
           <div className="form-group">
-            <label htmlFor="status">Status</label>
-            <select
-              name="status"
+            <label htmlFor="tester">Tester</label>
+            <input
+              name="tester"
               onChange={handleChange}
-              value={formState.status}
-            >
-              <option value="live">Live</option>
-              <option value="draft">Draft</option>
-              <option value="error">Error</option>
-            </select>
+              value={formState.tester} />
+          </div>
+          <div className="form-group">
+            <label htmlFor="soil_weight">Soil Weight</label>
+            <input
+              name="soil_weight"
+              onChange={handleChange}
+              value={formState.soil_weight} />
+          </div>
+          <div className="form-group">
+            <label htmlFor="vac_weight_i">Initial Vacuum Weight</label>
+            <input
+              name="vac_weight_i"
+              onChange={handleChange}
+              value={formState.vac_weight_i} />
+          </div>
+          <div className="form-group">
+            <label htmlFor="vac_weight_f">Final Vacuum Weight</label>
+            <input
+              name="vac_weight_f"
+              onChange={handleChange}
+              value={formState.vac_weight_f} />
+          </div>
+          <div className="form-group">
+            <label htmlFor="vac_weight_diff">Vacuum Weight Difference</label>
+            <input
+              name="vac_weight_diff"
+              onChange={handleChange}
+              value={formState.vac_weight_diff} />
+          </div>
+          <div className="form-group">
+            <label htmlFor="pickup">Pickup %</label>
+            <input
+              name="pickup"
+              onChange={handleChange}
+              value={formState.pickup} />
+          </div>
+          <div className="form-group">
+            <label htmlFor="run">Run</label>
+            <input
+              name="run"
+              onChange={handleChange}
+              value={formState.run} />
+          </div>
+          <div className="form-group">
+            <label htmlFor="remarks">Remarks</label>
+            <input
+              name="remarks"
+              onChange={handleChange}
+              value={formState.remarks} />
+          </div>
+          <div className="form-group">
+            <label htmlFor="created_at">Created at</label>
+            <input
+              name="created_at"
+              onChange={handleChange}
+              value={formState.created_at} />
+          </div>
+          <div className="form-group">
+            <label htmlFor="last_updated">Last Updated</label>
+            <input
+              name="last_updated"
+              onChange={handleChange}
+              value={formState.last_updated} />
           </div>
           {errors && <div className="error">{`Please include: ${errors}`}</div>}
           <button type="submit" className="btn" onClick={handleSubmit}>
