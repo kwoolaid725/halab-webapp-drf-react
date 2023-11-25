@@ -17,235 +17,164 @@ import TextField from "@mui/material/TextField";
 import TestDetailsTableRow from './TestDetailsTableRow';
 // import CRBareData from "./CRCordlessBareDataCreate";
 
-let test_measure_bare = {
-  Bare: [
-      {
-      Sand: [
-        {
-          soil_weight: {
-              value: '40',
-              units: 'g'
-          },
-          vac_weight_i: {
-              value: '',
-              units: 'g'
-          },
-          vac_weight_f: {
-              value: '',
-              units: 'g'
-          },
-          vac_weight_diff: {
-              value: '',
-              units: 'g'
-          },
-          pickup: {
-              value: '',
-              units: '%'
-          }
-        }
-        ]
-      },
-      {
-        Rice: [
-          {
-            soil_weight: {
-              value: '50',
-              units: 'g'
-            },
-            vac_weight_i: {
-              value: '',
-              units: 'g'
-            },
-            vac_weight_f: {
-              value: '',
-              units: 'g'
-            },
-            vac_weight_diff: {
-              value: '',
-              units: 'g'
-            },
-            pickup: {
-              value: '',
-              units: '%'
-            }
-          }
-        ]
-      },
-      {
-        Cheerios: [
-          {
-            soil_weight: {
-                value: '25',
-                units: 'g'
-            },
-            vac_weight_i: {
-                value: '',
-                units: 'g'
-            },
-            vac_weight_f: {
-                value: '',
-                units: 'g'
-            },
-            vac_weight_diff: {
-                value: '',
-                units: 'g'
-            },
-            pickup: {
-                value: '',
-                units: '%'
-            }
-          }
-        ]
-      }
-  ]};
-
-
 export default function TestDetailsTable(props) {
+
+  const [testMeasures, setTestMeasures] = useState(null);
+
+  useEffect(() => {
+    console.log('Attempting to fetch data...');
+    fetch('/test-measures.json')
+      .then((response) => response.json())
+      .then((jsonData) => {
+        // Set the retrieved JSON data to state
+        setTestMeasures(jsonData);
+      })
+      .catch((error) => {
+        console.error('Error fetching data', error);
+      });
+  }, []);
+
+  useEffect(() => {
+  console.log('testMeasures:', testMeasures);
+  }, [testMeasures]);
+
+
+
   const [modalOpen, setModalOpen] = useState(false);
   const [rows, setRows] = useState([
     {
-      slug: '',
-      tester: '',
-      test_group: '',
-      test_measure: '',
-      value: '',
-      units: '',
-      run: '',
-      remarks: '',
-      created: '',
-      updated: '',
+      slug: '1',
+      tester: 'a',
+      testGroup: '',
+      // test_measure: '',
+      // value: '',
+      // units: '',
+      run: 1,
+      remarks: 'adf',
+      created_at: '',
+      last_updated: '',
     }
 
   ]);
+  useEffect(() => {
+  console.log('rows:', rows);
+  }, [rows]);
   const [rowToEdit, setRowToEdit] = useState(null);
   const { row } = props;
   const [open, setOpen] = useState(false);
   const [groupStates, setGroupStates] = useState({});
 
-  useEffect(() => {
-      const initialRow = {
-      slug: '',
-      tester: '',
-      test_group: '',
-      test_measure: '',
-      value: '',
-      units: '',
-      run: '',
-      remarks: '',
-      created: '',
-      updated: ''
-  };
-  const initialGroupStates = {};
+    const initialGroupStates = {};
 
-  test_measure_bare.Bare.forEach((item) => {
-    const group = Object.keys(item)[0];
-    initialGroupStates[group] = [initialRow];
-  });
+    const handleDeleteRow = (targetIndex) => {
+      setRows(rows.filter((_, idx) => idx !== targetIndex));
+    };
 
-  setGroupStates(initialGroupStates);
-  }, []);
+    const handleEditRow = (idx) => {
+      setRowToEdit(idx);
 
- const addRow = (group) => {
-  const newRow = {
-      slug: '',
-      tester: '',
-      test_group: '',
-      test_measure: '',
-      value: '',
-      units: '',
-      run: '',
-      remarks: '',
-      created: '',
-      updated: ''
-  };
-  const handleDeleteRow = (targetIndex) => {
-    setRows(rows.filter((_, idx) => idx !== targetIndex));
-  };
+      setModalOpen(true);
+    };
+    const addRow = (group, measures) => {
+      const newRow = {
+        slug: '',
+        tester: '',
+        test_group: group,
+        test_measure: measures,
+        value: '',
+        units: '',
+        run: '',
+        remarks: '',
+        created: '',
+        updated: '',
+      };
 
-  const handleEditRow = (idx) => {
-    setRowToEdit(idx);
-
-    setModalOpen(true);
-  };
-
-  const handleSubmit = (newRow) => {
-    rowToEdit === null
-      ? setRows([...rows, newRow])
+      setRows([...rows, newRow]);
+    }
+    const handleSubmit = (newRow) => {
+      rowToEdit === null
+      ? setRows([
+        ...rows,
+        newRow
+      ])
       : setRows(
-          rows.map((currRow, idx) => {
-            if (idx !== rowToEdit) return currRow;
+        rows.map((currRow, idx) => {
+          if (idx !== rowToEdit) return currRow;
 
-            return newRow;
-          })
-        );
-  };
+          return newRow;
+        })
+      );
+    };
 
-  return (
-    <React.Fragment>
-      <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
-        <TableCell>
-          <IconButton
-            aria-label="expand row"
-            size="small"
-            onClick={() => setOpen(!open)}
-          >
-            {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-          </IconButton>
-        </TableCell>
-        <TableCell component="th" scope="row">
-          {row.test_id}
-        </TableCell>
-        <TableCell component="th" scope="row">
-          {row.test_category}
-        </TableCell>
-        <TableCell component="th" scope="row">
-          {row.product_category}
-        </TableCell>
-        <TableCell component="th" scope="row">
-          {row.description}
-        </TableCell>
-        <TableCell component="th" scope="row">
-          {row.sample}
-        </TableCell>
-        <TableCell component="th" scope="row">
-          {row.inv_no}
-        </TableCell>
-        <TableCell component="th" scope="row">
-          {row.brush_type}
-        </TableCell>
-         <TableCell component="th" scope="row">
-          {row.owner}
-        </TableCell>
-      </TableRow>
-      <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-          <Collapse in={open} timeout="auto" unmountOnExit>
-            <Box sx={{ margin: 1 }}>
-              {test_measure_bare.Bare.map((item) => {
-                const group = Object.keys(item)[0];
-                let measures;
-                if (item[group]) {
-                  measures = item[group][0]; // assign value to measures here
-                } else {
-                  console.log(`Group ${group} not found in item`, item);
-                }
-
-                return (
-                  <div>
-                    <Typography variant="h6" gutterBottom component="div">
-                      {group}
-                    </Typography>
-                  <TestDetailsTableRow rows={groupStates[group] || []} testGroup={group} testMeasures={measures} addRow={() => addRow(group)} deleteRow={handleDeleteRow} editRow={handleEditRow}  />
-                  </div>
-                )})
-                }
-            </Box>
-          </Collapse>
-        </TableCell>
-      </TableRow>
-    </React.Fragment>
-  );
-}}
+    return (
+      <React.Fragment>
+        {/*<TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>*/}
+        {/*  <TableCell>*/}
+        {/*    <IconButton*/}
+        {/*      aria-label="expand row"*/}
+        {/*      size="small"*/}
+        {/*      onClick={() => setOpen(!open)}*/}
+        {/*    >*/}
+        {/*      {open ? <KeyboardArrowUpIcon/> : <KeyboardArrowDownIcon/>}*/}
+        {/*    </IconButton>*/}
+        {/*  </TableCell>*/}
+        {/*  <TableCell component="th" scope="row">*/}
+        {/*    {row.slug}*/}
+        {/*  </TableCell>*/}
+        {/*  <TableCell component="th" scope="row">*/}
+        {/*    {row.test_category}*/}
+        {/*  </TableCell>*/}
+        {/*  <TableCell component="th" scope="row">*/}
+        {/*    {row.product_category}*/}
+        {/*  </TableCell>*/}
+        {/*  <TableCell component="th" scope="row">*/}
+        {/*    {row.description}*/}
+        {/*  </TableCell>*/}
+        {/*  <TableCell component="th" scope="row">*/}
+        {/*    {row.sample}*/}
+        {/*  </TableCell>*/}
+        {/*  <TableCell component="th" scope="row">*/}
+        {/*    {row.inv_no}*/}
+        {/*  </TableCell>*/}
+        {/*  <TableCell component="th" scope="row">*/}
+        {/*    {row.brush_type}*/}
+        {/*  </TableCell>*/}
+        {/*  <TableCell component="th" scope="row">*/}
+        {/*    {row.owner}*/}
+        {/*  </TableCell>*/}
+        {/*</TableRow>*/}
+        <TableRow>
+          <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+            <Collapse in={open} timeout="auto" unmountOnExit>
+              <Box sx={{ margin: 1 }}>
+                {testMeasures &&
+                  Object.keys(testMeasures).map((group) => {
+                    const measures = testMeasures[group];
+                    return (
+                      <div key={group}>
+                        <Typography variant="h6" gutterBottom component="div">
+                          {group}
+                        </Typography>
+                        {measures && (
+                          <TestDetailsTableRow
+                            rows={rows}
+                            testGroup={group}
+                            testMeasures={measures}
+                            addRow={() => addRow(group, measures[0])} // Assuming it's an array, selecting the first item
+                            // deleteRow={handleDeleteRow}
+                            // editRow={handleEditRow}
+                          />
+                        )}
+                      </div>
+                    );
+                  })}
+              </Box>
+            </Collapse>
+          </TableCell>
+        </TableRow>
+      </React.Fragment>
+    );
+}
 
 
 
