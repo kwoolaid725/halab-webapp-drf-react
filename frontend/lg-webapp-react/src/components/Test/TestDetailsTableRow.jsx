@@ -13,164 +13,55 @@ import Button from '@mui/material/Button';
 
 
 
+const TestDetailsTableRow = ({ testCategory, testGroup, testMeasures, addRow, deleteRow, editRow }) => {
 
-// const TestDetailsTableRow = ({  testGroup = '', testMeasures ={}, addRow, deleteRow, editRow }) => {
-const TestDetailsTableRow = ({  addRow, deleteRow, editRow }) => {
+
   const [rows, setRows] = useState([
     {
       slug: '1',
       tester: 'a',
       testGroup: '',
-      // test_measure: '',
-      // value: '',
-      // units: '',
       run: 1,
       remarks: 'adf',
       created_at: '',
       last_updated: '',
-    }
-
+      values: {} // Initialize values within the row object
+    },
   ]);
 
-  // const testGroup = 'Bare';
-  const testMeasures = {
-  "Bare": [
-    {
-      "Sand": [
-        {
-          "soil_weight": {
-            "value": "40",
-            "units": "g"
-          },
-          "vac_weight_i": {
-            "value": "",
-            "units": "g"
-          },
-          "vac_weight_f": {
-            "value": "",
-            "units": "g"
-          },
-          "vac_weight_diff": {
-            "value": "",
-            "units": "g"
-          },
-          "pickup": {
-            "value": "",
-            "units": "%"
-          }
-        }
-      ]
-    },
-    {
-      "Rice": [
-        {
-          "soil_weight": {
-            "value": "40",
-            "units": "g"
-          },
-          "vac_weight_i": {
-            "value": "",
-            "units": "g"
-          },
-          "vac_weight_f": {
-            "value": "",
-            "units": "g"
-          },
-          "vac_weight_diff": {
-            "value": "",
-            "units": "g"
-          },
-          "pickup": {
-            "value": "",
-            "units": "%"
-          }
-        }
-      ]
-    },
-    {
-      "Cheerios": [
-        {
-          "soil_weight": {
-            "value": "40",
-            "units": "g"
-          },
-          "vac_weight_i": {
-            "value": "",
-            "units": "g"
-          },
-          "vac_weight_f": {
-            "value": "",
-            "units": "g"
-          },
-          "vac_weight_diff": {
-            "value": "",
-            "units": "g"
-          },
-          "pickup": {
-            "value": "",
-            "units": "%"
-          }
-        }
-      ]
-    }
-  ],
-  "Carpet":
-      {
-      "Sand":
-        {
-          "soil_weight": {
-              "value": "100",
-              "units": "g"
-          },
-          "vac_weight_i": {
-              "value": "",
-              "units": "g"
-          },
-          "vac_weight_f": {
-              "value": "",
-              "units": "g"
-          },
-          "vac_weight_diff": {
-              "value": "",
-              "units": "g"
-          },
-          "pickup": {
-              "value": "",
-              "units": "%"
-          }
-        }
-      }
-}
+  const [keys, setKeys] = useState([]);
+  const [values, setValues] = useState({});
 
-const testGroup = 'Sand';
 
   const handleAddRow = () => {
-    addRow(testGroup, testMeasures); // Pass test group and test target data to addRow function
+    // For the sake of example, manually adding a row
+    setRows((prevRows) => [
+      ...prevRows,
+      {
+        slug: '2',
+        tester: 'b',
+        testGroup,
+        run: 2,
+        remarks: 'xyz', // Adjust as needed
+        created_at: '',
+        last_updated: '',
+      },
+    ]);
   };
 
+  useEffect(() => {
+    const selectedMeasures = testMeasures[testCategory];
+    if (selectedMeasures && selectedMeasures.length > 0) {
+      const specificMeasure = selectedMeasures.find(measure => Object.keys(measure)[0] === testGroup);
+      if (specificMeasure) {
+        const values = specificMeasure[testGroup][0];
+        const keys = Object.keys(values);
+        setValues(values);
+        setKeys(keys);
+      }
+    }
+  }, [testGroup, testCategory, testMeasures]);
 
- // Check if testMeasures and testGroup are valid
-  if (!testMeasures || !testMeasures[testGroup]) {
-    return (
-      <div>
-        <p>Test measures for {testGroup} are not available.</p>
-      </div>
-    );
-  }
-
-  // Extract keys and values from testMeasures[testGroup]
-  // let keys = [];
-  // let values = [];
-
-  // Extract keys and values from testMeasures[testGroup]
-  const measuresKeys = Object.keys(testMeasures[testGroup]); // Array of keys for the measures
-  const selectedMeasures = testMeasures[testGroup][measuresKeys[0]]; // Assuming taking the first instance
-
-  const keys = Object.keys(selectedMeasures[0]); // Assuming it's an array with at least one item
-  const values = keys.map((key) => selectedMeasures[0][key].value);
-
-  console.log('keys:', keys);
-  console.log('values:', values);
 
   return (
     <div>
@@ -180,8 +71,8 @@ const testGroup = 'Sand';
             <th>ID</th>
             <th>Tester</th>
             <th>Test Group</th>
-            {keys.map((key, idx) => (
-              <th key={idx}>{key}</th>
+            {keys.map((key, index) => (
+              <th key={index}>{key}</th>
             ))}
             <th>Run</th>
             <th>Remarks</th>
@@ -192,26 +83,26 @@ const testGroup = 'Sand';
         </thead>
         <tbody>
           {rows.map((row, idx) => (
-            <React.Fragment key={idx}>
-              <tr>
-                <td>{row.slug}</td>
-                <td>{row.tester}</td>
-                <td>{testGroup}</td>
-                {values.map((value, index) => (
-                  <td key={index}>{value}</td>
-                ))}
-                <td>{row.run}</td>
-                <td>{row.remarks}</td>
-                <td>{row.created_at}</td>
-                <td>{row.last_updated}</td>
-                <td>
-                  <span>
-                    <BsFillTrashFill />
-                    <BsFillPencilFill />
-                  </span>
+            <tr key={idx}>
+              <td>{row.slug}</td>
+              <td>{row.tester}</td>
+              <td>{testGroup}</td>
+              {keys.map((key, index) => (
+                <td key={index}>
+                  {values[key]?.value} {values[key]?.units}
                 </td>
-              </tr>
-            </React.Fragment>
+              ))}
+              <td>{row.run}</td>
+              <td>{row.remarks}</td>
+              <td>{row.created_at}</td>
+              <td>{row.last_updated}</td>
+              <td>
+                <span>
+                  <BsFillTrashFill />
+                  <BsFillPencilFill />
+                </span>
+              </td>
+            </tr>
           ))}
           <tr>
             <td colSpan={keys.length + 7}>

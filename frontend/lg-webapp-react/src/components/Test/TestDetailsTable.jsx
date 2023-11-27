@@ -17,6 +17,123 @@ import TextField from "@mui/material/TextField";
 import TestDetailsTableRow from './TestDetailsTableRow';
 // import CRBareData from "./CRCordlessBareDataCreate";
 
+
+const testMeasures = {
+"Bare": [
+  {
+    "Sand": [
+      {
+        "soil_weight": {
+          "value": "40",
+          "units": "g"
+        },
+        "vac_weight_i": {
+          "value": "",
+          "units": "g"
+        },
+        "vac_weight_f": {
+          "value": "",
+          "units": "g"
+        },
+        "vac_weight_diff": {
+          "value": "",
+          "units": "g"
+        },
+        "pickup": {
+          "value": "",
+          "units": "%"
+        }
+      }
+    ]
+  },
+  {
+    "Rice": [
+      {
+        "soil_weight": {
+          "value": "40",
+          "units": "g"
+        },
+        "vac_weight_i": {
+          "value": "",
+          "units": "g"
+        },
+        "vac_weight_f": {
+          "value": "",
+          "units": "g"
+        },
+        "vac_weight_diff": {
+          "value": "",
+          "units": "g"
+        },
+        "pickup": {
+          "value": "",
+          "units": "%"
+        }
+      }
+    ]
+  },
+  {
+    "Cheerios": [
+      {
+        "soil_weight": {
+          "value": "40",
+          "units": "g"
+        },
+        "vac_weight_i": {
+          "value": "",
+          "units": "g"
+        },
+        "vac_weight_f": {
+          "value": "",
+          "units": "g"
+        },
+        "vac_weight_diff": {
+          "value": "",
+          "units": "g"
+        },
+        "pickup": {
+          "value": "",
+          "units": "%"
+        }
+      }
+    ]
+  }
+],
+"Carpet":
+    {
+    "Sand":
+      {
+        "soil_weight": {
+            "value": "100",
+            "units": "g"
+        },
+        "vac_weight_i": {
+            "value": "",
+            "units": "g"
+        },
+        "vac_weight_f": {
+            "value": "",
+            "units": "g"
+        },
+        "vac_weight_diff": {
+            "value": "",
+            "units": "g"
+        },
+        "pickup": {
+            "value": "",
+            "units": "%"
+        }
+      }
+    }
+}
+//
+const testGroup = 'Sand'; // Example testGroup
+const testCategory = 'Bare'; // Example testCategory
+
+
+
+
+
 export default function TestDetailsTable(props) {
 
   const [testMeasures, setTestMeasures] = useState(null);
