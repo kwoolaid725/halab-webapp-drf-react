@@ -12,7 +12,6 @@ import Button from '@mui/material/Button';
 // }
 
 
-
 const TestDetailsTableRow = ({ testCategory, testGroup, testMeasures, addRow, deleteRow, editRow }) => {
 
 
