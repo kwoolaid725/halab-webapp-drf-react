@@ -18,125 +18,123 @@ import TestDetailsTableRow from './TestDetailsTableRow';
 // import CRBareData from "./CRCordlessBareDataCreate";
 
 
-const testMeasures = {
-"Bare": [
-  {
-    "Sand": [
-      {
-        "soil_weight": {
-          "value": "40",
-          "units": "g"
-        },
-        "vac_weight_i": {
-          "value": "",
-          "units": "g"
-        },
-        "vac_weight_f": {
-          "value": "",
-          "units": "g"
-        },
-        "vac_weight_diff": {
-          "value": "",
-          "units": "g"
-        },
-        "pickup": {
-          "value": "",
-          "units": "%"
-        }
-      }
-    ]
-  },
-  {
-    "Rice": [
-      {
-        "soil_weight": {
-          "value": "40",
-          "units": "g"
-        },
-        "vac_weight_i": {
-          "value": "",
-          "units": "g"
-        },
-        "vac_weight_f": {
-          "value": "",
-          "units": "g"
-        },
-        "vac_weight_diff": {
-          "value": "",
-          "units": "g"
-        },
-        "pickup": {
-          "value": "",
-          "units": "%"
-        }
-      }
-    ]
-  },
-  {
-    "Cheerios": [
-      {
-        "soil_weight": {
-          "value": "40",
-          "units": "g"
-        },
-        "vac_weight_i": {
-          "value": "",
-          "units": "g"
-        },
-        "vac_weight_f": {
-          "value": "",
-          "units": "g"
-        },
-        "vac_weight_diff": {
-          "value": "",
-          "units": "g"
-        },
-        "pickup": {
-          "value": "",
-          "units": "%"
-        }
-      }
-    ]
-  }
-],
-"Carpet":
-    {
-    "Sand":
-      {
-        "soil_weight": {
-            "value": "100",
-            "units": "g"
-        },
-        "vac_weight_i": {
-            "value": "",
-            "units": "g"
-        },
-        "vac_weight_f": {
-            "value": "",
-            "units": "g"
-        },
-        "vac_weight_diff": {
-            "value": "",
-            "units": "g"
-        },
-        "pickup": {
-            "value": "",
-            "units": "%"
-        }
-      }
-    }
-}
+// const testMeasures = {
+// "Bare": [
+//   {
+//     "Sand": [
+//       {
+//         "soil_weight": {
+//           "value": "40",
+//           "units": "g"
+//         },
+//         "vac_weight_i": {
+//           "value": "",
+//           "units": "g"
+//         },
+//         "vac_weight_f": {
+//           "value": "",
+//           "units": "g"
+//         },
+//         "vac_weight_diff": {
+//           "value": "",
+//           "units": "g"
+//         },
+//         "pickup": {
+//           "value": "",
+//           "units": "%"
+//         }
+//       }
+//     ]
+//   },
+//   {
+//     "Rice": [
+//       {
+//         "soil_weight": {
+//           "value": "40",
+//           "units": "g"
+//         },
+//         "vac_weight_i": {
+//           "value": "",
+//           "units": "g"
+//         },
+//         "vac_weight_f": {
+//           "value": "",
+//           "units": "g"
+//         },
+//         "vac_weight_diff": {
+//           "value": "",
+//           "units": "g"
+//         },
+//         "pickup": {
+//           "value": "",
+//           "units": "%"
+//         }
+//       }
+//     ]
+//   },
+//   {
+//     "Cheerios": [
+//       {
+//         "soil_weight": {
+//           "value": "40",
+//           "units": "g"
+//         },
+//         "vac_weight_i": {
+//           "value": "",
+//           "units": "g"
+//         },
+//         "vac_weight_f": {
+//           "value": "",
+//           "units": "g"
+//         },
+//         "vac_weight_diff": {
+//           "value": "",
+//           "units": "g"
+//         },
+//         "pickup": {
+//           "value": "",
+//           "units": "%"
+//         }
+//       }
+//     ]
+//   }
+// ],
+// "Carpet":
+//     {
+//     "Sand":
+//       {
+//         "soil_weight": {
+//             "value": "100",
+//             "units": "g"
+//         },
+//         "vac_weight_i": {
+//             "value": "",
+//             "units": "g"
+//         },
+//         "vac_weight_f": {
+//             "value": "",
+//             "units": "g"
+//         },
+//         "vac_weight_diff": {
+//             "value": "",
+//             "units": "g"
+//         },
+//         "pickup": {
+//             "value": "",
+//             "units": "%"
+//         }
+//       }
+//     }
+// }
 //
-const testGroup = 'Sand'; // Example testGroup
-const testCategory = 'Bare'; // Example testCategory
-
-
-
+// const testGroup = 'Sand'; // Example testGroup
+// const testCategory = 'Bare'; // Example testCategory
 
 
 export default function TestDetailsTable(props) {
 
   const [testMeasures, setTestMeasures] = useState(null);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     console.log('Attempting to fetch data...');
@@ -155,73 +153,70 @@ export default function TestDetailsTable(props) {
   console.log('testMeasures:', testMeasures);
   }, [testMeasures]);
 
+  // const [modalOpen, setModalOpen] = useState(false);
+  // const [rows, setRows] = useState([
+  //   {
+  //     slug: '1',
+  //     tester: 'a',
+  //     testGroup: '',
+  //     // test_measure: '',
+  //     // value: '',
+  //     // units: '',
+  //     run: 1,
+  //     remarks: 'adf',
+  //     created_at: '',
+  //     last_updated: '',
+  //   }
+  //
+  // ]);
+  // useEffect(() => {
+  // console.log('rows:', rows);
+  // }, [rows]);
+  // const [rowToEdit, setRowToEdit] = useState(null);
+  // const { row } = props;
 
-
-  const [modalOpen, setModalOpen] = useState(false);
-  const [rows, setRows] = useState([
-    {
-      slug: '1',
-      tester: 'a',
-      testGroup: '',
-      // test_measure: '',
-      // value: '',
-      // units: '',
-      run: 1,
-      remarks: 'adf',
-      created_at: '',
-      last_updated: '',
-    }
-
-  ]);
-  useEffect(() => {
-  console.log('rows:', rows);
-  }, [rows]);
-  const [rowToEdit, setRowToEdit] = useState(null);
-  const { row } = props;
-  const [open, setOpen] = useState(false);
-  const [groupStates, setGroupStates] = useState({});
-
-    const initialGroupStates = {};
-
-    const handleDeleteRow = (targetIndex) => {
-      setRows(rows.filter((_, idx) => idx !== targetIndex));
-    };
-
-    const handleEditRow = (idx) => {
-      setRowToEdit(idx);
-
-      setModalOpen(true);
-    };
-    const addRow = (group, measures) => {
-      const newRow = {
-        slug: '',
-        tester: '',
-        test_group: group,
-        test_measure: measures,
-        value: '',
-        units: '',
-        run: '',
-        remarks: '',
-        created: '',
-        updated: '',
-      };
-
-      setRows([...rows, newRow]);
-    }
-    const handleSubmit = (newRow) => {
-      rowToEdit === null
-      ? setRows([
-        ...rows,
-        newRow
-      ])
-      : setRows(
-        rows.map((currRow, idx) => {
-          if (idx !== rowToEdit) return currRow;
-
-          return newRow;
-        })
-      );
-    };
+  // const [groupStates, setGroupStates] = useState({});
+  // const initialGroupStates = {};
+  //
+  // const handleDeleteRow = (targetIndex) => {
+  //   setRows(rows.filter((_, idx) => idx !== targetIndex));
+  // };
+  //
+  // const handleEditRow = (idx) => {
+  //   setRowToEdit(idx);
+  //
+  //   setModalOpen(true);
+  // };
+  // const addRow = (group, measures) => {
+  //   const newRow = {
+  //     slug: '',
+  //     tester: '',
+  //     test_group: group,
+  //     test_measure: measures,
+  //     value: '',
+  //     units: '',
+  //     run: '',
+  //     remarks: '',
+  //     created: '',
+  //     updated: '',
+  //   };
+  //
+  //   setRows([...rows, newRow]);
+  // }
+  // const handleSubmit = (newRow) => {
+  //   rowToEdit === null
+  //   ? setRows([
+  //     ...rows,
+  //     newRow
+  //   ])
+  //   : setRows(
+  //     rows.map((currRow, idx) => {
+  //       if (idx !== rowToEdit) return currRow;
+  //
+  //       return newRow;
+  //     })
+  //   );
+  // };
 
     return (
       <React.Fragment>
@@ -262,31 +257,69 @@ export default function TestDetailsTable(props) {
         {/*</TableRow>*/}
         <TableRow>
           <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-            <Collapse in={open} timeout="auto" unmountOnExit>
+            {/*<Collapse in={open} timeout="auto" unmountOnExit>*/}
               <Box sx={{ margin: 1 }}>
-                {testMeasures &&
-                  Object.keys(testMeasures).map((group) => {
-                    const measures = testMeasures[group];
-                    return (
-                      <div key={group}>
+              {testMeasures &&
+                Object.keys(testMeasures).map((category) => {
+                  const measures = testMeasures[category];
+                  return (
+                      <div key={category}>
                         <Typography variant="h6" gutterBottom component="div">
-                          {group}
+                          {category}
                         </Typography>
-                        {measures && (
-                          <TestDetailsTableRow
-                            rows={rows}
-                            testGroup={group}
-                            testMeasures={measures}
-                            addRow={() => addRow(group, measures[0])} // Assuming it's an array, selecting the first item
-                            // deleteRow={handleDeleteRow}
-                            // editRow={handleEditRow}
-                          />
+                        {Array.isArray(measures) ? (
+                          measures.map((measure, index) => (
+                            <div key={index}>
+                              <Typography variant="body1">{Object.keys(measure)}</Typography>
+                              {/* Include TestDetailsTableRow here */}
+                              <TestDetailsTableRow
+                                testCategory={category}
+                                testGroup={Object.keys(measure)[0]} // Assuming only one key within the object
+                                testMeasures={measure}
+                                // Other necessary props
+                              />
+                            </div>
+                          ))
+                         ) : (
+                          <div key={Object.keys(measures)}>
+                            <Typography variant="body1">{Object.keys(measures)}</Typography>
+                            {/* Include TestDetailsTableRow here */}
+                            <TestDetailsTableRow
+                              testCategory={category}
+                              testGroup={Object.keys(measures)[0]} // Assuming only one key within the object
+                              testMeasures={measures}
+                              // Other necessary props
+                            />
+                          </div>
                         )}
                       </div>
                     );
+                    {/*{measures &&*/}
+                    {/*  Object.keys(measures).map((testGroup) => {*/}
+                    {/*    const groupMeasures = measures[testGroup];*/}
+                    {/*    return (*/}
+                    {/*      <div key={testGroup}>*/}
+                    {/*        <Typography variant="subtitle1" gutterBottom component="div">*/}
+                    {/*          {testGroup}*/}
+                    {/*        </Typography>*/}
+                    {/*        {groupMeasures && (*/}
+                    {/*          <TestDetailsTableRow*/}
+                    {/*            testCategory={testCategory}*/}
+                    {/*            testGroup={testGroup}*/}
+                    {/*            testMeasures={groupMeasures}*/}
+                    {/*            // addRow={() => addRow(testGroup, measures[0])} // Assuming it's an array, selecting the first item*/}
+                    {/*            // deleteRow={handleDeleteRow}*/}
+                    {/*            // editRow={handleEditRow}*/}
+                    {/*          />*/}
+                    {/*        )}*/}
+                    {/*      </div>*/}
+                    {/*    );*/}
+                      {/*  })}*/}
+                    // </div>
+
                   })}
               </Box>
-            </Collapse>
+            {/*</Collapse>*/}
           </TableCell>
         </TableRow>
       </React.Fragment>
