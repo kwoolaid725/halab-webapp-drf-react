@@ -50,17 +50,34 @@ const TestDetailsTableRow = ({ testCategory, testGroup, testMeasures, addRow, de
   };
 
   useEffect(() => {
-    const selectedMeasures = testMeasures[testCategory];
-    if (selectedMeasures && selectedMeasures.length > 0) {
-      const specificMeasure = selectedMeasures.find(measure => Object.keys(measure)[0] === testGroup);
-      if (specificMeasure) {
-        const values = specificMeasure[testGroup][0];
-        const keys = Object.keys(values);
-        setValues(values);
-        setKeys(keys);
+    console.log('Test Category:', testCategory);
+    console.log('Test Group:', testGroup);
+    console.log('Test Measures:', testMeasures);
+    let selectedMeasures = [];
+
+    if (testMeasures) {
+      if (Array.isArray(testMeasures[testGroup])) {
+        selectedMeasures = testMeasures[testGroup];
+      } else if (testMeasures[testGroup]) {
+        selectedMeasures = [testMeasures[testGroup]];
       }
     }
-  }, [testGroup, testCategory, testMeasures]);
+
+
+    if (
+      selectedMeasures
+    ) {
+      const values = selectedMeasures[0];
+      const keys = Object.keys(values);
+
+      console.log('Values:', values);
+      console.log('Keys:', keys);
+
+      setValues(values);
+      setKeys(keys);
+    }
+
+  }, [testCategory, testGroup, testMeasures]);
 
 
   return (
