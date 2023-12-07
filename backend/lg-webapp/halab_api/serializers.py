@@ -84,7 +84,7 @@ class TestDetailVacuumSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TestDetailVacuum
-        fields = ('id', 'test', 'tester', 'sample', 'brush_type', 'test_target', 'test_group',  'test_case', 'test_measure', 'run', 'value', 'units', 'remarks', 'owner','created_at','last_updated')
+        fields = ('id', 'test', 'tester', 'sample', 'brush_type', 'test_target', 'test_group',  'test_case', 'slug', 'test_measure', 'run', 'value', 'units', 'remarks', 'owner','created_at','last_updated')
 
     def create(self, validated_data):
         test_id = validated_data.pop('test')['id']

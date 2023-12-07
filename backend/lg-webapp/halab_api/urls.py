@@ -48,14 +48,15 @@ urlpatterns = [
     path('admin/samples/delete/<str:inv_no>/', DeleteSample.as_view(), name='sample_deletesample'),
 
     # Test URLs
-    path('tests/', TestList.as_view(), name='sample_listtest'),
-    path('tests/<int:pk>/', TestDetailVacuumList.as_view(), name='sample_listtestdetail'),
+    path('tests/', TestList.as_view(), name='test_listtest'),
+    path('tests/<int:pk>/', TestDetailVacuumList.as_view(), name='test_listtestdetail'),
 
-    # Sample Admin URLs
-    path('admin/tests/create/', CreateTest.as_view(), name='sample_createtest'),
-    path('admin/tests/edit/testdetail/<int:pk>/', AdminTestDetail.as_view(), name='sample_admindetailtest'),
-    path('admin/tests/edit/<int:pk>/', EditTest.as_view(), name='sample_edittest'),
-    path('admin/tests/delete/<int:pk>/', DeleteTest.as_view(), name='sample_deletetest'),
+    # Test Admin URLs
+    path('admin/tests/create/', CreateTest.as_view(), name='test_createtest'),
+    path('admin/tests/edit/testdetail/<int:pk>/', AdminTestDetail.as_view(), name='test_admindetailtest'),
+    path('admin/tests/edit/<int:pk>/', EditTest.as_view(), name='test_edittest'),
+    path('admin/tests/delete/<int:pk>/', DeleteTest.as_view(), name='test_deletetest'),
 
-    path('admin/tests/vacuum/testdetail/', TestDetailVacuumCreate.as_view(), name='sample_createtestdetailvacuum'),
+    path('admin/tests/vacuum/testdetail/', TestDetailVacuumCreate.as_view(), name='test_createtestdetailvacuum'),
+    path('admin/tests/vacuum/testdetail/<str:slug>', TestDetailVacuumCreate.as_view(), name='test_createtestdetailvacuum'),
 ]
