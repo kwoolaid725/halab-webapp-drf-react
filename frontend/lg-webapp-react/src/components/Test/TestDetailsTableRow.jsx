@@ -6,6 +6,8 @@ import { BsFillTrashFill, BsFillPencilFill } from 'react-icons/bs';
 import Button from '@mui/material/Button';
 import { TestModal } from './TestModal';
 import axiosInstance from '../../axios'
+import Typography from '@mui/material/Typography';
+import TableCell from '@mui/material/TableCell';
 
 // const testGroup = 'Bare';
 // const testMeasures = {
@@ -38,28 +40,31 @@ const TestDetailsTableRow = ({ testTarget, testGroup, testMeasures, addRow, dele
 
 
 
+
   const handleAddRow = () => {
     const newRun = rows.length > 0 ? rows[rows.length - 1].run + 1 : 1;
-    // For the sake of example, manually adding a row
-    const newRow = {
-      slug: 'test_no'+'_'+testTarget+'_'+testGroup+'_'+newRun,
-      tester: '',
-      testGroup,
-      run: newRun,
-      remarks: 'xyz',
-      created_at: '',
-      last_updated: '',
-      values: {},
-      units: {},
-    };
 
-    // Update the state to add the new row and its initial editing state (false)
-    setRows((prevRows) => [...prevRows, newRow]);
+    // Check if there's at least one row in the existing rows array
+    if (rows.length > 0) {
+      // Take the first row in the array and create a copy of it
+      const firstRow = rows[0];
+      const newRow = {
+        ...firstRow,
+        slug: `test_no_${testTarget}_${testGroup}_${newRun}`, // Adjust the slug if needed
+        run: newRun,
+        remarks: 'xyz', // Default value for remarks, modify if needed
+        created_at: '', // Default value for created_at, modify if needed
+        last_updated: '', // Default value for last_updated, modify if needed
+      };
 
-    // Update the editing state for the new row
-    setIsEditingRows((prevEditingState) => [...prevEditingState, false]); // Set editing status for the new row
+      // Update the state to add the new row
+      setRows((prevRows) => [...prevRows, newRow]);
 
-    console.log('rows', rows);
+      // Update the editing state for the new row (if needed)
+      setIsEditingRows((prevEditingState) => [...prevEditingState, false]);
+    } else {
+      console.error('No existing rows to copy'); // Handle the case when there are no existing rows
+    }
   };
 
 
@@ -124,16 +129,21 @@ const TestDetailsTableRow = ({ testTarget, testGroup, testMeasures, addRow, dele
         editedRow.keys.forEach((key) => {
           const formData = new FormData();
 
+          const value = editedRow.values[key]?.value || '';
+          const units = editedRow.values[key]?.units || '';
+
           // Populate formData with appropriate values for the current key
           formData.append('test_measure', key);
+          formData.append('value', value);
+          formData.append('units', units);
 
-          if (editedRow.values[key]) {
-            formData.append('value', editedRow.values[key].value || '');
-            formData.append('units', editedRow.values[key].units || '');
-          } else {
-            formData.append('value', '');
-            formData.append('units', '');
-          }
+          // if (editedRow.values[key]) {
+          //   formData.append('value', editedRow.values[key].value || '');
+          //   formData.append('units', editedRow.values[key].units || '');
+          // } else {
+          //   formData.append('value', '');
+          //   formData.append('units', '');
+          // }
           formData.append('test', 1);
           formData.append('sample', 1234);
           formData.append('brush_type', 'DMS');
@@ -171,6 +181,7 @@ const TestDetailsTableRow = ({ testTarget, testGroup, testMeasures, addRow, dele
         });
 
 	};
+
 
   return (
     <div>
@@ -210,25 +221,26 @@ const TestDetailsTableRow = ({ testTarget, testGroup, testMeasures, addRow, dele
                     />
                   </td>
                   <td>{testGroup}</td>
-                    {Object.keys(row.values).map((testCaseKey, caseIdx) => (
-                      Object.keys(row.values[testCaseKey]).map((propertyKey, propIdx) => (
-                        <td key={`${idx}-${caseIdx}-${propIdx}`}>
-                          <input
-                            type="text"
-                            value={row.values[testCaseKey][propertyKey]?.value || ''} // Ensure it's an object
-                            onChange={(e) => {
-                              const updatedRows = [...rows];
-                              const currentValue = row.values[testCaseKey][propertyKey];
-                              updatedRows[idx].values[testCaseKey][propertyKey] = {
-                                ...(currentValue || {}), // Preserve existing properties
-                                value: e.target.value, // Update the 'value' property
-                              };
-                              setRows(updatedRows);
-                            }}
-                          />
-                        </td>
-                      ))
-                    ))}
+                  {keys.map((key, index) => (
+                  <td key={index}>
+                    <input
+                      type="text"
+                      value={row.values[key]?.value || ''} // Use row.values[key]?.value if defined, otherwise an empty string
+                      onChange={(e) => {
+                        const updatedRows = [...rows];
+                        updatedRows[idx].values[key] = {
+                          ...(updatedRows[idx].values[key] || {}), // Preserve existing properties
+                          value: e.target.value, // Update the 'value' property
+                        };
+                        setRows(updatedRows);
+                      }}
+                    />
+                    <span>
+                      {row.values[key]?.units || ''} {/* Display units */}
+                    </span>
+                  </td>
+                ))}
+
                   <td>{row.run}</td>
                   <td>
                     <input
