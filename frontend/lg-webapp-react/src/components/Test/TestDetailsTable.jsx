@@ -25,6 +25,7 @@ export default function TestDetailsTable(props) {
   const [testMeasures, setTestMeasures] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [rowToEdit, setRowToEdit] = useState(null);
+  const [groupRows, setGroupRows] = useState({});
 
   useEffect(() => {
     console.log('Attempting to fetch data...');
@@ -40,7 +41,52 @@ export default function TestDetailsTable(props) {
   }, []);
 
   useEffect(() => {
-  console.log('testMeasures:', testMeasures);
+    if (testMeasures) {
+      const updatedRows = {};
+
+      Object.keys(testMeasures).forEach((target) => {
+        const measures = testMeasures[target];
+        const rows = [];
+
+        if (Array.isArray(measures)) {
+          measures.forEach((measure, index) => {
+            const slug = `test_no_${target}_${Object.keys(measure)[0]}_${index + 1}`; // Assuming only one key within the object
+            rows.push({
+              slug,
+              tester: 'a',
+              testGroup: Object.keys(measure)[0], // Assuming only one key within the object
+              run: index + 1,
+              remarks: '',
+              created_at: '',
+              last_updated: '',
+              isEditing: false,
+              values: measure,
+              units: {},
+            });
+            updatedRows[slug] = rows[index];
+          });
+        } else {
+          const slug = `test_no_${target}_${Object.keys(measures)[0]}_1`; // Assuming only one key within the object
+          rows.push({
+            slug,
+            tester: 'a',
+            testGroup: Object.keys(measures)[0], // Assuming only one key within the object
+            run: 1,
+            remarks: '',
+            created_at: '',
+            last_updated: '',
+            isEditing: false,
+            values: measures,
+            units: {},
+          });
+          updatedRows[slug] = rows[0];
+        }
+
+        updatedRows[target] = rows;
+      });
+
+      setGroupRows(updatedRows);
+    }
   }, [testMeasures]);
 
   // const [rows, setRows] = useState([
@@ -71,41 +117,19 @@ export default function TestDetailsTable(props) {
   //   setRows(rows.filter((_, idx) => idx !== targetIndex));
   // };
   //
-  const handleEditRow = (idx) => {
-    // setRowToEdit(idx);
-    console.log('editRow:', idx);
+  // const handleEditRow = (idx) => {
+  //   // setRowToEdit(idx);
+  //   console.log('editRow:', idx);
+  //   setModalOpen(true);
+  // };
+
+  const handleEditRow = (slug) => {
+    const updatedRows = { ...groupRows };
+    updatedRows[slug].isEditing = true;
+    setGroupRows(updatedRows);
+    setRowToEdit(slug);
     setModalOpen(true);
   };
-  // const addRow = (group, measures) => {
-  //   const newRow = {
-  //     slug: '',
-  //     tester: '',
-  //     test_group: group,
-  //     test_measure: measures,
-  //     value: '',
-  //     units: '',
-  //     run: '',
-  //     remarks: '',
-  //     created: '',
-  //     updated: '',
-  //   };
-  //
-  //   setRows([...rows, newRow]);
-  // }
-  // const handleSubmit = (newRow) => {
-  //   rowToEdit === null
-  //   ? setRows([
-  //     ...rows,
-  //     newRow
-  //   ])
-  //   : setRows(
-  //     rows.map((currRow, idx) => {
-  //       if (idx !== rowToEdit) return currRow;
-  //
-  //       return newRow;
-  //     })
-  //   );
-  // };
 
     return (
       <React.Fragment>
@@ -130,7 +154,7 @@ export default function TestDetailsTable(props) {
                                 testTarget={target}
                                 testGroup={Object.keys(measure)[0]} // Assuming only one key within the object
                                 testMeasures={measure}
-                                // editRow={handleEditRow}
+                                editRow={handleEditRow}
                                 // Other necessary props
                               />
                             </div>
@@ -150,29 +174,6 @@ export default function TestDetailsTable(props) {
                         )}
                       </div>
                     );
-                    {/*{measures &&*/}
-                    {/*  Object.keys(measures).map((testGroup) => {*/}
-                    {/*    const groupMeasures = measures[testGroup];*/}
-                    {/*    return (*/}
-                    {/*      <div key={testGroup}>*/}
-                    {/*        <Typography variant="subtitle1" gutterBottom component="div">*/}
-                    {/*          {testGroup}*/}
-                    {/*        </Typography>*/}
-                    {/*        {groupMeasures && (*/}
-                    {/*          <TestDetailsTableRow*/}
-                    {/*            testTarget={testTarget}*/}
-                    {/*            testGroup={testGroup}*/}
-                    {/*            testMeasures={groupMeasures}*/}
-                    {/*            // addRow={() => addRow(testGroup, measures[0])} // Assuming it's an array, selecting the first item*/}
-                    {/*            // deleteRow={handleDeleteRow}*/}
-                    {/*            // editRow={handleEditRow}*/}
-                    {/*          />*/}
-                    {/*        )}*/}
-                    {/*      </div>*/}
-                    {/*    );*/}
-                      {/*  })}*/}
-                    // </div>
-
                   })}
               </Box>
             {/*</Collapse>*/}
