@@ -17,18 +17,18 @@ import TableCell from '@mui/material/TableCell';
 
 const TestDetailsTableRow = ({ testTarget, testGroup, testMeasures, addRow, deleteRow, editRow }) => {
 
-    const initialRowState = {
-      slug: 'test_no' + '_' + testTarget + '_' + testGroup + '_' + 1,
+   const initialRowState = {
+      slug: `test_no_${testTarget}_${testGroup}_1`,
       tester: 'a',
       testGroup: '',
       run: 1,
-      remarks: 'adf',
+      remarks: '',
       created_at: '',
       last_updated: '',
       isEditing: false,
       values: {},
       units: {},
-    };
+  };
 
   const [rows, setRows] = useState([initialRowState]);
 
@@ -39,32 +39,12 @@ const TestDetailsTableRow = ({ testTarget, testGroup, testMeasures, addRow, dele
   const [isEditing, setIsEditing] = useState(false);
 
 
+  const handleEdit = (idx) => {
+    const updatedRows = [...rows];
+    updatedRows[idx].isEditing = true;
+    setRows(updatedRows);
 
-
-  const handleAddRow = () => {
-    const newRun = rows.length > 0 ? rows[rows.length - 1].run + 1 : 1;
-
-    // Check if there's at least one row in the existing rows array
-    if (rows.length > 0) {
-      // Take the first row in the array and create a copy of it
-      const firstRow = rows[0];
-      const newRow = {
-        ...firstRow,
-        slug: `test_no_${testTarget}_${testGroup}_${newRun}`, // Adjust the slug if needed
-        run: newRun,
-        remarks: 'xyz', // Default value for remarks, modify if needed
-        created_at: '', // Default value for created_at, modify if needed
-        last_updated: '', // Default value for last_updated, modify if needed
-      };
-
-      // Update the state to add the new row
-      setRows((prevRows) => [...prevRows, newRow]);
-
-      // Update the editing state for the new row (if needed)
-      setIsEditingRows((prevEditingState) => [...prevEditingState, false]);
-    } else {
-      console.error('No existing rows to copy'); // Handle the case when there are no existing rows
-    }
+    editRow(testTarget, testGroup);
   };
 
 
@@ -106,79 +86,108 @@ const TestDetailsTableRow = ({ testTarget, testGroup, testMeasures, addRow, dele
     }
   }, [testTarget, testGroup, testMeasures]);
 
+  const handleAddRow = () => {
+    const newRun = rows.length > 0 ? rows[rows.length - 1].run + 1 : 1;
+    const newRow = {
+      slug: `test_no_${testTarget}_${testGroup}_${newRun}`,
+      tester: 'a',
+      testGroup: testGroup,
+      run: newRun,
+      remarks: '',
+      created_at: '',
+      last_updated: '',
+      isEditing: false,
+      values: {}, // Each row starts with an empty value object
+      units: {},
+    };
+
+    setRows([...rows, newRow]);
+  };
 
    const toggleEditing = (idx) => {
-    setRows((prevRows) =>
-      prevRows.map((row, index) => {
-        if (idx === index) {
-          return { ...row, isEditing: !row.isEditing };
-        }
-        return row;
-      })
-    );
-    setIsEditingRows((prevEditingState) =>
-      prevEditingState.map((editingState, index) => (idx === index ? !editingState : editingState))
-    );
-    // editRow(idx); // Trigger an edit action with the row identifier
+    const updatedRows = [...rows];
+    updatedRows[idx].isEditing = !updatedRows[idx].isEditing;
+    setRows(updatedRows);
+  };
+
+  // Function to handle input changes for each cell in a row
+  const handleInputChange = (slug, key, value) => {
+    const updatedRows = rows.map((row) => {
+      if (row.slug === slug) {
+        const updatedValues = { ...row.values };
+        updatedValues[key] = {
+          ...(updatedValues[key] || {}),
+          value: value,
+        };
+
+        return {
+          ...row,
+          values: updatedValues,
+        };
+      }
+      return row;
+    });
+    setRows(updatedRows);
   };
 
   const submitRow = (idx) => {
-        const editedRow = rows[idx];
-        const formDataArray = [];
+    const editedRow = rows[idx];
+    const formDataArray = [];
 
-        editedRow.keys.forEach((key) => {
-          const formData = new FormData();
+    // Loop through each key in the editedRow object
+    editedRow.keys.forEach((key) => {
+      const formData = new FormData();
 
-          const value = editedRow.values[key]?.value || '';
-          const units = editedRow.values[key]?.units || '';
+      const value = editedRow.values[key]?.value || '';
+      const units = editedRow.values[key]?.units || '';
 
-          // Populate formData with appropriate values for the current key
-          formData.append('test_measure', key);
-          formData.append('value', value);
-          formData.append('units', units);
+      // Populate formData with appropriate values for the current key
+      formData.append('test_measure', key);
+      formData.append('value', value);
+      formData.append('units', units);
 
-          // if (editedRow.values[key]) {
-          //   formData.append('value', editedRow.values[key].value || '');
-          //   formData.append('units', editedRow.values[key].units || '');
-          // } else {
-          //   formData.append('value', '');
-          //   formData.append('units', '');
-          // }
-          formData.append('test', 1);
-          formData.append('sample', 1234);
-          formData.append('brush_type', 'DMS');
-          formData.append('tester', 1);
-          formData.append('owner', 1);
-          formData.append('test_target', 'Bare');
-          formData.append('test_group', editedRow.testGroup);
-          formData.append('test_case', 'REG');
-          // formData.append('slug', editedRow.slug);
-          formData.append('run', editedRow.run);
-          formData.append('remarks', editedRow.remarks);
+      // if (editedRow.values[key]) {
+      //   formData.append('value', editedRow.values[key].value || '');
+      //   formData.append('units', editedRow.values[key].units || '');
+      // } else {
+      //   formData.append('value', '');
+      //   formData.append('units', '');
+      // }
+      formData.append('test', 1);
+      formData.append('sample', 1234);
+      formData.append('brush_type', 'DMS');
+      formData.append('tester', 1);
+      formData.append('owner', 1);
+      formData.append('test_target', 'Bare');
+      formData.append('test_group', editedRow.testGroup);
+      formData.append('test_case', 'REG');
+      formData.append('slug', editedRow.slug);
+      formData.append('run', editedRow.run);
+      formData.append('remarks', editedRow.remarks);
 
-          formDataArray.push(formData);
+      formDataArray.push(formData);
 
+    });
+
+    // Submit each formData instance separately
+    formDataArray.forEach((formData) => {
+      axiosInstance
+        .post(`admin/tests/vacuum/testdetail/`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        })
+        .then((response) => {
+          console.log('Posted successfully!', response);
+          // Handle success if needed
+          toggleEditing(idx);
+          // window.location.reload();
+        })
+        .catch((error) => {
+          console.error('Error posting data', error);
+          // Handle errors
         });
-
-        // Submit each formData instance separately
-        formDataArray.forEach((formData) => {
-          axiosInstance
-            .post(`admin/tests/vacuum/testdetail/`, formData, {
-              headers: {
-                'Content-Type': 'multipart/form-data'
-              }
-            })
-            .then((response) => {
-              console.log('Posted successfully!', response);
-              // Handle success if needed
-              toggleEditing(idx);
-              // window.location.reload();
-            })
-            .catch((error) => {
-              console.error('Error posting data', error);
-              // Handle errors
-            });
-        });
+    });
 
 	};
 
@@ -192,7 +201,7 @@ const TestDetailsTableRow = ({ testTarget, testGroup, testMeasures, addRow, dele
             <th>Tester</th>
             <th>Test Group</th>
             {keys.map((key, index) => (
-              <th key={`${key}-${index}`}>{key}</th>
+              <th key={index}>{key}</th>
             ))}
             <th>Run</th>
             <th>Remarks</th>
@@ -221,25 +230,20 @@ const TestDetailsTableRow = ({ testTarget, testGroup, testMeasures, addRow, dele
                     />
                   </td>
                   <td>{testGroup}</td>
-                  {keys.map((key, index) => (
-                  <td key={index}>
-                    <input
-                      type="text"
-                      value={row.values[key]?.value || ''} // Use row.values[key]?.value if defined, otherwise an empty string
-                      onChange={(e) => {
-                        const updatedRows = [...rows];
-                        updatedRows[idx].values[key] = {
-                          ...(updatedRows[idx].values[key] || {}), // Preserve existing properties
-                          value: e.target.value, // Update the 'value' property
-                        };
-                        setRows(updatedRows);
-                      }}
-                    />
-                    <span>
-                      {row.values[key]?.units || ''} {/* Display units */}
-                    </span>
-                  </td>
-                ))}
+                 {keys.map((key, index) => (
+                    <td key={index}>
+                      <input
+                        type="text"
+                        value={row.values[key]?.value || ''} // Use row.values[key]?.value if defined, otherwise an empty string
+                        onChange={(e) => {
+                          handleInputChange(row.slug, key, e.target.value);
+                        }}
+                      />
+                      <span>
+                        {row.values[key]?.units || ''} {/* Display units */}
+                      </span>
+                    </td>
+                  ))}
 
                   <td>{row.run}</td>
                   <td>
@@ -266,7 +270,7 @@ const TestDetailsTableRow = ({ testTarget, testGroup, testMeasures, addRow, dele
                   <td>{testGroup}</td>
                   {keys.map((key, idx) => (
                     <td key={idx}>
-                      {values[key]?.value} {values[key]?.units}
+                      {row.values[key]?.value} {row.values[key]?.units}
                     </td>
                   ))}
                   <td>{row.run}</td>
@@ -274,7 +278,8 @@ const TestDetailsTableRow = ({ testTarget, testGroup, testMeasures, addRow, dele
                   <td>{row.created_at}</td>
                   <td>{row.last_updated}</td>
                   <td>
-                   <button onClick={() => toggleEditing(idx)}>Edit</button>
+                   <button onClick={() => handleEdit(idx)}>Edit</button>
+                   {/*<button onClick={handleEdit}>Edit</button>*/}
                   </td>
                 </>
               )}
