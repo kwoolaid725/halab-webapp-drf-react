@@ -4,7 +4,7 @@ from .views import (ProductList, ProductDetail, CreateProduct, AdminProductDetai
                     CreatePost, AdminPostDetail, EditPost, DeletePost,
                     SampleList, CreateSample, AdminSampleDetail, EditSample, DeleteSample,
                     TestList, CreateTest, AdminTestDetail, EditTest, DeleteTest,
-                    TestDetailVacuumList, TestDetailVacuumCreate
+                    TestDetailVacuumList, TestDetailVacuumCreate, TestDetailVacuumEdit
                     )
 from rest_framework.routers import DefaultRouter
 
@@ -58,5 +58,5 @@ urlpatterns = [
     path('admin/tests/delete/<int:pk>/', DeleteTest.as_view(), name='test_deletetest'),
 
     path('admin/tests/vacuum/testdetail/', TestDetailVacuumCreate.as_view(), name='test_createtestdetailvacuum'),
-    path('admin/tests/vacuum/testdetail/<str:slug>', TestDetailVacuumCreate.as_view(), name='test_createtestdetailvacuum'),
+    path('admin/tests/vacuum/testdetail/<int:pk>/', TestDetailVacuumEdit.as_view(), name='test_edittestdetailvacuum'),
 ]

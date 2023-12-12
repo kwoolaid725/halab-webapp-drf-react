@@ -270,10 +270,16 @@ class TestDetailVacuumList(generics.ListCreateAPIView):
     serializer_class = TestDetailVacuumSerializer
     pass
 
-class TestDetailVacuumCreate(generics.CreateAPIView):
+class TestDetailVacuumCreate(generics.ListCreateAPIView):
     # permission_classes = [permissions.IsAuthenticated]
     queryset = TestDetailVacuum.objects.all()
     serializer_class = TestDetailVacuumSerializer
+
+class TestDetailVacuumEdit(generics.RetrieveUpdateAPIView):
+    queryset = TestDetailVacuum.objects.all()
+    serializer_class = TestDetailVacuumSerializer
+
+
 
 """ Concrete View Classes
 #CreateAPIView

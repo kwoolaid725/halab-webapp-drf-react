@@ -4,7 +4,7 @@
       "Sand": [
         {
           "soil_weight": {
-            "value": "40",
+            "value": "50",
             "units": "g"
           },
           "vac_weight_i": {
@@ -56,7 +56,7 @@
       "Cheerios": [
         {
           "soil_weight": {
-            "value": "40",
+            "value": "25",
             "units": "g"
           },
           "vac_weight_i": {

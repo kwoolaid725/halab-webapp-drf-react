@@ -94,6 +94,30 @@ class TestDetailVacuumSerializer(serializers.ModelSerializer):
 
         testdetailvacuum = TestDetailVacuum.objects.create(test=test, sample=sample, **validated_data)
         return testdetailvacuum
+
+    def update(self, instance, validated_data):
+        # Update existing fields
+        instance.test = validated_data.get('test_id', instance.test)
+        instance.sample = validated_data.get('sample_id', instance.sample)
+        instance.tester = validated_data.get('tester', instance.tester)
+        instance.brush_type = validated_data.get('brush_type', instance.brush_type)
+        instance.test_target = validated_data.get('test_target', instance.test_target)
+        instance.test_group = validated_data.get('test_group', instance.test_group)
+        instance.test_case = validated_data.get('test_case', instance.test_case)
+        instance.slug = validated_data.get('slug', instance.slug)
+        instance.test_measure = validated_data.get('test_measure', instance.test_measure)
+        instance.run = validated_data.get('run', instance.run)
+        instance.value = validated_data.get('value', instance.value)
+        instance.units = validated_data.get('units', instance.units)
+        instance.remarks = validated_data.get('remarks', instance.remarks)
+        instance.owner = validated_data.get('owner', instance.owner)
+
+
+        # Save the instance with updated data
+        instance.save()
+        return instance
+
+
 # SlugRelatedField is used to represent the related Product model. The queryset argument is required, and should be a queryset that includes all items you might want to refer to. The slug_field is the field on the related object that is used to represent it.
 #
 # When deserializing, the SlugRelatedField will lookup an object based on this slug_field. This means that you should ensure that the slug_field used has unique values to avoid multiple objects returning during the lookup.

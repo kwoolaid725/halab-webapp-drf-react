@@ -89,39 +89,6 @@ export default function TestDetailsTable(props) {
     }
   }, [testMeasures]);
 
-  // const [rows, setRows] = useState([
-  //   {
-  //     slug: '1',
-  //     tester: 'a',
-  //     testGroup: '',
-  //     // test_measure: '',
-  //     // value: '',
-  //     // units: '',
-  //     run: 1,
-  //     remarks: 'adf',
-  //     created_at: '',
-  //     last_updated: '',
-  //   }
-  //
-  // ]);
-  // useEffect(() => {
-  // console.log('rows:', rows);
-  // }, [rows]);
-  // const [rowToEdit, setRowToEdit] = useState(null);
-  // const { row } = props;
-
-  // const [groupStates, setGroupStates] = useState({});
-  // const initialGroupStates = {};
-  //
-  // const handleDeleteRow = (targetIndex) => {
-  //   setRows(rows.filter((_, idx) => idx !== targetIndex));
-  // };
-  //
-  // const handleEditRow = (idx) => {
-  //   // setRowToEdit(idx);
-  //   console.log('editRow:', idx);
-  //   setModalOpen(true);
-  // };
 
   const handleEditRow = (slug) => {
     const updatedRows = { ...groupRows };
@@ -130,6 +97,34 @@ export default function TestDetailsTable(props) {
     setRowToEdit(slug);
     setModalOpen(true);
   };
+
+  const handleAddRowToTable = (target, group) => {
+    const updatedRows = { ...groupRows };
+
+    // Extract the current rows for the specific target and group
+    const currentRows = updatedRows[target] || [];
+
+    const newRun = currentRows.length > 0 ? currentRows[currentRows.length - 1].run + 1 : 1;
+      const newRow = {
+        slug: `test_no_${target}_${group}_${newRun}`,
+        tester: 'a',
+        testGroup: group,
+        run: newRun,
+        remarks: '',
+        created_at: '',
+        last_updated: '',
+        isEditing: false,
+        values: {}, // Each row starts with an empty value object
+        units: {},
+      };
+
+      // Add the new row to the existing rows for the specific target and group
+      updatedRows[target] = [...currentRows, newRow];
+
+      setGroupRows(updatedRows);
+      setRowToEdit(newRow.slug);
+      console.log('updatedRows', updatedRows);
+      };
 
     return (
       <React.Fragment>
@@ -154,6 +149,7 @@ export default function TestDetailsTable(props) {
                                 testTarget={target}
                                 testGroup={Object.keys(measure)[0]} // Assuming only one key within the object
                                 testMeasures={measure}
+                                addRowToTable={handleAddRowToTable}
                                 editRow={handleEditRow}
                                 // Other necessary props
                               />
@@ -167,6 +163,7 @@ export default function TestDetailsTable(props) {
                               testTarget={target}
                               testGroup={Object.keys(measures)[0]} // Assuming only one key within the object
                               testMeasures={measures}
+                              addRowToTable={handleAddRowToTable}
                               editRow={handleEditRow}
                               // Other necessary props
                             />
@@ -175,7 +172,8 @@ export default function TestDetailsTable(props) {
                       </div>
                     );
                   })}
-              </Box>
+
+            </Box>
             {/*</Collapse>*/}
           </TableCell>
         </TableRow>
