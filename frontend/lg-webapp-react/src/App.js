@@ -38,7 +38,7 @@ import CollapsibleTable_CR from "./components/Admin/Test/CR/CRCordlessTest";
 import CRBareData from "./components/Admin/Test/CR/CRCordlessBareDataCreate";
 import Table from "./components/Admin/Test/CR/Table";
 import TestLists from "./components/Test/TestLists";
-import SingleTest from "./components/Test/SingleTest";
+
 import TestDetailsTableRow from './components/Test/TestDetailsTableRow'
 import TestDetailsTable from './components/Test/TestDetailsTable'
 import TestDetails from './components/Test/TestDetails'
@@ -69,7 +69,7 @@ function Routes() {
 		{ path: '/admin/samples/edit/:id', element: <SampleEdit /> },
 
 		{ path: '/tests', element: <TestLists /> },
-		{ path: '/tests/:id', element: <SingleTest /> },
+
 		{ path: '/admin/tests', element: <AdminTestsList /> },
 		{ path: '/admin/tests/create', element: <TestCreate /> },
 		{ path: '/admin/tests/delete/:id', element: <TestDelete /> },

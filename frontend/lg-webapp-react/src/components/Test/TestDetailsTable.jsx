@@ -151,6 +151,11 @@ export default function TestDetailsTable(props) {
                                 testMeasures={measure}
                                 addRowToTable={handleAddRowToTable}
                                 editRow={handleEditRow}
+                                testId={props.testId}
+                                sample={props.sample}
+                                brushType={props.brushType}
+                                tester={props.tester}
+                                testCase={props.testCase}
                                 // Other necessary props
                               />
                             </div>
@@ -165,6 +170,11 @@ export default function TestDetailsTable(props) {
                               testMeasures={measures}
                               addRowToTable={handleAddRowToTable}
                               editRow={handleEditRow}
+                              testId={props.testId}
+                              sample={props.sample}
+                              brushType={props.brushType}
+                              tester={props.tester}
+                              testCase={props.testCase}
                               // Other necessary props
                             />
                           </div>

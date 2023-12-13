@@ -4,7 +4,6 @@ import React, {
 } from 'react'
 import { BsFillTrashFill, BsFillPencilFill } from 'react-icons/bs';
 import Button from '@mui/material/Button';
-import { TestModal } from './TestModal';
 import axiosInstance from '../../axios'
 import Typography from '@mui/material/Typography';
 import TableCell from '@mui/material/TableCell';
@@ -17,12 +16,13 @@ import StaticRow  from './StaticRow'
 // }
 
 
-const TestDetailsTableRow = ({ testTarget, testGroup, testMeasures, addRowToTable, deleteRow, editRow }) => {
+const TestDetailsTableRow = ({ testTarget, testGroup, testMeasures, deleteRow, editRow, testId, sample, brushType, tester, testCase }) => {
 
    const initialRowState = {
       id: '',
       slug: `test_no_${testTarget}_${testGroup}_1`,
       tester: 'a',
+      testTarget: testTarget,
       testGroup: testGroup,
       run: 1,
       remarks: '',
@@ -107,6 +107,7 @@ const TestDetailsTableRow = ({ testTarget, testGroup, testMeasures, addRowToTabl
     id: '',
     slug: '',
     tester: 'a',
+    testTarget: testTarget,
     testGroup: testGroup,
     run: 1,
     remarks: '',
@@ -224,7 +225,7 @@ const TestDetailsTableRow = ({ testTarget, testGroup, testMeasures, addRowToTabl
           formData.append('brush_type', 'DMS');
           formData.append('tester', 1);
           formData.append('owner', 1);
-          formData.append('test_target', 'Bare');
+          formData.append('test_target', editedRow.testTarget);
           formData.append('test_group', editedRow.testGroup);
           formData.append('test_case', 'REG');
           formData.append('slug', editedRow.slug);
@@ -282,7 +283,7 @@ const TestDetailsTableRow = ({ testTarget, testGroup, testMeasures, addRowToTabl
           formData.append('brush_type', 'DMS');
           formData.append('tester', 1);
           formData.append('owner', 1);
-          formData.append('test_target', 'Bare');
+          formData.append('test_target', editedRow.testTarget);
           formData.append('test_group', editedRow.testGroup);
           formData.append('test_case', 'REG');
           formData.append('slug', editedRow.slug);
