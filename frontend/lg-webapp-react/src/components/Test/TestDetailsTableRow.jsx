@@ -10,37 +10,19 @@ import TableCell from '@mui/material/TableCell';
 import EditableRow  from './EditableRow'
 import StaticRow  from './StaticRow'
 
-// const testGroup = 'Bare';
-// const testMeasures = {
-//
-// }
 
+// const TestDetailsTableRow = ({ testTarget, testGroup, testMeasures, deleteRow, editRow, testId, sample, brushType, tester, testCase }) => {
+function TestDetailsTableRow(props){
 
-const TestDetailsTableRow = ({ testTarget, testGroup, testMeasures, deleteRow, editRow, testId, sample, brushType, tester, testCase }) => {
-
-   const initialRowState = {
-      id: '',
-      slug: `test_no_${testTarget}_${testGroup}_1`,
-      tester: 'a',
-      testTarget: testTarget,
-      testGroup: testGroup,
-      run: 1,
-      remarks: '',
-      created_at: '',
-      last_updated: '',
-      isEditing: false,
-      values: {},
-      units: {},
-  };
-
-  const [rows, setRows] = useState([initialRowState]);
-
+  const [rows, setRows] = useState([]);
   const [keys, setKeys] = useState([]);
   const [values, setValues] = useState({});
   const [allRows, setAllRows] = useState([]);
   const [isEditingRows, setIsEditingRows] = useState(Array(rows.length).fill(false));
 
   const [isEditing, setIsEditing] = useState(false);
+
+
 
 
   useEffect(() => {
@@ -55,26 +37,27 @@ const TestDetailsTableRow = ({ testTarget, testGroup, testMeasures, deleteRow, e
 
   }, []); // Fetch only once on component mount
 
-  const handleEdit = (idx) => {
-    const updatedRows = [...rows];
-    updatedRows[idx].isEditing = true;
-    setRows(updatedRows);
 
-    editRow(testTarget, testGroup);
-  };
-
+  // const handleEditRow = (slug) => {
+  //   const updatedRows = { ...groupRows };
+  //   updatedRows[slug].isEditing = true;
+  //   setGroupRows(updatedRows);
+  //   setRowToEdit(slug);
+  //   setModalOpen(true);
+  // };
+  //
 
   useEffect(() => {
-    console.log('Test Target:', testTarget);
-    console.log('Test Group:', testGroup);
-    console.log('Test Measures:', testMeasures);
+    console.log('Test Target:', props.testTarget);
+    console.log('Test Group:', props.testGroup);
+    console.log('Test Measures:', props.testMeasures);
     let selectedMeasures = [];
 
-    if (testMeasures) {
-      if (Array.isArray(testMeasures[testGroup])) {
-        selectedMeasures = testMeasures[testGroup];
-      } else if (testMeasures[testGroup]) {
-        selectedMeasures = [testMeasures[testGroup]];
+    if (props.testMeasures) {
+      if (Array.isArray(props.testMeasures[props.testGroup])) {
+        selectedMeasures = props.testMeasures[props.testGroup];
+      } else if (props.testMeasures[props.testGroup]) {
+        selectedMeasures = [props.testMeasures[props.testGroup]];
       }
     }
     if (
@@ -100,15 +83,33 @@ const TestDetailsTableRow = ({ testTarget, testGroup, testMeasures, deleteRow, e
       setKeys(keys);
 
     }
-  }, [testTarget, testGroup, testMeasures]);
+  }, [props.testTarget, props.testGroup, props.testMeasures]);
+
+    useEffect(() => {
+    const initialRowState = {
+      id: '',
+      slug: `${props.testId}-${props.testTarget}-${props.testGroup}-1`,
+      tester: props.tester,
+      testTarget: props.testTarget,
+      testGroup: props.testGroup,
+      run: 1,
+      remarks: '',
+      created_at: '',
+      last_updated: '',
+      isEditing: false,
+      values: values,
+      units: {},
+    };
+    setRows([initialRowState]);
+  }, [props.testId, props.testTarget, props.testGroup, props.tester]);
 
 
   const [newRow, setNewRow] = useState({
     id: '',
     slug: '',
-    tester: 'a',
-    testTarget: testTarget,
-    testGroup: testGroup,
+    tester: props.tester,
+    testTarget: props.testTarget,
+    testGroup: props.testGroup,
     run: 1,
     remarks: '',
     created_at: '',
@@ -149,10 +150,20 @@ const TestDetailsTableRow = ({ testTarget, testGroup, testMeasures, deleteRow, e
     }
   }, [rows]);
 
+  const handleEdit = (slug) => {
+    const updatedRows = [...rows];
+    updatedRows[slug].isEditing = true;
+    setRows(updatedRows);
+    console.log('slug', slug);
+    console.log('rows', rows);
+    console.log('updatedRows', updatedRows);
+    // editRow(testTarget, testGroup);
+  };
+
 
   const handleAddRow = () => {
     const newRowIndex = rows.length + 1; // Determine the index for the new row
-    const newSlug = `test_no_${testTarget}_${testGroup}_${newRowIndex}`; // Create a new slug for the row
+    const newSlug = `${props.testId}-${props.testTarget}-${props.testGroup}-${newRowIndex}`; // Create a new slug for the row
 
     const previousRow = rows[rows.length - 1]; // Get the previous row
     const previousUnits = previousRow ? previousRow.units : {}; // Extract previous units
@@ -173,10 +184,9 @@ const TestDetailsTableRow = ({ testTarget, testGroup, testMeasures, deleteRow, e
     console.log('Rows:', rows);
   };
 
-
-   const toggleEditing = (idx) => {
+  const toggleEditing = (slug) => {
     const updatedRows = [...rows];
-    updatedRows[idx].isEditing = !updatedRows[idx].isEditing;
+    updatedRows[slug].isEditing = !updatedRows[slug].isEditing;
     setRows(updatedRows);
   };
 
@@ -366,7 +376,7 @@ const TestDetailsTableRow = ({ testTarget, testGroup, testMeasures, deleteRow, e
                 key={idx}
                 row={row}
                 idx={idx}
-                testGroup={testGroup}
+                testGroup={props.testGroup}
                 keys={keys}
                 handleInputChange={(slug, key, value) => handleInputChange(rows, setRows, slug, key, value)}
                 submitRow={submitRow}
@@ -378,7 +388,7 @@ const TestDetailsTableRow = ({ testTarget, testGroup, testMeasures, deleteRow, e
                   key={idx}
                   row={row}
                   idx={idx}
-                  testGroup={testGroup}
+                  testGroup={props.testGroup}
                   keys={keys}
                   handleEdit={handleEdit}
                 />

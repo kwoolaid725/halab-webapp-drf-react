@@ -89,7 +89,7 @@ const AdminTests = (props) => {
 								<TableRow>
 									<TableCell colSpan={9} align="right">
 										<Button
-											href={'/admin/products/create'}
+											href={'/admin/tests/create'}
 											variant="contained"
 											color="primary"
 										>

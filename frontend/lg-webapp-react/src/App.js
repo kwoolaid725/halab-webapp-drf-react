@@ -57,7 +57,7 @@ function Routes() {
 		{ path: '/admin/posts/edit/:id', element: <EditPost /> },
 
 		{ path: '/products', element: <ProductLists /> },
-		{ path: '/products/:slug', element: <SingleProduct /> },
+		{ path: '/product/:slug', element: <SingleProduct /> },
 		{ path: '/admin/products', element: <AdminProductsList /> },
 		{ path: '/admin/products/create', element: <ProductCreate /> },
 		{ path: '/admin/products/delete/:id', element: <ProductDelete /> },
@@ -69,6 +69,7 @@ function Routes() {
 		{ path: '/admin/samples/edit/:id', element: <SampleEdit /> },
 
 		{ path: '/tests', element: <TestLists /> },
+		{ path: '/test/:id', element: <TestDetails /> },
 
 		{ path: '/admin/tests', element: <AdminTestsList /> },
 		{ path: '/admin/tests/create', element: <TestCreate /> },
