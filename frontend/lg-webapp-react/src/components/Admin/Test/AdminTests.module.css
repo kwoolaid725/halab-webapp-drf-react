@@ -24,3 +24,25 @@
 	margin-bottom: 2rem; /* You might need to adjust this according to your theme spacing */
 }
 
+/* styles.module.css */
+.paper {
+	margin-top: 8rem; /* Adjust according to your theme spacing */
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.avatar {
+	margin: 1rem; /* Adjust according to your theme spacing */
+	background-color: #f50057; /* Adjust according to your theme palette */
+}
+
+.form {
+	width: 100%;
+	margin-top: 3rem; /* Adjust according to your theme spacing */
+}
+
+.submit {
+	margin: 3rem 0 2rem; /* Adjust according to your theme spacing */
+}
+

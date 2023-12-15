@@ -5,7 +5,6 @@ import TextField from '@mui/material/TextField';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import TestDetailsTableRow from "./TestDetailsTableRow";
-import Input from '@mui/material/Input';
 
 const TEST_CATEGORY = [
   { value: 'CR', label: 'CR' },
@@ -25,23 +24,30 @@ const TEST_STATUS = [
   { value: 'COMPLETED', label: 'Completed' },
 ];
 
-function TestDetailsHeader(props) {
-
-  // console.log('dueDate', dueDate);
-
+const TestDetailsHeader = ({testCategory, productCategory, testId, description, dueDate, completionDate, remarks, owner  }) => {
   return (
     <React.Fragment>
       {/* First row: Test Category, Product Category */}
       <TableRow>
         <TableCell sx={{ width: '100px' }} colSpan={1}>Test Category</TableCell>
         <TableCell colSpan={1}>
-          {props.testCategory}
+          <Select variant="outlined" size="small">
+            {TEST_CATEGORY.map((category) => (
+              <MenuItem key={category.value} value={category.value}>
+                {category.label}
+              </MenuItem>
+            ))}
+          </Select>
         </TableCell>
-
-
         <TableCell sx={{ width: '100px' }} colSpan={1}>Product Category</TableCell>
-        <TableCell colSpan={2}>
-          {props.productCategory}
+        <TableCell colSpan={1}>
+          <Select variant="outlined" size="small">
+            {PRODUCT_CATEGORY.map((category) => (
+              <MenuItem key={category.value} value={category.value}>
+                {category.label}
+              </MenuItem>
+            ))}
+          </Select>
         </TableCell>
         <TableCell colSpan={2}></TableCell>
       </TableRow>
@@ -50,11 +56,11 @@ function TestDetailsHeader(props) {
       <TableRow>
         <TableCell sx={{ width: '100px' }} colSpan={1}>Test No.</TableCell>
         <TableCell >
-          {props.testId}
+          <TextField variant="outlined" size="small" />
         </TableCell>
         <TableCell>Description</TableCell>
         <TableCell colSpan={4}>
-          {props.description}
+          <TextField variant="outlined" size="small" multiline />
         </TableCell>
       </TableRow>
 
@@ -76,23 +82,14 @@ function TestDetailsHeader(props) {
             variant="outlined"
             size="small"
             type="date"
-            value={props.dueDate}
             InputLabelProps={{
               shrink: true,
             }}
           />
         </TableCell>
-         <TableCell sx={{ width: '100px' }}>Completion Date</TableCell>
-         <TableCell colSpan={1}>
-          <TextField
-            variant="outlined"
-            size="small"
-            type="date"
-            value={props.completionDate}
-            InputLabelProps={{
-              shrink: true,
-            }}
-          />
+        <TableCell>Completion Date</TableCell>
+        <TableCell colSpan={1}>
+          <TextField variant="outlined" size="small" />
         </TableCell>
         <TableCell colSpan={2}></TableCell>
       </TableRow>
