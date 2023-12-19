@@ -25,6 +25,8 @@ function TestDetailsTableRow(props){
 
 
 
+
+
   useEffect(() => {
     // Fetch rows from the database and update the 'allRows' state
     axiosInstance.get('admin/tests/vacuum/testdetail/')
@@ -37,20 +39,55 @@ function TestDetailsTableRow(props){
 
   }, []); // Fetch only once on component mount
 
+ useEffect(() => {
+  if (props.fetchedRows) {
+    const combinedRows = {};
 
-  // const handleEditRow = (slug) => {
-  //   const updatedRows = { ...groupRows };
-  //   updatedRows[slug].isEditing = true;
-  //   setGroupRows(updatedRows);
-  //   setRowToEdit(slug);
-  //   setModalOpen(true);
-  // };
-  //
+    props.fetchedRows.forEach((row) => {
+      // Assign default values if testTarget or testGroup is empty
+      const target = row.test_target || 'DefaultTarget';
+      const group = row.test_group || 'DefaultGroup';
+
+      if (!combinedRows[row.slug]) {
+        combinedRows[row.slug] = {
+          id: row.id || '',
+          slug: row.slug,
+          tester: row.tester || props.tester,
+          testTarget: target,
+          testGroup: group,
+          run: row.run,
+          remarks: row.remarks || '',
+          created_at: row.created_at || '',
+          last_updated: row.last_updated || '',
+          isEditing: false,
+          values: {},
+          units: {},
+        };
+      }
+
+      if (row.test_measure) {
+        Object.keys(row.test_measure).forEach((measure) => {
+          combinedRows[row.slug].values[measure] = {
+            value: row.test_measure[measure]?.value || '',
+            units: row.test_measure[measure]?.units || '',
+          };
+          combinedRows[row.slug].units[measure] = row.test_measure[measure]?.units || '';
+        });
+      }
+    });
+
+    const updatedRows = Object.values(combinedRows);
+    console.log('Updated rows1:', updatedRows)
+
+    setRows(updatedRows);
+  }
+}, [props.fetchedRows, props.tester]);
 
   useEffect(() => {
     console.log('Test Target:', props.testTarget);
     console.log('Test Group:', props.testGroup);
     console.log('Test Measures:', props.testMeasures);
+    console.log('props.sample:', props.sample);
     let selectedMeasures = [];
 
     if (props.testMeasures) {
@@ -85,7 +122,7 @@ function TestDetailsTableRow(props){
     }
   }, [props.testTarget, props.testGroup, props.testMeasures]);
 
-    useEffect(() => {
+  useEffect(() => {
     const initialRowState = {
       id: '',
       slug: `${props.testId}-${props.testTarget}-${props.testGroup}-1`,
@@ -150,16 +187,6 @@ function TestDetailsTableRow(props){
     }
   }, [rows]);
 
-  const handleEdit = (slug) => {
-    const updatedRows = [...rows];
-    updatedRows[slug].isEditing = true;
-    setRows(updatedRows);
-    console.log('slug', slug);
-    console.log('rows', rows);
-    console.log('updatedRows', updatedRows);
-    // editRow(testTarget, testGroup);
-  };
-
 
   const handleAddRow = () => {
     const newRowIndex = rows.length + 1; // Determine the index for the new row
@@ -183,6 +210,17 @@ function TestDetailsTableRow(props){
 
     console.log('Rows:', rows);
   };
+
+  const handleEdit = (slug) => {
+    const updatedRows = [...rows];
+    updatedRows[slug].isEditing = true;
+    setRows(updatedRows);
+    console.log('slug', slug);
+    console.log('rows', rows);
+    console.log('updatedRows', updatedRows);
+    // editRow(testTarget, testGroup);
+  };
+
 
   const toggleEditing = (slug) => {
     const updatedRows = [...rows];
@@ -209,6 +247,7 @@ function TestDetailsTableRow(props){
     });
 
     setRows([...updatedRows]); // Ensure you always set it as an array
+
   };
 
   const submitRow = (idx) => {
@@ -231,19 +270,20 @@ function TestDetailsTableRow(props){
           formData.append('value', value);
           formData.append('units', units);
           formData.append('test', 1);
-          formData.append('sample', 1234);
-          formData.append('brush_type', 'DMS');
+          formData.append('sample', props.sample);
+          formData.append('brush_type', props.brushType);
           formData.append('tester', 1);
           formData.append('owner', 1);
           formData.append('test_target', editedRow.testTarget);
           formData.append('test_group', editedRow.testGroup);
-          formData.append('test_case', 'REG');
+          formData.append('test_case', props.testCase);
           formData.append('slug', editedRow.slug);
           formData.append('run', editedRow.run);
           formData.append('remarks', editedRow.remarks);
 
           const url = `admin/tests/vacuum/testdetail/${rowToUpdate.id}/`;
           const requestType = 'PUT'; // Use PUT for updating existing rows
+          console.log('formData', formData);
 
           axiosInstance({
           method: requestType,
@@ -289,13 +329,13 @@ function TestDetailsTableRow(props){
           formData.append('units', units);
 
           formData.append('test', 1);
-          formData.append('sample', 1234);
-          formData.append('brush_type', 'DMS');
+          formData.append('sample', props.sample);
+          formData.append('brush_type', props.brushType);
           formData.append('tester', 1);
           formData.append('owner', 1);
           formData.append('test_target', editedRow.testTarget);
           formData.append('test_group', editedRow.testGroup);
-          formData.append('test_case', 'REG');
+          formData.append('test_case', props.testCase);
           formData.append('slug', editedRow.slug);
           formData.append('run', editedRow.run);
           formData.append('remarks', editedRow.remarks);
@@ -377,6 +417,7 @@ function TestDetailsTableRow(props){
                 row={row}
                 idx={idx}
                 testGroup={props.testGroup}
+                testId={props.testId}
                 keys={keys}
                 handleInputChange={(slug, key, value) => handleInputChange(rows, setRows, slug, key, value)}
                 submitRow={submitRow}
