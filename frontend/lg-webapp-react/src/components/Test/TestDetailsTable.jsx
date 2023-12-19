@@ -15,21 +15,16 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import TextField from "@mui/material/TextField";
 import TestDetailsTableRow from './TestDetailsTableRow';
+import axiosInstance from "../../axios";
 // import CRBareData from "./CRCordlessBareDataCreate";
 
 
 
 
-const TestDetailsTable = ({testCategory, productCategory, testId, description, dueDate, completionDate, remarks, owner  }) => {
+const TestDetailsTable = (props) => {
 
   const [testMeasures, setTestMeasures] = useState(null);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [rowToEdit, setRowToEdit] = useState(null);
-  const [groupRows, setGroupRows] = useState({});
-
-  // const testNo = props.testId;
-
-  console.log('testId', testId);
+  const [fetchedRows, setFetchedRows] = useState([]);
 
   useEffect(() => {
     console.log('Attempting to fetch data...');
@@ -44,70 +39,25 @@ const TestDetailsTable = ({testCategory, productCategory, testId, description, d
       });
   }, []);
 
-  // useEffect(() => {
-  //   if (testMeasures) {
-  //     const updatedRows = {};
-  //
-  //     Object.keys(testMeasures).forEach((target) => {
-  //       const measures = testMeasures[target];
-  //       const rows = [];
-  //
-  //       if (Array.isArray(measures)) {
-  //         measures.forEach((measure, index) => {
-  //           const slug = `${testId}_${target}_${Object.keys(measure)[0]}_${index + 1}`; // Assuming only one key within the object
-  //           rows.push({
-  //             test: testId, // test_id
-  //             sample: '', // inv. no.
-  //             owner: '', // owner_id
-  //             tester: '', //tester_id
-  //             slug,
-  //             testGroup: Object.keys(measure)[0], // Assuming only one key within the object
-  //             run: index + 1,
-  //             remarks: '',
-  //             created_at: '',
-  //             last_updated: '',
-  //             isEditing: false,
-  //             values: measure,
-  //             units: {},
-  //
-  //           });
-  //           updatedRows[slug] = rows[index];
-  //         });
-  //       } else {
-  //         const slug = `${testId}_${target}_${Object.keys(measures)[0]}_1`; // Assuming only one key within the object
-  //         rows.push({
-  //           test: testId, // test_id
-  //           sample: '', // inv. no.
-  //           owner: '', // owner_id
-  //           tester: '', //tester_id
-  //           slug,
-  //           testGroup: Object.keys(measures)[0], // Assuming only one key within the object
-  //           run: 1,
-  //           remarks: '',
-  //           created_at: '',
-  //           last_updated: '',
-  //           isEditing: false,
-  //           values: measures,
-  //           units: {},
-  //         });
-  //         updatedRows[slug] = rows[0];
-  //       }
-  //
-  //       updatedRows[target] = rows;
-  //     });
-  //
-  //     setGroupRows(updatedRows);
-  //   }
-  // }, [testMeasures]);
+  console.log('Sample value:', props.sample);
 
+   useEffect(() => {
+    if (props.testId) {
+      axiosInstance(`/admin/tests/vacuum/testdetail/?test_no=${props.testId}`)
+        .then((res) => {
+          const testDataDetails = res.data;
+          setFetchedRows(testDataDetails);
+        })
+        .catch((error) => {
+          console.error('Error fetching detailed data: ', error);
+          // Handle error appropriately
+        });
+    }
+  }, [props.testId]);
 
-  // const handleEditRow = (slug) => {
-  //   const updatedRows = { ...groupRows };
-  //   updatedRows[slug].isEditing = true;
-  //   setGroupRows(updatedRows);
-  //   setRowToEdit(slug);
-  //   setModalOpen(true);
-  // };
+  useEffect(() => {
+    console.log('Fetched rows updated:', fetchedRows);
+  }, [fetchedRows]);
 
 
     return (
@@ -134,12 +84,11 @@ const TestDetailsTable = ({testCategory, productCategory, testId, description, d
                                 testGroup={Object.keys(measure)[0]} // Assuming only one key within the object
                                 testMeasures={measure}
                                 // editRow={handleEditRow}
-                                testId={testId}
-                                // sample={props.sample}
-                                // brushType={props.brushType}
+                                testId={props.testId}
+                                sample={props.sample}
+                                brushType={props.brushType}
                                 // tester={props.tester}
-                                // testCase={props.testCase}
-                                // Other necessary props
+                                testCase={props.testCase}
                               />
                             </div>
                           ))
@@ -152,12 +101,11 @@ const TestDetailsTable = ({testCategory, productCategory, testId, description, d
                               testGroup={Object.keys(measures)[0]} // Assuming only one key within the object
                               testMeasures={measures}
                               // editRow={handleEditRow}
-                              testId={testId}
-                              // sample={props.sample}
-                              // brushType={props.brushType}
+                              testId={props.testId}
+                              sample={props.sample}
+                              brushType={props.brushType}
                               // tester={props.tester}
-                              // testCase={props.testCase}
-                              // Other necessary props
+                              testCase={props.testCase}
                             />
                           </div>
                         )}
@@ -170,7 +118,10 @@ const TestDetailsTable = ({testCategory, productCategory, testId, description, d
           </TableCell>
         </TableRow>
       </React.Fragment>
-    );
+      );
+
+
+
 }
 
 export default TestDetailsTable;
