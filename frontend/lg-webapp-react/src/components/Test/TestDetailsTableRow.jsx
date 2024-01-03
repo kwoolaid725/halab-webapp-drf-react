@@ -11,19 +11,13 @@ import EditableRow  from './EditableRow'
 import StaticRow  from './StaticRow'
 
 
-// const TestDetailsTableRow = ({ testTarget, testGroup, testMeasures, deleteRow, editRow, testId, sample, brushType, tester, testCase }) => {
 function TestDetailsTableRow(props){
 
   const [rows, setRows] = useState([]);
   const [keys, setKeys] = useState([]);
   const [values, setValues] = useState({});
   const [allRows, setAllRows] = useState([]);
-  const [isEditingRows, setIsEditingRows] = useState(Array(rows.length).fill(false));
-
-  const [isEditing, setIsEditing] = useState(false);
-
-
-
+  const [fetchedRows, setFetchedRows] = useState([]);
 
 
 
@@ -39,49 +33,7 @@ function TestDetailsTableRow(props){
 
   }, []); // Fetch only once on component mount
 
- useEffect(() => {
-  if (props.fetchedRows) {
-    const combinedRows = {};
 
-    props.fetchedRows.forEach((row) => {
-      // Assign default values if testTarget or testGroup is empty
-      const target = row.test_target || 'DefaultTarget';
-      const group = row.test_group || 'DefaultGroup';
-
-      if (!combinedRows[row.slug]) {
-        combinedRows[row.slug] = {
-          id: row.id || '',
-          slug: row.slug,
-          tester: row.tester || props.tester,
-          testTarget: target,
-          testGroup: group,
-          run: row.run,
-          remarks: row.remarks || '',
-          created_at: row.created_at || '',
-          last_updated: row.last_updated || '',
-          isEditing: false,
-          values: {},
-          units: {},
-        };
-      }
-
-      if (row.test_measure) {
-        Object.keys(row.test_measure).forEach((measure) => {
-          combinedRows[row.slug].values[measure] = {
-            value: row.test_measure[measure]?.value || '',
-            units: row.test_measure[measure]?.units || '',
-          };
-          combinedRows[row.slug].units[measure] = row.test_measure[measure]?.units || '';
-        });
-      }
-    });
-
-    const updatedRows = Object.values(combinedRows);
-    console.log('Updated rows1:', updatedRows)
-
-    setRows(updatedRows);
-  }
-}, [props.fetchedRows, props.tester]);
 
   useEffect(() => {
     console.log('Test Target:', props.testTarget);
@@ -122,23 +74,29 @@ function TestDetailsTableRow(props){
     }
   }, [props.testTarget, props.testGroup, props.testMeasures]);
 
+
+
   useEffect(() => {
-    const initialRowState = {
-      id: '',
-      slug: `${props.testId}-${props.testTarget}-${props.testGroup}-1`,
-      tester: props.tester,
-      testTarget: props.testTarget,
-      testGroup: props.testGroup,
-      run: 1,
-      remarks: '',
-      created_at: '',
-      last_updated: '',
-      isEditing: false,
-      values: values,
-      units: {},
-    };
-    setRows([initialRowState]);
+      // Set 'initialRowState' as the default 'rows' state
+      const initialRowState = {
+        id: '',
+        slug: `${props.testId}-${props.testTarget}-${props.testGroup}-1`,
+        tester: props.tester,
+        testTarget: props.testTarget,
+        testGroup: props.testGroup,
+        run: 1,
+        remarks: '',
+        created_at: '',
+        last_updated: '',
+        isEditing: false,
+        values: values,
+        units: {},
+      };
+      setRows([initialRowState]);
+      console.log('initialRowState', initialRowState);
+
   }, [props.testId, props.testTarget, props.testGroup, props.tester]);
+
 
 
   const [newRow, setNewRow] = useState({
@@ -155,37 +113,37 @@ function TestDetailsTableRow(props){
     values: {}, // Initialize as an empty object
     units: {}   // Initialize as an empty object
   });
-
-  useEffect(() => {
-    if (rows.length > 0) {
-      const firstRow = rows[0]; // Access the first row
-      const rowKeys = Object.keys(firstRow.values);
-      const rowUnits = {};
-
-      rowKeys.forEach((key) => {
-        if (key !== 'soil_weight') {
-          rowUnits[key] = firstRow.values[key]?.units || '';
-        }
-      });
-
-      /// Create a copy of the first row with units for all values except soil_weight
-      const updatedNewRow = {
-        ...firstRow,
-        values: {
-          soil_weight: firstRow.values.soil_weight || { value: '', units: '' },
-          // Set other values as empty strings
-          ...(Object.fromEntries(
-            Object.keys(firstRow.values)
-              .filter(key => key !== 'soil_weight')
-              .map(key => [key, { value: '', units: rowUnits[key] || '' }])
-          )),
-        },
-        units: { ...rowUnits }, // Copy units
-      };
-
-      setNewRow(updatedNewRow); // Update the newRow state immediately
-    }
-  }, [rows]);
+  //
+  // useEffect(() => {
+  //   if (rows.length > 0) {
+  //     const firstRow = rows[0]; // Access the first row
+  //     const rowKeys = Object.keys(firstRow.values);
+  //     const rowUnits = {};
+  //
+  //     rowKeys.forEach((key) => {
+  //       if (key !== 'soil_weight') {
+  //         rowUnits[key] = firstRow.values[key]?.units || '';
+  //       }
+  //     });
+  //
+  //     /// Create a copy of the first row with units for all values except soil_weight
+  //     const updatedNewRow = {
+  //       ...firstRow,
+  //       values: {
+  //         soil_weight: firstRow.values.soil_weight || { value: '', units: '' },
+  //         // Set other values as empty strings
+  //         ...(Object.fromEntries(
+  //           Object.keys(firstRow.values)
+  //             .filter(key => key !== 'soil_weight')
+  //             .map(key => [key, { value: '', units: rowUnits[key] || '' }])
+  //         )),
+  //       },
+  //       units: { ...rowUnits }, // Copy units
+  //     };
+  //
+  //     setNewRow(updatedNewRow); // Update the newRow state immediately
+  //   }
+  // }, [rows]);
 
 
   const handleAddRow = () => {
@@ -327,7 +285,6 @@ function TestDetailsTableRow(props){
           formData.append('test_measure', key);
           formData.append('value', value);
           formData.append('units', units);
-
           formData.append('test', 1);
           formData.append('sample', props.sample);
           formData.append('brush_type', props.brushType);
@@ -399,7 +356,7 @@ function TestDetailsTableRow(props){
             <th>ID</th>
             <th>Tester</th>
             <th>Test Group</th>
-            {keys.map((key, index) => (
+            {keys && keys.map((key, index) => (
               <th key={index}>{key}</th>
             ))}
             <th>Run</th>

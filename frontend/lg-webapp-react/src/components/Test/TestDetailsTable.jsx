@@ -1,37 +1,19 @@
-import React, {useEffect, useState} from 'react';
-import PropTypes from 'prop-types';
+import React, { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
-import Collapse from '@mui/material/Collapse';
-import IconButton from '@mui/material/IconButton';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
-import Paper from '@mui/material/Paper';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import TextField from "@mui/material/TextField";
-import TestDetailsTableRow from './TestDetailsTableRow';
 import axiosInstance from "../../axios";
-// import CRBareData from "./CRCordlessBareDataCreate";
-
-
-
+import TestDetailsTableRow from "./TestDetailsTableRow";
 
 const TestDetailsTable = (props) => {
-
   const [testMeasures, setTestMeasures] = useState(null);
   const [fetchedRows, setFetchedRows] = useState([]);
+  const [rows, setRows] = useState([]);
 
   useEffect(() => {
-    console.log('Attempting to fetch data...');
     fetch('/test-measures.json')
       .then((response) => response.json())
       .then((jsonData) => {
-        // Set the retrieved JSON data to state
         setTestMeasures(jsonData);
       })
       .catch((error) => {
@@ -39,93 +21,114 @@ const TestDetailsTable = (props) => {
       });
   }, []);
 
-  console.log('Sample value:', props.sample);
-
-   useEffect(() => {
+  useEffect(() => {
     if (props.testId) {
       axiosInstance(`/admin/tests/vacuum/testdetail/?test_no=${props.testId}`)
         .then((res) => {
-          const testDataDetails = res.data;
-          setFetchedRows(testDataDetails);
+          const fetchedRows = res.data || [];
+          setFetchedRows(fetchedRows);
         })
         .catch((error) => {
           console.error('Error fetching detailed data: ', error);
-          // Handle error appropriately
         });
     }
   }, [props.testId]);
 
   useEffect(() => {
-    console.log('Fetched rows updated:', fetchedRows);
+    if (fetchedRows.length > 0) {
+      const combinedRows = fetchedRows.reduce((acc, row) => {
+        const { slug, test_measure, value, units, ...otherValues } = row;
+
+        if (!acc[slug]) {
+          acc[slug] = {
+            ...otherValues,
+            slug,
+            test_measure: test_measure ? [test_measure] : [],
+            values: {},
+            units: units ? [units] : [],
+          };
+        }
+
+        if (test_measure) {
+          if (!acc[slug].values[test_measure]) {
+            acc[slug].values[test_measure] = { value: value || '', units: units || '' };
+          }
+        }
+
+        return acc;
+      }, {});
+
+      const updatedRows = Object.keys(combinedRows).reduce((acc, slug) => {
+        const { test_target, test_group } = combinedRows[slug];
+        if (!acc[test_target]) {
+          acc[test_target] = {};
+        }
+        if (!acc[test_target][test_group]) {
+          acc[test_target][test_group] = [];
+        }
+        acc[test_target][test_group].push(combinedRows[slug]);
+        return acc;
+      }, {});
+
+      setRows(updatedRows);
+    }
   }, [fetchedRows]);
 
+   return (
+    <React.Fragment>
+      {testMeasures &&
+        Object.keys(testMeasures).map((target) => {
+          const measures = testMeasures[target];
+          return (
+            <div key={target}>
+              <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+                <Box sx={{ margin: 1 }}>
+                  <Typography variant="h6" gutterBottom component="div">
+                    {target}
+                  </Typography>
 
-    return (
-      <React.Fragment>
-        <TableRow>
-          <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-            {/*<Collapse in={open} timeout="auto" unmountOnExit>*/}
-              <Box sx={{ margin: 1 }}>
-              {testMeasures &&
-                Object.keys(testMeasures).map((target) => {
-                  const measures = testMeasures[target];
-                  return (
-                      <div key={target}>
-                        <Typography variant="h6" gutterBottom component="div">
-                          {target}
-                        </Typography>
-                        {Array.isArray(measures) ? (
-                          measures.map((measure, index) => (
-                            <div key={index}>
-                              <Typography variant="body1">{Object.keys(measure)}</Typography>
-                              {/* Include TestDetailsTableRow here */}
-                              <TestDetailsTableRow
-                                testTarget={target}
-                                testGroup={Object.keys(measure)[0]} // Assuming only one key within the object
-                                testMeasures={measure}
-                                // editRow={handleEditRow}
-                                testId={props.testId}
-                                sample={props.sample}
-                                brushType={props.brushType}
-                                // tester={props.tester}
-                                testCase={props.testCase}
-                              />
+                  {Array.isArray(measures) ? (
+                    measures.map((measure, index) => {
+                      const measureName = Object.keys(measure)[0];
+                      const testTargetGroups = rows[target];
+                      if (testTargetGroups) {
+                        const groups = testTargetGroups[measureName];
+                        if (groups) {
+                          return groups.map((group) => (
+                            <div key={group.slug}>
+                              {/*<TestDetailsTableRow*/}
+                              {/*  testTarget={group.test_target}*/}
+                              {/*  testGroup={group.test_group}*/}
+                              {/*  testMeasures={measure}*/}
+                              {/*  testId={props.testId}*/}
+                              {/*  sample={props.sample}*/}
+                              {/*  brushType={props.brushType}*/}
+                              {/*  testCase={props.testCase}*/}
+                              {/*/>*/}
+                              <Typography variant="body1">{group.slug}</Typography>
                             </div>
-                          ))
-                         ) : (
-                          <div key={Object.keys(measures)}>
-                            <Typography variant="body1">{Object.keys(measures)}</Typography>
-                            {/* Include TestDetailsTableRow here */}
-                            <TestDetailsTableRow
-                              testTarget={target}
-                              testGroup={Object.keys(measures)[0]} // Assuming only one key within the object
-                              testMeasures={measures}
-                              // editRow={handleEditRow}
-                              testId={props.testId}
-                              sample={props.sample}
-                              brushType={props.brushType}
-                              // tester={props.tester}
-                              testCase={props.testCase}
-                            />
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
+                          ));
+                        }
+                      }
+                    })
+                  ) : (
+                    // <div key={Object.keys(testMeasures[target])}>
+                    // <Typography variant="body1">{Object.keys(testMeasures[target])}</Typography>
+                    // </div>
 
-            </Box>
-            {/*</Collapse>*/}
-          </TableCell>
-        </TableRow>
-      </React.Fragment>
-      );
+                    <div key={Object.keys(measures)}>
+                      <Typography variant="body1">{Object.keys(measures)}</Typography>
+                      const testTargetGroups = rows[target];
+                    </div>
 
-
-
-}
+                )}
+              </Box>
+            </TableCell>
+          </div>
+        );
+      })}
+  </React.Fragment>
+  );
+};
 
 export default TestDetailsTable;
-
-
-
-
