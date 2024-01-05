@@ -82,7 +82,6 @@ const TestDetailsTable = (props) => {
     console.log('rows', rows);
   }, [rows]);
 
-
   return (
     <React.Fragment>
       {testMeasures &&

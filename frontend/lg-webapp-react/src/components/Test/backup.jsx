@@ -8,7 +8,7 @@ import TestDetailsTableRow from "./TestDetailsTableRow";
 const TestDetailsTable = (props) => {
   const [testMeasures, setTestMeasures] = useState(null);
   const [fetchedRows, setFetchedRows] = useState([]);
-  const [rows, setRows] = useState();
+  const [rows, setRows] = useState([]);
 
   useEffect(() => {
     fetch('/test-measures.json')
@@ -70,20 +70,11 @@ const TestDetailsTable = (props) => {
         return acc;
       }, {});
 
-      // console.log('updatedRows', updatedRows);
-
       setRows(updatedRows);
-
-
     }
   }, [fetchedRows]);
 
-  useEffect(() => {
-    console.log('rows', rows);
-  }, [rows]);
-
-
-  return (
+   return (
     <React.Fragment>
       {testMeasures &&
         Object.keys(testMeasures).map((target) => {
@@ -101,39 +92,22 @@ const TestDetailsTable = (props) => {
                       <div key={index}>
                         <Typography variant="body1">{Object.keys(measure)}</Typography>
 
-                        {/* Find and render rows for this target and measure */}
-                        {rows &&
-                          rows[target] &&
-                          rows[target][Object.keys(measure)[0]] &&
-                          rows[target][Object.keys(measure)[0]].map((row, idx) => (
-                            <TestDetailsTableRow
-                              key={idx}
-                              testId={row.test}
-                              testTarget={target}
-                              testGroup={Object.keys(measure)[0]}
-                              testMeasures={row.values}
-                              sample={row.sample}
-                              brushType={row.brush_type}
-                              tester={row.tester}
-                              testCase={row.test_case}
-                            />
-                          ))}
                       </div>
-                    ))
+                          ))
                   ) : (
+
                     <div key={Object.keys(measures)}>
                       <Typography variant="body1">{Object.keys(measures)}</Typography>
                     </div>
-                  )}
-                </Box>
-              </TableCell>
-            </div>
-          );
-        })}
-    </React.Fragment>
+
+                )}
+              </Box>
+            </TableCell>
+          </div>
+        );
+      })}
+  </React.Fragment>
   );
-
-
 };
 
 export default TestDetailsTable;

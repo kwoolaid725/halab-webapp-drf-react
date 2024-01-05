@@ -17,63 +17,98 @@ function TestDetailsTableRow(props){
   const [keys, setKeys] = useState([]);
   const [values, setValues] = useState({});
   const [allRows, setAllRows] = useState([]);
-  const [fetchedRows, setFetchedRows] = useState([]);
 
 
 
+  // useEffect(() => {
+  //   // Fetch rows from the database and update the 'allRows' state
+  //   axiosInstance.get('admin/tests/vacuum/testdetail/')
+  //     .then(response => {
+  //       setAllRows(response.data);
+  //     })
+  //     .catch(error => {
+  //       console.error('Error fetching rows', error);
+  //     });
+  //
+  // }, []); // Fetch only once on component mount
+
+
+
+  // useEffect(() => {
+  //   // console.log('Test Target:', props.testTarget);
+  //   // console.log('Test Group:', props.testGroup);
+  //   console.log('Test Measures:', props.testMeasures);
+  //   // console.log('props.sample:', props.sample);
+  //   let selectedMeasures = [];
+  //
+  //   if (props.testMeasures) {
+  //     if (Array.isArray(props.testMeasures)) {
+  //       selectedMeasures = props.testMeasures;
+  //     } else if (props.testMeasures) {
+  //       selectedMeasures = [props.testMeasures];
+  //     }
+  //   }
+  //   if (
+  //     selectedMeasures
+  //   ) {
+  //     const values = selectedMeasures[0];
+  //     const keys = Object.keys(values);
+  //
+  //     console.log('Values:', values);
+  //     console.log('Keys:', keys);
+  //
+  //
+  //     // Update the rows state with new keys and values for the selected measures
+  //     setRows((prevRows) =>
+  //       prevRows.map((row) => ({
+  //         ...row,
+  //         values: { ...values },
+  //         keys: [...keys]
+  //      }))
+  //   );
+  //
+  //     setValues(values);
+  //     setKeys(keys);
+  //
+  //   }
+  // }, [props.testTarget, props.testGroup, props.testMeasures]);
+
+
+  // Use useEffect to update rows, keys, and values when the component mounts
   useEffect(() => {
-    // Fetch rows from the database and update the 'allRows' state
-    axiosInstance.get('admin/tests/vacuum/testdetail/')
-      .then(response => {
-        setAllRows(response.data);
-      })
-      .catch(error => {
+    const fetchDataAndUpdateState = async () => {
+      try {
+        const response = await axiosInstance.get('admin/tests/vacuum/testdetail/');
+        const fetchedData = response.data;
+
+        // Assuming props.testMeasures has the required data structure
+        const selectedMeasures = Array.isArray(props.testMeasures)
+          ? props.testMeasures
+          : [props.testMeasures];
+
+        if (selectedMeasures.length > 0) {
+          const values = selectedMeasures[0];
+          const keys = Object.keys(values);
+
+          setValues(values);
+          setKeys(keys);
+
+          // Update the rows state with new keys and values for the selected measures
+          setRows(prevRows =>
+            prevRows.map(row => ({
+              ...row,
+              values: { ...values },
+              keys: [...keys],
+            }))
+          );
+        }
+      } catch (error) {
         console.error('Error fetching rows', error);
-      });
-
-  }, []); // Fetch only once on component mount
-
-
-
-  useEffect(() => {
-    console.log('Test Target:', props.testTarget);
-    console.log('Test Group:', props.testGroup);
-    console.log('Test Measures:', props.testMeasures);
-    console.log('props.sample:', props.sample);
-    let selectedMeasures = [];
-
-    if (props.testMeasures) {
-      if (Array.isArray(props.testMeasures[props.testGroup])) {
-        selectedMeasures = props.testMeasures[props.testGroup];
-      } else if (props.testMeasures[props.testGroup]) {
-        selectedMeasures = [props.testMeasures[props.testGroup]];
       }
-    }
-    if (
-      selectedMeasures
-    ) {
-      const values = selectedMeasures[0];
-      const keys = Object.keys(values);
+    };
 
-      console.log('Values:', values);
-      console.log('Keys:', keys);
-
-
-      // Update the rows state with new keys and values for the selected measures
-      setRows((prevRows) =>
-        prevRows.map((row) => ({
-          ...row,
-          values: { ...values },
-          keys: [...keys]
-       }))
-    );
-
-      setValues(values);
-      setKeys(keys);
-
-    }
+    fetchDataAndUpdateState();
   }, [props.testTarget, props.testGroup, props.testMeasures]);
-
 
 
   useEffect(() => {
@@ -93,7 +128,7 @@ function TestDetailsTableRow(props){
         units: {},
       };
       setRows([initialRowState]);
-      console.log('initialRowState', initialRowState);
+      // console.log('initialRowState', initialRowState);
 
   }, [props.testId, props.testTarget, props.testGroup, props.tester]);
 
@@ -113,37 +148,37 @@ function TestDetailsTableRow(props){
     values: {}, // Initialize as an empty object
     units: {}   // Initialize as an empty object
   });
-  //
-  // useEffect(() => {
-  //   if (rows.length > 0) {
-  //     const firstRow = rows[0]; // Access the first row
-  //     const rowKeys = Object.keys(firstRow.values);
-  //     const rowUnits = {};
-  //
-  //     rowKeys.forEach((key) => {
-  //       if (key !== 'soil_weight') {
-  //         rowUnits[key] = firstRow.values[key]?.units || '';
-  //       }
-  //     });
-  //
-  //     /// Create a copy of the first row with units for all values except soil_weight
-  //     const updatedNewRow = {
-  //       ...firstRow,
-  //       values: {
-  //         soil_weight: firstRow.values.soil_weight || { value: '', units: '' },
-  //         // Set other values as empty strings
-  //         ...(Object.fromEntries(
-  //           Object.keys(firstRow.values)
-  //             .filter(key => key !== 'soil_weight')
-  //             .map(key => [key, { value: '', units: rowUnits[key] || '' }])
-  //         )),
-  //       },
-  //       units: { ...rowUnits }, // Copy units
-  //     };
-  //
-  //     setNewRow(updatedNewRow); // Update the newRow state immediately
-  //   }
-  // }, [rows]);
+
+  useEffect(() => {
+    if (rows.length > 0) {
+      const firstRow = rows[0]; // Access the first row
+      const rowKeys = Object.keys(firstRow.values);
+      const rowUnits = {};
+
+      rowKeys.forEach((key) => {
+        if (key !== 'soil_weight') {
+          rowUnits[key] = firstRow.values[key]?.units || '';
+        }
+      });
+
+      /// Create a copy of the first row with units for all values except soil_weight
+      const updatedNewRow = {
+        ...firstRow,
+        values: {
+          soil_weight: firstRow.values.soil_weight || { value: '', units: '' },
+          // Set other values as empty strings
+          ...(Object.fromEntries(
+            Object.keys(firstRow.values)
+              .filter(key => key !== 'soil_weight')
+              .map(key => [key, { value: '', units: rowUnits[key] || '' }])
+          )),
+        },
+        units: { ...rowUnits }, // Copy units
+      };
+
+      setNewRow(updatedNewRow); // Update the newRow state immediately
+    }
+  }, [rows]);
 
 
   const handleAddRow = () => {
