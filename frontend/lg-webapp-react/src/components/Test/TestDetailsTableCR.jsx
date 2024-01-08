@@ -119,17 +119,6 @@ const TestDetailsTable = (props) => {
       </table>
 
 
-
-      <div>
-      <button onClick={() => handleButtonClick('Component1')}>Show Component 1</button>
-      <button onClick={() => handleButtonClick('Component2')}>Show Component 2</button>
-      <button onClick={() => handleButtonClick('Component3')}>Show Component 3</button>
-
-      {selectedComponent === 'Component1' && 2}
-      {selectedComponent === 'Component2' && 1}
-      {selectedComponent === 'Component3' && 3}
-    </div>
-
     </React.Fragment>
   );
 

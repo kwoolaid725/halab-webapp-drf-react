@@ -16,6 +16,7 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import TextField from '@mui/material/TextField';
 import {useParams} from "react-router-dom";
 import axiosInstance from "../../axios";
+import TestDetailsTableCR from "./TestDetailsTableCR";
 
 export default function TestDetails(props) {
   const [openFirst, setOpenFirst] = useState(true);
@@ -34,7 +35,7 @@ export default function TestDetails(props) {
       .then((res) => {
         const test = res.data.find((test) => test.id === parseInt(id));
         setData(test);
-        console.log(test);
+        console.log('test:',test);
       })
       .catch((error) => {
         console.error("Error fetching data: ", error);
@@ -48,11 +49,11 @@ export default function TestDetails(props) {
         .then((res) => {
           const testDataDetails = res.data;
           setDataDetails(testDataDetails);
-          console.log(testDataDetails);
+          console.log('testDataDetails:', testDataDetails);
         })
         .catch((error) => {
           console.error("Error fetching detailed data: ", error);
-          // handle error appropriately
+          // handle erroz r appropriately
         });
     }
   }, [data?.id]);
@@ -137,15 +138,40 @@ export default function TestDetails(props) {
             </TableContainer>
 
             {/* Collapse the TestDetailsTable content */}
-            <Collapse in={openFirst} timeout="auto" unmountOnExit>
-              <TestDetailsTable
-                testId={data?.id}
-                sample={sampleValue}
-                brushType={brushTypeValue}
-                tester={props.tester}
-                testCase={testCaseValue}
-              />
-            </Collapse>
+            {/*<Collapse in={openFirst} timeout="auto" unmountOnExit>*/}
+            {/*  <TestDetailsTable*/}
+            {/*    testId={data?.id}*/}
+            {/*    sample={sampleValue}*/}
+            {/*    brushType={brushTypeValue}*/}
+            {/*    tester={props.tester}*/}
+            {/*    testCase={testCaseValue}*/}
+            {/*  />*/}
+            {/*</Collapse>*/}
+
+            {/* Conditionally render TestDetailsTable or TestDetailsTableCR based on testCategory */}
+            {data?.test_category === 'CR' ? (
+              <Collapse in={openFirst} timeout="auto" unmountOnExit>
+                <TestDetailsTableCR
+                  testId={data?.id}
+                  sample={sampleValue}
+                  brushType={brushTypeValue}
+                  tester={props.tester}
+                  testCase={testCaseValue}
+                />
+              </Collapse>
+            ) : (
+              <Collapse in={openFirst} timeout="auto" unmountOnExit>
+                <TestDetailsTable
+                  testId={data?.id}
+                  sample={sampleValue}
+                  brushType={brushTypeValue}
+                  tester={props.tester}
+                  testCase={testCaseValue}
+                />
+              </Collapse>
+            )}
+
+
           </Box>
         </TableRow>
       </Box>
