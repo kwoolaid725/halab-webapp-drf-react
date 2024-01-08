@@ -82,6 +82,81 @@ const TestDetailsTable = (props) => {
     console.log('rows', rows);
   }, [rows]);
 
+  // const groupedRows = Object.keys(rows).map((testTarget) => {
+  //   return Object.keys(rows[testTarget]).map((testGroup) => {
+  //     return rows[testTarget][testGroup];
+  //   });
+  // });
+  //
+   return (
+    <React.Fragment>
+      {testMeasures &&
+        Object.keys(testMeasures).map((target) => {
+          const measures = testMeasures[target];
+          return (
+            <div key={target}>
+              <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+                <Box sx={{ margin: 1 }}>
+                  <Typography variant="h6" gutterBottom component="div">
+                    {target}
+                  </Typography>
+
+                  {Array.isArray(measures) ? (
+                    measures.map((measure, index) => (
+                      <div key={index}>
+                        <Typography variant="body1">{Object.keys(measure)}</Typography>
+
+                      {rows &&
+                        Object.keys(rows).map((testTarget) => {
+                          if (testTarget === target) {
+                            return Object.keys(rows[testTarget]).map((testGroup) => {
+                              if (testGroup === Object.keys(measure)[0]) {
+                                return rows[testTarget][testGroup].map((row, idx) => (
+                                  // <div key={idx}>
+                                  //   <Typography variant="body1">{row.slug}</Typography>
+                                  //   <Typography variant="body1">{row.test}</Typography>
+                                  //   <Typography variant="body1">{row.sample}</Typography>
+                                  //   <Typography variant="body1">{row.brush_type}</Typography>
+                                  //   <Typography variant="body1">{row.tester}</Typography>
+                                  //   <Typography variant="body1">{row.test_case}</Typography>
+                                  //
+                                  // </div>
+                                  <TestDetailsTableRow
+                                    key={idx}
+                                    testId={row.test}
+                                    testTarget={testTarget}
+                                    testGroup={testGroup}
+                                    testMeasures={row.values}
+                                    sample={row.sample}
+                                    brushType={row.brush_type}
+                                    tester={row.tester}
+                                    testCase={row.test_case}
+                                  />
+                                ));
+                              }
+                              return null;
+                             });
+                            }
+                            return null;
+                          })}
+                      </div>
+                    ))
+                  ) : (
+
+                    <div key={Object.keys(measures)}>
+                      <Typography variant="body1">{Object.keys(measures)}</Typography>
+                    </div>
+
+                )}
+              </Box>
+            </TableCell>
+          </div>
+        );
+      })}
+  </React.Fragment>
+  );
+
+
   return (
     <React.Fragment>
       {testMeasures &&

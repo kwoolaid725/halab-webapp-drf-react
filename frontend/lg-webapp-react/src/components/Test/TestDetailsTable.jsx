@@ -82,8 +82,13 @@ const TestDetailsTable = (props) => {
     console.log('rows', rows);
   }, [rows]);
 
-
-  return (
+  // const groupedRows = Object.keys(rows).map((testTarget) => {
+  //   return Object.keys(rows[testTarget]).map((testGroup) => {
+  //     return rows[testTarget][testGroup];
+  //   });
+  // });
+  //
+   return (
     <React.Fragment>
       {testMeasures &&
         Object.keys(testMeasures).map((target) => {
@@ -101,37 +106,47 @@ const TestDetailsTable = (props) => {
                       <div key={index}>
                         <Typography variant="body1">{Object.keys(measure)}</Typography>
 
-                        {/* Find and render rows for this target and measure */}
-                        {rows &&
-                          rows[target] &&
-                          rows[target][Object.keys(measure)[0]] &&
-                          rows[target][Object.keys(measure)[0]].map((row, idx) => (
-                            <TestDetailsTableRow
-                              key={idx}
-                              testId={row.test}
-                              testTarget={target}
-                              testGroup={Object.keys(measure)[0]}
-                              testMeasures={row.values}
-                              sample={row.sample}
-                              brushType={row.brush_type}
-                              tester={row.tester}
-                              testCase={row.test_case}
-                            />
-                          ))}
+                      {rows &&
+                        Object.keys(rows).map((testTarget) => {
+                          if (testTarget === target) {
+                            return Object.keys(rows[testTarget]).map((testGroup) => {
+                              if (testGroup === Object.keys(measure)[0]) {
+                                return rows[testTarget][testGroup].map((row, idx) => (
+                                  <TestDetailsTableRow
+                                    key={idx}
+                                    testId={row.test}
+                                    testTarget={testTarget}
+                                    testGroup={testGroup}
+                                    testMeasures={row.values}
+                                    sample={row.sample}
+                                    brushType={row.brush_type}
+                                    tester={row.tester}
+                                    testCase={row.test_case}
+                                  />
+                                ));
+                              }
+                              return null;
+                             });
+                            }
+                            return null;
+                          })}
                       </div>
                     ))
                   ) : (
+
                     <div key={Object.keys(measures)}>
                       <Typography variant="body1">{Object.keys(measures)}</Typography>
                     </div>
-                  )}
-                </Box>
-              </TableCell>
-            </div>
-          );
-        })}
-    </React.Fragment>
+
+                )}
+              </Box>
+            </TableCell>
+          </div>
+        );
+      })}
+  </React.Fragment>
   );
+
 
 
 };
