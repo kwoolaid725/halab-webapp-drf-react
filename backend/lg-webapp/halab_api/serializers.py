@@ -5,6 +5,7 @@ from django.conf import settings
 
 # is it like schema in fastapi?
 
+
 class UserRegisterSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(required=True)
     username = serializers.CharField(required=True)
