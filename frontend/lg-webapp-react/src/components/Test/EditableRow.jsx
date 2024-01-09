@@ -25,7 +25,6 @@ const EditableRow = ({
     });
   };
 
-
   return (
     <tr key={idx}>
       <td>{row.slug}</td>

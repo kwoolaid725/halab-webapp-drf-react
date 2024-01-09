@@ -4,6 +4,7 @@ import TableCell from '@mui/material/TableCell';
 import Typography from '@mui/material/Typography';
 import axiosInstance from "../../axios";
 import TestDetailsTableRow from "./TestDetailsTableRow";
+import TestDetailsTableRowBare from "./TestDetailsTableRowBare";
 
 const TestDetailsTable = (props) => {
   const [testMeasures, setTestMeasures] = useState(null);
