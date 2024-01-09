@@ -18,6 +18,7 @@ function TestDetailsTableRowBare(props){
   const [keys, setKeys] = useState([]);
   const [values, setValues] = useState({});
   const [allRows, setAllRows] = useState([]);
+  const [fetchedRows, setFetchedRows] = useState([]);
 
 
   useEffect(() => {
@@ -103,65 +104,68 @@ function TestDetailsTableRowBare(props){
   }, [testMeasures]);
 
 
-  // Function to fetch data based on the slug
   useEffect(() => {
-  const fetchDataByTestId = async (testId) => {
-    try {
-      const response = await axiosInstance(`/admin/tests/vacuum/testdetail/?test_no=${testId}`);
-      const fetchedData = response.data;
-
-      // Group the fetched data by the 'slug' attribute
-      const groupedData = fetchedData.reduce((acc, data) => {
-        if (!acc[data.slug]) {
-          acc[data.slug] = [];
-        }
-        acc[data.slug].push(data);
-        return acc;
-      }, {});
-
-      // Combine the grouped rows into a single array
-      const combinedRows = Object.values(groupedData).map(group => {
-        const combinedValues = {};
-
-        group.forEach(data => {
-          Object.entries(data.values).forEach(([testMeasure, value]) => {
-            // Merge values for different test measures into combinedValues
-            if (!combinedValues[testMeasure]) {
-              combinedValues[testMeasure] = [];
-            }
-            combinedValues[testMeasure].push(value);
-          });
+    if (props.testId) {
+      axiosInstance(`/admin/tests/vacuum/testdetail/?test_no=${props.testId}`)
+        .then((res) => {
+          const fetchedRows = res.data || [];
+          setFetchedRows(fetchedRows);
+        })
+        .catch((error) => {
+          console.error('Error fetching detailed data: ', error);
         });
-
-        console.log('combinedValues', combinedValues)
-        return {
-          id: '', // Assign an appropriate ID
-          slug: group[0].slug, // Considering slug from the grouped data
-          tester: props.tester, // Assuming tester from props
-          testTarget: 'Bare', // Adjust as needed
-          testGroup: '', // Adjust as needed
-          run: 1, // Adjust as needed
-          remarks: '', // Adjust as needed
-          created_at: '', // Adjust as needed
-          last_updated: '', // Adjust as needed
-          isEditing: false, // Assuming default isEditing as false
-          values: combinedValues, // Combine values for different test measures
-          units: group[0].units, // Using units from the first data in the group
-        };
-      });
-
-      // Update the rows state with combined rows
-      setRows(combinedRows);
-    } catch (error) {
-      console.error('Error fetching data by testId', error);
     }
-  };
+  }, [props.testId]);
 
-  // Call fetchDataByTestId function when the props.testId changes
-  if (props.testId) {
-    fetchDataByTestId(props.testId);
+  useEffect(() => {
+  if (fetchedRows.length > 0) {
+    const combinedRows = fetchedRows.reduce((acc, row) => {
+      const { slug, test_measure, value, units, ...otherValues } = row;
+
+      if (!acc[slug]) {
+        acc[slug] = {
+          ...otherValues,
+          slug,
+          test_measure: test_measure ? [test_measure] : [],
+          values: {},
+          units: units ? [units] : {},
+        };
+      }
+
+      if (test_measure) {
+        if (!acc[slug].values[test_measure]) {
+          acc[slug].values[test_measure] = { value: value || '', units: units || '' };
+        }
+      }
+
+      return acc;
+    }, {});
+
+    // Transform combinedRows to match the initialState structure
+    const transformedRows = Object.values(combinedRows).map(row => ({
+      id: '', // Assign an appropriate ID
+      slug: row.slug,
+      tester: row.tester, // Assuming 'tester' exists in fetchedRows
+      testTarget: row.testTarget, // Assuming 'testTarget' exists in fetchedRows
+      testGroup: row.testGroup, // Assuming 'testGroup' exists in fetchedRows
+      run: row.run, // Adjust as needed
+      remarks: row.remarks, // Adjust as needed
+      created_at: row.created_at, // Adjust as needed
+      last_updated: row.last_updated, // Adjust as needed
+      isEditing: false, // Assuming default isEditing as false
+      values: row.values || {}, // Setting the values from combinedRows
+      units: row.units || {}, // Setting the units from combinedRows
+    }));
+
+    console.log('transformedRows', transformedRows);
+
+    setRows(transformedRows);
   }
-}, [props.testId, props.tester]);
+}, [fetchedRows]);
+
+  useEffect(() => {
+    console.log('rows', rows);
+  }, [rows]);
 
 
 
