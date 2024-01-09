@@ -275,10 +275,38 @@ class TestDetailVacuumCreate(generics.ListCreateAPIView):
     queryset = TestDetailVacuum.objects.all()
     serializer_class = TestDetailVacuumSerializer
 
-class TestDetailVacuumEdit(generics.RetrieveUpdateAPIView):
-    queryset = TestDetailVacuum.objects.all()
+
+class TestDetailVacuumSlug(generics.ListCreateAPIView):
     serializer_class = TestDetailVacuumSerializer
 
+    def get_queryset(self):
+        queryset = TestDetailVacuum.objects.all()
+        test = self.kwargs.get('test')
+        slug = self.kwargs.get('slug')
+
+        if test is not None:
+            queryset = queryset.filter(test=test)
+        if slug is not None:
+            queryset = queryset.filter(slug=slug)
+
+        return queryset
+class TestDetailVacuumSlugEdit(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = TestDetailVacuumSerializer
+
+    def get_queryset(self):
+        queryset = TestDetailVacuum.objects.all()
+        test = self.kwargs.get('test')
+        slug = self.kwargs.get('slug')
+        pk = self.kwargs.get('pk')
+
+        if test is not None:
+            queryset = queryset.filter(test=test)
+        if slug is not None:
+            queryset = queryset.filter(slug=slug)
+        if pk is not None:
+            queryset = queryset.filter(id=pk)
+
+        return queryset
 
 
 """ Concrete View Classes

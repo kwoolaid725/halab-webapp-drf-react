@@ -2,14 +2,14 @@ import React from 'react';
 import { BsFillTrashFill, BsFillPencilFill } from 'react-icons/bs';
 import moment from 'moment';
 
-const StaticRow = ({ row, idx, testGroup, keys, handleEdit }) => {
+const StaticRow = ({ row, idx, keys, handleEdit, handleDelete }) => {
 
 
   return (
     <tr key={idx}>
       <td>{row.slug}</td>
       <td>{row.tester}</td>
-      <td>{testGroup}</td>
+      <td>{row.testGroup}</td>
         {keys.map((key, idx) => (
           <td key={idx}>
             {row.values[key]?.value} {row.values[key]?.units}
@@ -23,7 +23,7 @@ const StaticRow = ({ row, idx, testGroup, keys, handleEdit }) => {
       <td>
         <span>
           <BsFillPencilFill className="edit-btn" onClick={() => handleEdit(idx)} />
-          <BsFillTrashFill />
+          <BsFillTrashFill className="edit-btn" onClick={() => handleDelete(row.slug)} />
         </span>
       </td>
     </tr>

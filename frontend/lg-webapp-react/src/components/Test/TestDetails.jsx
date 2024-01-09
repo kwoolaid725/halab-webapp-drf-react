@@ -149,7 +149,7 @@ export default function TestDetails(props) {
             {/*</Collapse>*/}
 
             {/* Conditionally render TestDetailsTable or TestDetailsTableCR based on testCategory */}
-            {data?.test_category === 'CR' && data?.product_category.startsWith('Stick') ? (
+            {data?.test_category === 'CR' && data?.product_category.startsWith('Stick') || data?.product_category.startsWith('STICK') ? (
               <Collapse in={openFirst} timeout="auto" unmountOnExit>
                 <TestDetailsTableCR
                   testId={data?.id}

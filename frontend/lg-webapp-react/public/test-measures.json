@@ -3,23 +3,23 @@
     {
       "Sand": [
         {
-          "soil_weight": {
+          "Soil_Wt": {
             "value": "50",
             "units": "g"
           },
-          "vac_weight_i": {
+          "Pre-Wt.": {
             "value": "",
             "units": "g"
           },
-          "vac_weight_f": {
+          "Post-Wt.": {
             "value": "",
             "units": "g"
           },
-          "vac_weight_diff": {
+          "Wt.-Diff.": {
             "value": "",
             "units": "g"
           },
-          "pickup": {
+          "Pickup": {
             "value": "",
             "units": "%"
           }
@@ -29,23 +29,23 @@
     {
       "Rice": [
         {
-          "soil_weight": {
+          "Soil_Wt": {
             "value": "40",
             "units": "g"
           },
-          "vac_weight_i": {
+          "Pre-Wt.": {
             "value": "",
             "units": "g"
           },
-          "vac_weight_f": {
+          "Post-Wt.": {
             "value": "",
             "units": "g"
           },
-          "vac_weight_diff": {
+          "Wt.-Diff.": {
             "value": "",
             "units": "g"
           },
-          "pickup": {
+          "Pickup": {
             "value": "",
             "units": "%"
           }
@@ -55,23 +55,23 @@
     {
       "Cheerios": [
         {
-          "soil_weight": {
+          "Soil_Wt": {
             "value": "25",
             "units": "g"
           },
-          "vac_weight_i": {
+          "Pre-Wt.": {
             "value": "",
             "units": "g"
           },
-          "vac_weight_f": {
+          "Post-Wt.": {
             "value": "",
             "units": "g"
           },
-          "vac_weight_diff": {
+          "Wt.-Diff.": {
             "value": "",
             "units": "g"
           },
-          "pickup": {
+          "Pickup": {
             "value": "",
             "units": "%"
           }
@@ -83,23 +83,23 @@
       {
       "Sand":
         {
-          "soil_weight": {
+          "Soil_Wt": {
               "value": "100",
               "units": "g"
           },
-          "vac_weight_i": {
+          "Pre-Wt.": {
               "value": "",
               "units": "g"
           },
-          "vac_weight_f": {
+          "Post-Wt.": {
               "value": "",
               "units": "g"
           },
-          "vac_weight_diff": {
+          "Wt.-Diff.": {
               "value": "",
               "units": "g"
           },
-          "pickup": {
+          "Pickup": {
               "value": "",
               "units": "%"
           }
@@ -110,7 +110,7 @@
       {
       "Sand":
         {
-          "soil_weight": {
+          "Soil_Wt": {
               "value": "50",
               "units": "g"
           },
