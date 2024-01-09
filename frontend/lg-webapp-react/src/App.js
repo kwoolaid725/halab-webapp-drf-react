@@ -40,6 +40,7 @@ import Table from "./components/Admin/Test/CR/Table";
 import TestLists from "./components/Test/TestLists";
 
 import TestDetailsTableRow from './components/Test/TestDetailsTableRow'
+import TestDetailsTableRowBare from './components/Test/TestDetailsTableRowBare'
 import TestDetailsTable from './components/Test/TestDetailsTable'
 import TestDetails from './components/Test/TestDetails'
 
@@ -81,6 +82,7 @@ function Routes() {
 		{ path: '/admin/tests/test', element: <TestDetails /> },
 		{ path: '/admin/tests/testtable', element: <TestDetailsTable /> },
 		{ path: '/admin/tests/testrow', element: <TestDetailsTableRow /> },
+		{ path: '/admin/tests/testrowbare', element: <TestDetailsTableRowBare /> },
 
 
 		{ path: '/register', element: <Register /> },

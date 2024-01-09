@@ -104,6 +104,101 @@
               "units": "%"
           }
         }
+      },
+
+  "Edge":
+      {
+      "Sand":
+        {
+          "soil_weight": {
+              "value": "50",
+              "units": "g"
+          },
+          "F1": {
+              "value": "",
+              "units": "in"
+          },
+          "F2": {
+              "value": "",
+              "units": "in"
+          },
+          "F3": {
+              "value": "",
+              "units": "in"
+          },
+          "F4": {
+              "value": "",
+              "units": "in"
+          },
+          "F5": {
+              "value": "",
+              "units": "in"
+          },
+          "F6": {
+              "value": "",
+              "units": "in"
+          },
+          "F_AVG": {
+              "value": "",
+              "units": "in"
+          },
+          "L1": {
+              "value": "",
+              "units": "in"
+          },
+          "L2": {
+              "value": "",
+              "units": "in"
+          },
+          "L3": {
+              "value": "",
+              "units": "in"
+          },
+          "L_AVG": {
+              "value": "",
+              "units": "in"
+          },
+          "R1": {
+              "value": "",
+              "units": "in"
+          },
+          "R2": {
+              "value": "",
+              "units": "in"
+          },
+          "R3": {
+              "value": "",
+              "units": "in"
+          },
+          "R_AVG": {
+              "value": "",
+              "units": "in"
+          },
+          "L_Pre-Wt.": {
+              "value": "",
+              "units": "g"
+          },
+          "L_Post-Wt.": {
+              "value": "",
+              "units": "g"
+          },
+          "L_Pickup": {
+              "value": "",
+              "units": "%"
+          },
+          "R_Pre-Wt.": {
+              "value": "",
+              "units": "g"
+          },
+          "R_Post-Wt.": {
+              "value": "",
+              "units": "g"
+          },
+          "R_Pickup": {
+              "value": "",
+              "units": "%"
+          }
+        }
       }
 }
 

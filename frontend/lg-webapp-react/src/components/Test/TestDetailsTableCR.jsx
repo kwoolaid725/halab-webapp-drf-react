@@ -4,6 +4,7 @@ import TableCell from '@mui/material/TableCell';
 import Typography from '@mui/material/Typography';
 import axiosInstance from "../../axios";
 import TestDetailsTableRow from "./TestDetailsTableRow";
+import TestDetailsTableRowBare from "./TestDetailsTableRowBare";
 
 const TestDetailsTable = (props) => {
   const [testMeasures, setTestMeasures] = useState(null);
@@ -96,6 +97,17 @@ const TestDetailsTable = (props) => {
         <th>
           Bare
         </th>
+          <tbody>
+          <TestDetailsTableRowBare
+
+            testId={props.testID}
+            sample={props.sample}
+            brushType={props.brushType}
+            tester={props.tester}
+            testCase={props.testCase}
+
+              />
+          </tbody>
       </table>
       <table>
         <th>
@@ -117,6 +129,7 @@ const TestDetailsTable = (props) => {
           Noise
         </th>
       </table>
+
 
 
     </React.Fragment>
