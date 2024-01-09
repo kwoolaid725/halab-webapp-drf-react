@@ -19,6 +19,10 @@ function TestDetailsTableRowBare(props){
   const [values, setValues] = useState({});
   const [allRows, setAllRows] = useState([]);
   const [fetchedRows, setFetchedRows] = useState([]);
+  const testGroupOptions = testMeasures ? Object.keys(testMeasures).map(key => Object.keys(testMeasures[key])[0]) : [];
+  const [soilWtMap, setSoilWtMap] = useState({});
+
+
 
 
   useEffect(() => {
@@ -48,6 +52,24 @@ function TestDetailsTableRowBare(props){
       });
 
   }, []); // Fetch only once on component mount
+
+  useEffect(() => {
+    // Your logic to fetch and generate soilWtMap from the provided TestMeasures data
+    if (testMeasures) {
+      const soilWtMapData = {}; // Object to store Soil_Wt values for different keys
+
+      testMeasures.forEach((measure) => {
+        const key = Object.keys(measure)[0]; // Extracting the key, e.g., 'Sand', 'Rice', etc.
+        const values = measure[key][0]; // Assuming there's only one set of values for each key
+
+        if (values.Soil_Wt && values.Soil_Wt.value) {
+          soilWtMapData[key] = parseFloat(values.Soil_Wt.value); // Storing Soil_Wt value as a number
+        }
+      });
+
+      setSoilWtMap(soilWtMapData); // Set the soilWtMap state
+    }
+  }, [testMeasures]);
 
 
   useEffect(() => {
@@ -143,15 +165,16 @@ function TestDetailsTableRowBare(props){
 
     // Transform combinedRows to match the initialState structure
     const transformedRows = Object.values(combinedRows).map(row => ({
+
       id: '', // Assign an appropriate ID
       slug: row.slug,
       tester: row.tester, // Assuming 'tester' exists in fetchedRows
-      testTarget: row.testTarget, // Assuming 'testTarget' exists in fetchedRows
-      testGroup: row.testGroup, // Assuming 'testGroup' exists in fetchedRows
+      testTarget: row.test_target, // Assuming 'testTarget' exists in fetchedRows
+      testGroup: row.test_group, // Assuming 'testGroup' exists in fetchedRows
       run: row.run, // Adjust as needed
       remarks: row.remarks, // Adjust as needed
-      created_at: row.created_at, // Adjust as needed
-      last_updated: row.last_updated, // Adjust as needed
+      created_at: row.created_at.split('.')[0], // Adjust as needed
+      last_updated: row.last_updated.split('.')[0], // Adjust as needed
       isEditing: false, // Assuming default isEditing as false
       values: row.values || {}, // Setting the values from combinedRows
       units: row.units || {}, // Setting the units from combinedRows
@@ -166,8 +189,6 @@ function TestDetailsTableRowBare(props){
   useEffect(() => {
     console.log('rows', rows);
   }, [rows]);
-
-
 
 
   const [newRow, setNewRow] = useState({
@@ -187,25 +208,26 @@ function TestDetailsTableRowBare(props){
 
   useEffect(() => {
     if (rows.length > 0) {
-      const firstRow = rows[0]; // Access the first row
-      const rowKeys = Object.keys(firstRow.values);
+      // const firstRow = rows[0]; // Access the first row
+      const previousRow = rows[rows.length - 1];
+      const rowKeys = Object.keys(previousRow.values);
       const rowUnits = {};
 
       rowKeys.forEach((key) => {
-        if (key !== 'soil_weight') {
-          rowUnits[key] = firstRow.values[key]?.units || '';
+        if (key !== 'Soil_Wt') {
+          rowUnits[key] = previousRow.values[key]?.units || '';
         }
       });
 
       /// Create a copy of the first row with units for all values except soil_weight
       const updatedNewRow = {
-        ...firstRow,
+        ...previousRow,
         values: {
-          soil_weight: firstRow.values.soil_weight || { value: '', units: '' },
+          Soil_Wt: previousRow.values.Soil_Wt || { value: '', units: '' },
           // Set other values as empty strings
           ...(Object.fromEntries(
-            Object.keys(firstRow.values)
-              .filter(key => key !== 'soil_weight')
+            Object.keys(previousRow.values)
+              .filter(key => key !== 'Soil_Wt')
               .map(key => [key, { value: '', units: rowUnits[key] || '' }])
           )),
         },
@@ -218,27 +240,29 @@ function TestDetailsTableRowBare(props){
 
 
   const handleAddRow = () => {
-    const newRowIndex = rows.length + 1; // Determine the index for the new row
-    const newSlug = `${props.testId}-Bare-${newRowIndex}`; // Create a new slug for the row
+    const maxIndex = rows.length > 0 ? Math.max(...rows.map(row => parseInt(row.slug.split('-').pop()))) + 1 : 1; // Get the maximum index of existing rows and increment by 1
+    const newSlug = `${props.testId}-Bare-${maxIndex}`; // Create a new slug for the row
 
     const previousRow = rows[rows.length - 1]; // Get the previous row
-    const previousUnits = previousRow ? previousRow.units : {}; // Extract previous units
+    const previousRun = previousRow ? previousRow.run : 0; // Get the previous row's run
 
     const updatedNewRow = {
-      ...newRow,
-      slug: newSlug,
-      run: newRowIndex,
-      units: { ...previousUnits }, // Set the new row's units based on the previous row
-      keys: Object.keys(values)
+        ...newRow,
+        remarks: '',
+        slug: newSlug,
+        run: previousRun + 1, // Set the new row's run as the maximum index + 1
+        units: { ...(rows[maxIndex - 1]?.units || {}) }, // Set the new row's units based on the previous row or an empty object
+        keys: Object.keys(values)
     };
 
-    setNewRow(updatedNewRow); // Update the newRow state
-    setRows([...rows, updatedNewRow]); // Update rows state
+      setNewRow(updatedNewRow); // Update the newRow state
+      setRows([...rows, updatedNewRow]); // Update rows state
 
-    // Other state updates or triggers for related effects
+      // Other state updates or triggers for related effects
 
-    console.log('Rows:', rows);
+      console.log('Rows:', rows);
   };
+
 
   const handleEdit = (slug) => {
     const updatedRows = [...rows];
@@ -250,6 +274,31 @@ function TestDetailsTableRowBare(props){
     // editRow(testTarget, testGroup);
   };
 
+  const handleDelete = (slug) => {
+  // Make an API call to get all rows with the specified slug
+    axiosInstance.get(`/admin/tests/vacuum/testdetail/${props.testId}/${slug}/`)
+      .then((response) => {
+        const rowsToDelete = response.data; // Get the rows with the specified slug
+        // Iterate through the rows to delete each one
+        console.log('rowsToDelete', rowsToDelete)
+        rowsToDelete.forEach((row) => {
+          axiosInstance.delete(`/admin/tests/vacuum/testdetail/${props.testId}/${slug}/${row.id}/`)
+            .then((deleteResponse) => {
+              // Handle successful deletion of each row
+              // Remove the deleted row from the local state if necessary
+              setRows((prevRows) => prevRows.filter((row) => row.slug !== slug));
+            })
+            .catch((deleteError) => {
+              // Handle error while deleting the row
+            });
+        });
+      })
+      .catch((error) => {
+        // Handle error while fetching rows with the specified slug
+      });
+  };
+
+
 
   const toggleEditing = (slug) => {
     const updatedRows = [...rows];
@@ -257,27 +306,7 @@ function TestDetailsTableRowBare(props){
     setRows(updatedRows);
   };
 
-  // Function to handle input changes for each cell in a row
-   const handleInputChange = (rows, setRows, slug, key, value) => {
-    const updatedRows = rows.map((row) => {
-      if (row.slug === slug) {
-        const updatedValues = { ...row.values };
-        updatedValues[key] = {
-          ...(updatedValues[key] || {}),
-          value: value,
-        };
 
-        return {
-          ...row,
-          values: updatedValues,
-        };
-      }
-      return row;
-    });
-
-    setRows([...updatedRows]); // Ensure you always set it as an array
-
-  };
 
   const submitRow = (idx) => {
     console.log('row', rows[idx])
@@ -364,7 +393,7 @@ function TestDetailsTableRowBare(props){
           formData.append('tester', 1);
           formData.append('owner', 1);
           formData.append('test_target', editedRow.testTarget);
-          formData.append('test_group', 'Sand');
+          formData.append('test_group', editedRow.testGroup);
           formData.append('test_case', props.testCase);
           formData.append('slug', editedRow.slug);
           formData.append('run', editedRow.run);
@@ -447,22 +476,33 @@ function TestDetailsTableRowBare(props){
                 key={idx}
                 row={row}
                 idx={idx}
-                testGroup='Sand'
+                // testGroup='Sand'
                 testId={props.testId}
                 keys={keys}
-                handleInputChange={(slug, key, value) => handleInputChange(rows, setRows, slug, key, value)}
+                // handleInputChange={(slug, key, value) => handleInputChange(rows, setRows, slug, key, value)}
                 submitRow={submitRow}
                 setRows={setRows}
                 rows={rows}
+                testGroupOptions={testGroupOptions}
+                soilWtMap={soilWtMap}
+                onCancelEdit={(cancelIdx) => {
+                  setRows((prevRows) =>
+                    prevRows.map((r, index) =>
+                      index === cancelIdx ? { ...r, isEditing: false } : r
+                    )
+                  );
+                }}
               />
               ) : (
                 <StaticRow
                   key={idx}
                   row={row}
                   idx={idx}
-                  testGroup='Sand'
+                  // testGroup='Sand'
                   keys={keys}
                   handleEdit={handleEdit}
+                  handleDelete={handleDelete}
+                  testGroupOptions={testGroupOptions}
                 />
               )
             ))}
