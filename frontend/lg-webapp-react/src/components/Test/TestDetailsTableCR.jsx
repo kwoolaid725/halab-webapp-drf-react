@@ -100,7 +100,7 @@ const TestDetailsTable = (props) => {
           <tbody>
           <TestDetailsTableRowBare
 
-            testId={props.testID}
+            testId={props.testId}
             sample={props.sample}
             brushType={props.brushType}
             tester={props.tester}

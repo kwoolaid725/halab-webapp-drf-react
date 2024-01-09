@@ -11,7 +11,7 @@ import EditableRow  from './EditableRow'
 import StaticRow  from './StaticRow'
 
 
-function TestDetailsTableRow(props){
+function TestDetailsTableRowBare(props){
 
   const [testMeasures, setTestMeasures] = useState(null);
   const [rows, setRows] = useState([]);
@@ -49,44 +49,6 @@ function TestDetailsTableRow(props){
   }, []); // Fetch only once on component mount
 
 
-
-  // Use useEffect to update rows, keys, and values when the component mounts
-  // useEffect(() => {
-  //   const fetchDataAndUpdateState = async () => {
-  //     try {
-  //       const response = await axiosInstance.get('admin/tests/vacuum/testdetail/');
-  //       const fetchedData = response.data;
-  //
-  //       // Assuming props.testMeasures has the required data structure
-  //       const selectedMeasures = Array.isArray(props.testMeasures)
-  //         ? props.testMeasures
-  //         : [props.testMeasures];
-  //
-  //       if (selectedMeasures.length > 0) {
-  //         const values = selectedMeasures[0];
-  //         const keys = Object.keys(values);
-  //
-  //         setValues(values);
-  //         setKeys(keys);
-  //
-  //         // Update the rows state with new keys and values for the selected measures
-  //         setRows(prevRows =>
-  //           prevRows.map(row => ({
-  //             ...row,
-  //             values: { ...values },
-  //             keys: [...keys],
-  //           }))
-  //         );
-  //       }
-  //     } catch (error) {
-  //       console.error('Error fetching rows', error);
-  //     }
-  //   };
-  //
-  //   fetchDataAndUpdateState();
-  // }, [props.testTarget, props.testGroup, props.testMeasures]);
-
-
   useEffect(() => {
       // Set 'initialRowState' as the default 'rows' state
       const initialRowState = {
@@ -110,48 +72,96 @@ function TestDetailsTableRow(props){
 
 
   useEffect(() => {
-
     console.log('Test Measures:', testMeasures);
-    let selectedMeasures = [];
 
     if (testMeasures) {
-      if (Array.isArray(testMeasures)) {
-        selectedMeasures = testMeasures;
-      } else if (testMeasures) {
-        selectedMeasures = [testMeasures];
-      }
-    }
-    if (selectedMeasures) {
-    // Get the first object from selectedMeasures
-        const firstMeasure = selectedMeasures[0];
+      let selectedMeasures = Array.isArray(testMeasures) ? testMeasures : [testMeasures];
 
-        // Get the key of the first property in firstMeasure
-        const firstKey = Object.keys(firstMeasure)[0];
+      // Find the object that contains "Sand"
+      const sandMeasure = selectedMeasures.find(measure => Object.keys(measure)[0] === "Sand");
 
-        // Get the value of the first property in firstMeasure
-        const values = firstMeasure[firstKey][0]; // Access the first element of the array
-
-        console.log('Values:', values);
-
-        // Get the keys from the values object
+      if (sandMeasure) {
+        const values = sandMeasure["Sand"][0]; // Accessing the values for "Sand"
         const keys = Object.keys(values);
 
-        console.log('Keys:', keys);
+        console.log('Sand Values:', values);
+        console.log('Sand Keys:', keys);
 
-        // Update the rows state with new keys and values for the selected measures
-        setRows((prevRows) =>
-          prevRows.map((row) => ({
+        // Update the rows state with "Sand" values and keys
+        setRows(prevRows =>
+          prevRows.map(row => ({
             ...row,
             values: { ...values },
-            keys: keys // Spread the keys array, not the firstKey string
+            keys: keys
           }))
         );
 
         setValues(values);
         setKeys(keys);
       }
-    }, [testMeasures]);
+    }
+  }, [testMeasures]);
 
+
+  // Function to fetch data based on the slug
+  useEffect(() => {
+  const fetchDataByTestId = async (testId) => {
+    try {
+      const response = await axiosInstance(`/admin/tests/vacuum/testdetail/?test_no=${testId}`);
+      const fetchedData = response.data;
+
+      // Group the fetched data by the 'slug' attribute
+      const groupedData = fetchedData.reduce((acc, data) => {
+        if (!acc[data.slug]) {
+          acc[data.slug] = [];
+        }
+        acc[data.slug].push(data);
+        return acc;
+      }, {});
+
+      // Combine the grouped rows into a single array
+      const combinedRows = Object.values(groupedData).map(group => {
+        const combinedValues = {};
+
+        group.forEach(data => {
+          Object.entries(data.values).forEach(([testMeasure, value]) => {
+            // Merge values for different test measures into combinedValues
+            if (!combinedValues[testMeasure]) {
+              combinedValues[testMeasure] = [];
+            }
+            combinedValues[testMeasure].push(value);
+          });
+        });
+
+        console.log('combinedValues', combinedValues)
+        return {
+          id: '', // Assign an appropriate ID
+          slug: group[0].slug, // Considering slug from the grouped data
+          tester: props.tester, // Assuming tester from props
+          testTarget: 'Bare', // Adjust as needed
+          testGroup: '', // Adjust as needed
+          run: 1, // Adjust as needed
+          remarks: '', // Adjust as needed
+          created_at: '', // Adjust as needed
+          last_updated: '', // Adjust as needed
+          isEditing: false, // Assuming default isEditing as false
+          values: combinedValues, // Combine values for different test measures
+          units: group[0].units, // Using units from the first data in the group
+        };
+      });
+
+      // Update the rows state with combined rows
+      setRows(combinedRows);
+    } catch (error) {
+      console.error('Error fetching data by testId', error);
+    }
+  };
+
+  // Call fetchDataByTestId function when the props.testId changes
+  if (props.testId) {
+    fetchDataByTestId(props.testId);
+  }
+}, [props.testId, props.tester]);
 
 
 
@@ -205,7 +215,7 @@ function TestDetailsTableRow(props){
 
   const handleAddRow = () => {
     const newRowIndex = rows.length + 1; // Determine the index for the new row
-    const newSlug = `${props.testId}-${props.testTarget}-${props.testGroup}-${newRowIndex}`; // Create a new slug for the row
+    const newSlug = `${props.testId}-Bare-${newRowIndex}`; // Create a new slug for the row
 
     const previousRow = rows[rows.length - 1]; // Get the previous row
     const previousUnits = previousRow ? previousRow.units : {}; // Extract previous units
@@ -266,6 +276,7 @@ function TestDetailsTableRow(props){
   };
 
   const submitRow = (idx) => {
+    console.log('row', rows[idx])
     const editedRow = rows[idx];
 
     // Filter rows to find all rows with the same slug
@@ -327,10 +338,11 @@ function TestDetailsTableRow(props){
       }
     });
   });
-      }else {
+      } else {
         // New entry, perform a POST request
         const formDataArray = [];
 
+        console.log('editedRow', editedRow)
 
         editedRow.keys.forEach((key) => {
           const formData = new FormData();
@@ -348,13 +360,14 @@ function TestDetailsTableRow(props){
           formData.append('tester', 1);
           formData.append('owner', 1);
           formData.append('test_target', editedRow.testTarget);
-          formData.append('test_group', editedRow.testGroup);
+          formData.append('test_group', 'Sand');
           formData.append('test_case', props.testCase);
           formData.append('slug', editedRow.slug);
           formData.append('run', editedRow.run);
           formData.append('remarks', editedRow.remarks);
 
           formDataArray.push(formData);
+
 
         });
 
@@ -430,7 +443,7 @@ function TestDetailsTableRow(props){
                 key={idx}
                 row={row}
                 idx={idx}
-                testGroup={row.testGroup}
+                testGroup='Sand'
                 testId={props.testId}
                 keys={keys}
                 handleInputChange={(slug, key, value) => handleInputChange(rows, setRows, slug, key, value)}
@@ -443,7 +456,7 @@ function TestDetailsTableRow(props){
                   key={idx}
                   row={row}
                   idx={idx}
-                  testGroup={row.testGroup}
+                  testGroup='Sand'
                   keys={keys}
                   handleEdit={handleEdit}
                 />
@@ -463,5 +476,5 @@ function TestDetailsTableRow(props){
   );
 };
 
-export default TestDetailsTableRow;
+export default TestDetailsTableRowBare;
 
