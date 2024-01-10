@@ -76,7 +76,7 @@ function TestDetailsTableRowBare(props){
       // Set 'initialRowState' as the default 'rows' state
       const initialRowState = {
         id: '',
-        slug: `${props.testId}-Bare-1`,
+        slug: `${props.testId}-Bare-${props.sample}${props.brushType}${props.testCase}-1`,
         tester: props.tester,
         testTarget: 'Bare',
         testGroup: '',
@@ -241,7 +241,7 @@ function TestDetailsTableRowBare(props){
 
   const handleAddRow = () => {
     const maxIndex = rows.length > 0 ? Math.max(...rows.map(row => parseInt(row.slug.split('-').pop()))) + 1 : 1; // Get the maximum index of existing rows and increment by 1
-    const newSlug = `${props.testId}-Bare-${maxIndex}`; // Create a new slug for the row
+    const newSlug = `${props.testId}-Bare-${props.sample}${props.brushType}${props.testCase}-${maxIndex}`; // Create a new slug for the row
 
     const previousRow = rows[rows.length - 1]; // Get the previous row
     const previousRun = previousRow ? previousRow.run : 0; // Get the previous row's run

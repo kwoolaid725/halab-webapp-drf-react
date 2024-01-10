@@ -4,7 +4,7 @@ from .views import (ProductList, ProductDetail, CreateProduct, AdminProductDetai
                     CreatePost, AdminPostDetail, EditPost, DeletePost,
                     SampleList, CreateSample, AdminSampleDetail, EditSample, DeleteSample,
                     TestList, CreateTest, AdminTestDetail, EditTest, DeleteTest,
-                    TestDetailVacuumList, TestDetailVacuumCreate, TestDetailVacuumSlug, TestDetailVacuumSlugEdit
+                    TestDetailVacuumList, TestDetailVacuumCreate, TestDetailVacuumSample, TestDetailVacuumSlug, TestDetailVacuumSlugEdit
                     )
 from rest_framework.routers import DefaultRouter
 
@@ -58,8 +58,10 @@ urlpatterns = [
     path('admin/tests/delete/<int:pk>/', DeleteTest.as_view(), name='test_deletetest'),
 
     path('admin/tests/vacuum/testdetail/', TestDetailVacuumCreate.as_view(), name='test_createtestdetailvacuum'),
-    path('admin/tests/vacuum/testdetail/<int:test>/<slug:slug>/', TestDetailVacuumSlug.as_view(), name='test_listtestdetailvacuum'),
-    path('admin/tests/vacuum/testdetail/<int:test>/<slug:slug>/<int:pk>/', TestDetailVacuumSlugEdit.as_view(), name='test_edittestdetailvacuum'),
+    # path('admin/tests/vacuum/testdetail/<int:test>/<slug:slug>/', TestDetailVacuumSlug.as_view(), name='test_listtestdetailvacuum'),
+    path('admin/tests/vacuum/testdetail/<int:test>/', TestDetailVacuumSample.as_view(), name='test_listtestdetailvacuumsample'),
+
+    # path('admin/tests/vacuum/testdetail/<int:test>/<slug:slug>/<int:pk>/', TestDetailVacuumSlugEdit.as_view(), name='test_edittestdetailvacuum'),
 
 
 ]

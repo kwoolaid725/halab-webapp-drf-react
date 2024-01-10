@@ -268,12 +268,34 @@ class DeleteTest(generics.DestroyAPIView):
 class TestDetailVacuumList(generics.ListCreateAPIView):
     queryset = TestDetailVacuum.objects.all()
     serializer_class = TestDetailVacuumSerializer
-    pass
+
+
 
 class TestDetailVacuumCreate(generics.ListCreateAPIView):
     # permission_classes = [permissions.IsAuthenticated]
     queryset = TestDetailVacuum.objects.all()
     serializer_class = TestDetailVacuumSerializer
+
+
+class TestDetailVacuumSample(generics.ListCreateAPIView):
+    serializer_class = TestDetailVacuumSerializer
+
+    def get_queryset(self):
+        queryset = TestDetailVacuum.objects.all()
+        sample_inv_no = self.request.query_params.get('sample_inv_no')
+        brush_type = self.request.query_params.get('brush_type')
+        test_case = self.request.query_params.get('test_case')
+
+        if sample_inv_no:
+            queryset = queryset.filter(sample__inv_no=sample_inv_no)
+
+        if brush_type:
+            queryset = queryset.filter(brush_type=brush_type)
+
+        if test_case:
+            queryset = queryset.filter(test_case=test_case)
+
+        return queryset
 
 
 class TestDetailVacuumSlug(generics.ListCreateAPIView):

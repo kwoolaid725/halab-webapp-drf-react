@@ -17,6 +17,7 @@ import TextField from '@mui/material/TextField';
 import {useParams} from "react-router-dom";
 import axiosInstance from "../../axios";
 import TestDetailsTableCR from "./TestDetailsTableCR";
+import TestDetailsBody from "./TestDetailsBody";
 
 export default function TestDetails(props) {
   const [openFirst, setOpenFirst] = useState(true);
@@ -74,107 +75,9 @@ export default function TestDetails(props) {
       />
 
 
+      <TestDetailsBody/>
       {/* First collapsible section */}
-      <Box>
-        <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
-          <TableCell>
-            <IconButton
-              aria-label="expand row"
-              size="small"
-              onClick={() => setOpenFirst(!openFirst)}
-            >
-              {openFirst ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-            </IconButton>
-          </TableCell>
-          <Box>
-             {/*Input fields for sample, Inv. No., Brush Type, and Test Case */}
-            <TableContainer component={Paper}>
-              <Table aria-label="fixed table">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Test Sample</TableCell>
-                    <TableCell align="left">Inv. No.</TableCell>
-                    <TableCell align="left">Brush Type</TableCell>
-                    <TableCell align="left">Test Case</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  <TableRow>
-                    <TableCell>
-                      <TextField
-                        variant="outlined"
-                        size="small"
-                        value={sampleValue}
-                        onChange={(e) => setSampleValue(e.target.value)}
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <TextField
-                        variant="outlined"
-                        size="small"
-                        value={invNoValue}
-                        onChange={(e) => setInvNoValue(e.target.value)}
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <TextField
-                        variant="outlined"
-                        size="small"
-                        value={brushTypeValue}
-                        onChange={(e) => setBrushTypeValue(e.target.value)}
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <TextField
-                        variant="outlined"
-                        size="small"
-                        value={testCaseValue}
-                        onChange={(e) => setTestCaseValue(e.target.value)}
-                      />
-                    </TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-            </TableContainer>
-
-            {/* Collapse the TestDetailsTable content */}
-            {/*<Collapse in={openFirst} timeout="auto" unmountOnExit>*/}
-            {/*  <TestDetailsTable*/}
-            {/*    testId={data?.id}*/}
-            {/*    sample={sampleValue}*/}
-            {/*    brushType={brushTypeValue}*/}
-            {/*    tester={props.tester}*/}
-            {/*    testCase={testCaseValue}*/}
-            {/*  />*/}
-            {/*</Collapse>*/}
-
-            {/* Conditionally render TestDetailsTable or TestDetailsTableCR based on testCategory */}
-            {data?.test_category === 'CR' && data?.product_category.startsWith('Stick') || data?.product_category.startsWith('STICK') ? (
-              <Collapse in={openFirst} timeout="auto" unmountOnExit>
-                <TestDetailsTableCR
-                  testId={data?.id}
-                  sample={sampleValue}
-                  brushType={brushTypeValue}
-                  tester={props.tester}
-                  testCase={testCaseValue}
-                />
-              </Collapse>
-            ) : (
-              <Collapse in={openFirst} timeout="auto" unmountOnExit>
-                <TestDetailsTable
-                  testId={data?.id}
-                  sample={sampleValue}
-                  brushType={brushTypeValue}
-                  tester={props.tester}
-                  testCase={testCaseValue}
-                />
-              </Collapse>
-            )}
-
-
-          </Box>
-        </TableRow>
-      </Box>
+      <div>Add Sample</div>
     </React.Fragment>
   );
 }
