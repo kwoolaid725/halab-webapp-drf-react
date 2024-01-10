@@ -128,7 +128,7 @@ function TestDetailsTableRowBare(props){
 
   useEffect(() => {
     if (props.testId) {
-      axiosInstance(`/admin/tests/vacuum/testdetail/?test_no=${props.testId}`)
+      axiosInstance(`/admin/tests/vacuum/testdetail/${props.testId}/?sample=${props.sample}&brush_type=${props.brushType}&test_case=${props.testCase}`)
         .then((res) => {
           const fetchedRows = res.data || [];
           setFetchedRows(fetchedRows);
@@ -275,27 +275,31 @@ function TestDetailsTableRowBare(props){
   };
 
   const handleDelete = (slug) => {
-  // Make an API call to get all rows with the specified slug
-    axiosInstance.get(`/admin/tests/vacuum/testdetail/${props.testId}/${slug}/`)
-      .then((response) => {
-        const rowsToDelete = response.data; // Get the rows with the specified slug
-        // Iterate through the rows to delete each one
-        console.log('rowsToDelete', rowsToDelete)
-        rowsToDelete.forEach((row) => {
-          axiosInstance.delete(`/admin/tests/vacuum/testdetail/${props.testId}/${slug}/${row.id}/`)
-            .then((deleteResponse) => {
-              // Handle successful deletion of each row
-              // Remove the deleted row from the local state if necessary
-              setRows((prevRows) => prevRows.filter((row) => row.slug !== slug));
-            })
-            .catch((deleteError) => {
-              // Handle error while deleting the row
+
+    // Display a confirmation dialog
+    if (window.confirm('Are you sure you want to delete this item?')) {
+      // Make an API call to get all rows with the specified slug
+      axiosInstance.get(`/admin/tests/vacuum/testdetail/${props.testId}/${slug}/`)
+          .then((response) => {
+            const rowsToDelete = response.data; // Get the rows with the specified slug
+            // Iterate through the rows to delete each one
+            console.log('rowsToDelete', rowsToDelete)
+            rowsToDelete.forEach((row) => {
+              axiosInstance.delete(`/admin/tests/vacuum/testdetail/${props.testId}/${slug}/${row.id}/`)
+                  .then((deleteResponse) => {
+                    // Handle successful deletion of each row
+                    // Remove the deleted row from the local state if necessary
+                    setRows((prevRows) => prevRows.filter((row) => row.slug !== slug));
+                  })
+                  .catch((deleteError) => {
+                    // Handle error while deleting the row
+                  });
             });
-        });
-      })
-      .catch((error) => {
-        // Handle error while fetching rows with the specified slug
-      });
+          })
+          .catch((error) => {
+            // Handle error while fetching rows with the specified slug
+          });
+    }
   };
 
 
@@ -340,7 +344,7 @@ function TestDetailsTableRowBare(props){
           formData.append('run', editedRow.run);
           formData.append('remarks', editedRow.remarks);
 
-          const url = `admin/tests/vacuum/testdetail/${rowToUpdate.id}/`;
+          const url = `admin/tests/vacuum/testdetail/${rowToUpdate.test}/${rowToUpdate.slug}/${rowToUpdate.id}/`;
           const requestType = 'PUT'; // Use PUT for updating existing rows
           console.log('formData', formData);
 

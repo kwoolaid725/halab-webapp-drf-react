@@ -1,162 +1,150 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import Box from '@mui/material/Box';
+import Collapse from '@mui/material/Collapse';
+import Table from '@mui/material/Table';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
-import Typography from '@mui/material/Typography';
+import TableBody from '@mui/material/TableBody';
+import Paper from '@mui/material/Paper';
+import TestDetailsTable from './TestDetailsTable';
+import TestDetailsHeader from './TestDetailsHeader';
+import IconButton from '@mui/material/IconButton';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import TextField from '@mui/material/TextField';
+import {useParams} from "react-router-dom";
 import axiosInstance from "../../axios";
-import TestDetailsTableRow from "./TestDetailsTableRow";
+import TestDetailsTableCR from "./TestDetailsTableCR";
 
-const TestDetailsTable = (props) => {
-  const [testMeasures, setTestMeasures] = useState(null);
-  const [fetchedRows, setFetchedRows] = useState([]);
-  const [rows, setRows] = useState();
+export default function TestDetailsBody(props) {
+  const [openFirst, setOpenFirst] = useState(true);
+  const [sampleValue, setSampleValue] = useState('');
+  const [invNoValue, setInvNoValue] = useState('');
+  const [brushTypeValue, setBrushTypeValue] = useState('');
+  const [testCaseValue, setTestCaseValue] = useState('');
 
-  useEffect(() => {
-    fetch('/test-measures.json')
-      .then((response) => response.json())
-      .then((jsonData) => {
-        setTestMeasures(jsonData);
-      })
-      .catch((error) => {
-        console.error('Error fetching data', error);
-      });
-  }, []);
+  const {id} = useParams();
 
-  useEffect(() => {
-    if (props.testId) {
-      axiosInstance(`/admin/tests/vacuum/testdetail/?test_no=${props.testId}`)
-        .then((res) => {
-          const fetchedRows = res.data || [];
-          setFetchedRows(fetchedRows);
-        })
-        .catch((error) => {
-          console.error('Error fetching detailed data: ', error);
-        });
-    }
-  }, [props.testId]);
+  const [data, setData] = useState();
+  const [dataDetails, setDataDetails] = useState();
 
-  useEffect(() => {
-    if (fetchedRows.length > 0) {
-      const combinedRows = fetchedRows.reduce((acc, row) => {
-        const { slug, test_measure, value, units, ...otherValues } = row;
+  const { test, testDetails } = props;
 
-        if (!acc[slug]) {
-          acc[slug] = {
-            ...otherValues,
-            slug,
-            test_measure: test_measure ? [test_measure] : [],
-            values: {},
-            units: units ? [units] : [],
-          };
+
+  const [groupedDetails, setGroupedDetails] = useState({});
+
+   useEffect(() => {
+    if (Array.isArray(testDetails)) {
+      const grouped = testDetails.reduce((grouped, detail) => {
+        const key = `${detail.sample}${detail.brush_type}${detail.test_case}`;
+        if (!grouped[key]) {
+          grouped[key] = [];
         }
-
-        if (test_measure) {
-          if (!acc[slug].values[test_measure]) {
-            acc[slug].values[test_measure] = { value: value || '', units: units || '' };
-          }
-        }
-
-        return acc;
+        grouped[key].push(detail);
+        return grouped;
       }, {});
-
-      const updatedRows = Object.keys(combinedRows).reduce((acc, slug) => {
-        const { test_target, test_group } = combinedRows[slug];
-        if (!acc[test_target]) {
-          acc[test_target] = {};
-        }
-        if (!acc[test_target][test_group]) {
-          acc[test_target][test_group] = [];
-        }
-        acc[test_target][test_group].push(combinedRows[slug]);
-        return acc;
-      }, {});
-
-      // console.log('updatedRows', updatedRows);
-
-      setRows(updatedRows);
-
-
+      setGroupedDetails(grouped);
     }
-  }, [fetchedRows]);
+  }, [testDetails]);
 
   useEffect(() => {
-    console.log('rows', rows);
-  }, [rows]);
+    console.log('groupedDetails:', groupedDetails);
+  }, [groupedDetails]);
 
-  // const groupedRows = Object.keys(rows).map((testTarget) => {
-  //   return Object.keys(rows[testTarget]).map((testGroup) => {
-  //     return rows[testTarget][testGroup];
-  //   });
-  // });
-  //
-   return (
+
+  return (
     <React.Fragment>
-      {testMeasures &&
-        Object.keys(testMeasures).map((target) => {
-          const measures = testMeasures[target];
-          return (
-            <div key={target}>
-              <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-                <Box sx={{ margin: 1 }}>
-                  <Typography variant="h6" gutterBottom component="div">
-                    {target}
-                  </Typography>
+        <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
+          <TableCell>
+            <IconButton
+              aria-label="expand row"
+              size="small"
+              onClick={() => setOpenFirst(!openFirst)}
+            >
+              {openFirst ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+            </IconButton>
+          </TableCell>
+          <Box>
+             {/*Input fields for sample, Inv. No., Brush Type, and Test Case */}
+            <TableContainer component={Paper}>
+              <Table aria-label="fixed table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Test Sample</TableCell>
+                    <TableCell align="left">Inv. No.</TableCell>
+                    <TableCell align="left">Brush Type</TableCell>
+                    <TableCell align="left">Test Case</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  <TableRow>
+                    <TableCell>
+                      <TextField
+                        variant="outlined"
+                        size="small"
+                        value={sampleValue}
+                        onChange={(e) => setSampleValue(e.target.value)}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <TextField
+                        variant="outlined"
+                        size="small"
+                        value={invNoValue}
+                        onChange={(e) => setInvNoValue(e.target.value)}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <TextField
+                        variant="outlined"
+                        size="small"
+                        value={brushTypeValue}
+                        onChange={(e) => setBrushTypeValue(e.target.value)}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <TextField
+                        variant="outlined"
+                        size="small"
+                        value={testCaseValue}
+                        onChange={(e) => setTestCaseValue(e.target.value)}
+                      />
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </TableContainer>
 
-                  {Array.isArray(measures) ? (
-                    measures.map((measure, index) => (
-                      <div key={index}>
-                        <Typography variant="body1">{Object.keys(measure)}</Typography>
+            {/* Conditionally render TestDetailsTable or TestDetailsTableCR based on testCategory */}
+            {test?.test_category === 'CR' && test?.product_category.startsWith('Stick') || test?.product_category.startsWith('STICK') ? (
+              <Collapse in={openFirst} timeout="auto" unmountOnExit>
+                <TestDetailsTableCR
+                  testId={test?.id}
+                  sample={sampleValue}
+                  brushType={brushTypeValue}
+                  tester={props.tester}
+                  testCase={testCaseValue}
+                />
+              </Collapse>
+            ) : (
+              <Collapse in={openFirst} timeout="auto" unmountOnExit>
+                <TestDetailsTable
+                  testId={test?.id}
+                  sample={sampleValue}
+                  brushType={brushTypeValue}
+                  tester={props.tester}
+                  testCase={testCaseValue}
+                />
+              </Collapse>
+            )}
 
-                      {rows &&
-                        Object.keys(rows).map((testTarget) => {
-                          if (testTarget === target) {
-                            return Object.keys(rows[testTarget]).map((testGroup) => {
-                              if (testGroup === Object.keys(measure)[0]) {
-                                return rows[testTarget][testGroup].map((row, idx) => (
-                                  // <div key={idx}>
-                                  //   <Typography variant="body1">{row.slug}</Typography>
-                                  //   <Typography variant="body1">{row.test}</Typography>
-                                  //   <Typography variant="body1">{row.sample}</Typography>
-                                  //   <Typography variant="body1">{row.brush_type}</Typography>
-                                  //   <Typography variant="body1">{row.tester}</Typography>
-                                  //   <Typography variant="body1">{row.test_case}</Typography>
-                                  //
-                                  // </div>
-                                  <TestDetailsTableRow
-                                    key={idx}
-                                    testId={row.test}
-                                    testTarget={testTarget}
-                                    testGroup={testGroup}
-                                    testMeasures={row.values}
-                                    sample={row.sample}
-                                    brushType={row.brush_type}
-                                    tester={row.tester}
-                                    testCase={row.test_case}
-                                  />
-                                ));
-                              }
-                              return null;
-                             });
-                            }
-                            return null;
-                          })}
-                      </div>
-                    ))
-                  ) : (
 
-                    <div key={Object.keys(measures)}>
-                      <Typography variant="body1">{Object.keys(measures)}</Typography>
-                    </div>
-
-                )}
-              </Box>
-            </TableCell>
-          </div>
-        );
-      })}
-  </React.Fragment>
+          </Box>
+        </TableRow>
+      </Box>
+    </React.Fragment>
   );
+}
 
-
-};
-
-export default TestDetailsTable;

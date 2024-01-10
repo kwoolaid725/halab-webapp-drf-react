@@ -30,131 +30,114 @@ export default function TestDetailsBody(props) {
   const [data, setData] = useState();
   const [dataDetails, setDataDetails] = useState();
 
-  useEffect(() => {
-    axiosInstance(`/tests/`)
-      .then((res) => {
-        const test = res.data.find((test) => test.id === parseInt(id));
-        setData(test);
-        console.log('test:',test);
-      })
-      .catch((error) => {
-        console.error("Error fetching data: ", error);
-        // handle error appropriately
-      });
-  }, [id]);
-  //
-  useEffect(() => {
-    if (data?.id) {
-      axiosInstance(`/admin/tests/vacuum/testdetail/?test_no=${data.id}`)
-        .then((res) => {
-          const testDataDetails = res.data;
-          setDataDetails(testDataDetails);
-          console.log('testDataDetails:', testDataDetails);
-        })
-        .catch((error) => {
-          console.error("Error fetching detailed data: ", error);
-          // handle erroz r appropriately
-        });
+  const { test, testDetails } = props;
+  const [openDetails, setOpenDetails] = useState({});
+
+
+  const [groupedDetails, setGroupedDetails] = useState({});
+
+   useEffect(() => {
+    if (Array.isArray(testDetails)) {
+      const grouped = testDetails.reduce((grouped, detail) => {
+        const key = `${detail.sample}${detail.brush_type}${detail.test_case}`;
+        if (!grouped[key]) {
+          grouped[key] = [];
+        }
+        grouped[key].push(detail);
+        return grouped;
+      }, {});
+      setGroupedDetails(grouped);
     }
-  }, [data?.id]);
+  }, [testDetails]);
+
+  useEffect(() => {
+    console.log('groupedDetails:', groupedDetails);
+  }, [groupedDetails]);
 
 
-
+  const handleCollapseToggle = (key) => {
+    setOpenDetails({
+      ...openDetails,
+      [key]: !openDetails[key], // Toggle the state for the clicked group
+    });
+  };
 
   return (
+
     <React.Fragment>
-      {/* TestDetailsHeader outside of the collapsible section */}
 
-      {/* First collapsible section */}
-      <Box>
-        <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
-          <TableCell>
-            <IconButton
-              aria-label="expand row"
-              size="small"
-              onClick={() => setOpenFirst(!openFirst)}
-            >
-              {openFirst ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-            </IconButton>
-          </TableCell>
-          <Box>
-             {/*Input fields for sample, Inv. No., Brush Type, and Test Case */}
-            <TableContainer component={Paper}>
-              <Table aria-label="fixed table">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Test Sample</TableCell>
-                    <TableCell align="left">Inv. No.</TableCell>
-                    <TableCell align="left">Brush Type</TableCell>
-                    <TableCell align="left">Test Case</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  <TableRow>
-                    <TableCell>
-                      <TextField
-                        variant="outlined"
-                        size="small"
-                        value={sampleValue}
-                        onChange={(e) => setSampleValue(e.target.value)}
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <TextField
-                        variant="outlined"
-                        size="small"
-                        value={invNoValue}
-                        onChange={(e) => setInvNoValue(e.target.value)}
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <TextField
-                        variant="outlined"
-                        size="small"
-                        value={brushTypeValue}
-                        onChange={(e) => setBrushTypeValue(e.target.value)}
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <TextField
-                        variant="outlined"
-                        size="small"
-                        value={testCaseValue}
-                        onChange={(e) => setTestCaseValue(e.target.value)}
-                      />
-                    </TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-            </TableContainer>
+      {Object.keys(groupedDetails).map((key, index) => {
+        const details = groupedDetails[key];
+        const firstDetail = details[0];
+        return (
+          <div key={index}>
+            <Box>
+              <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
+                <TableCell>
+                  <IconButton
+                    aria-label="expand row"
+                    size="small"
+                    onClick={() => handleCollapseToggle(key)}
+                  >
+                    {openDetails[key] ? (
+                      <KeyboardArrowUpIcon />
+                    ) : (
+                      <KeyboardArrowDownIcon />
+                    )}
+                  </IconButton>
+                </TableCell>
+                <Box>
+                  <TableContainer component={Paper}>
+                    <Table aria-label="fixed table">
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>Test Sample</TableCell>
+                          <TableCell align="left">Inv. No.</TableCell>
+                          <TableCell align="left">Brush Type</TableCell>
+                          <TableCell align="left">Test Case</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
 
-            {/* Conditionally render TestDetailsTable or TestDetailsTableCR based on testCategory */}
-            {data?.test_category === 'CR' && data?.product_category.startsWith('Stick') || data?.product_category.startsWith('STICK') ? (
-              <Collapse in={openFirst} timeout="auto" unmountOnExit>
-                <TestDetailsTableCR
-                  testId={data?.id}
-                  sample={sampleValue}
-                  brushType={brushTypeValue}
-                  tester={props.tester}
-                  testCase={testCaseValue}
-                />
-              </Collapse>
-            ) : (
-              <Collapse in={openFirst} timeout="auto" unmountOnExit>
-                <TestDetailsTable
-                  testId={data?.id}
-                  sample={sampleValue}
-                  brushType={brushTypeValue}
-                  tester={props.tester}
-                  testCase={testCaseValue}
-                />
-              </Collapse>
-            )}
+                        <TableRow key={index}>
+                          <TableCell>{firstDetail.sample}</TableCell>
+                          <TableCell>{firstDetail.sample}</TableCell>
+                          <TableCell>{firstDetail.brush_type}</TableCell>
+                          <TableCell>{firstDetail.test_case}</TableCell>
+                        </TableRow>
 
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                </Box>
+              </TableRow>
 
-          </Box>
-        </TableRow>
-      </Box>
+              {/* Conditionally render TestDetailsTable or TestDetailsTableCR based on testCategory */}
+              {test?.test_category === 'CR' && (test?.product_category.startsWith('Stick') || test?.product_category.startsWith('STICK')) ? (
+                <Collapse in={openDetails[key]} timeout="auto" unmountOnExit>
+                  <TestDetailsTableCR
+                    testId={test?.id}
+                    sample={firstDetail.sample}
+                    brushType={firstDetail.brush_type}
+                    tester={props.tester}
+                    testCase={firstDetail.test_case}
+                  />
+                </Collapse>
+              ) : (
+                <Collapse in={openDetails[key]} timeout="auto" unmountOnExit>
+                  <TestDetailsTable
+                    testId={test?.id}
+                    sample={sampleValue}
+                    brushType={brushTypeValue}
+                    tester={props.tester}
+                    testCase={testCaseValue}
+                  />
+                </Collapse>
+              )}
+            </Box>
+          </div>
+        );
+      })}
     </React.Fragment>
   );
 }
