@@ -13,33 +13,41 @@ import StaticRow  from './StaticRow'
 
 function TestDetailsTableRowCarpet(props){
 
-  const [testMeasures, setTestMeasures] = useState(null);
+  const [testMeasuress, setTestMeasuress] = useState(null);
   const [rows, setRows] = useState([]);
   const [keys, setKeys] = useState([]);
   const [values, setValues] = useState({});
   const [allRows, setAllRows] = useState([]);
   const [fetchedRows, setFetchedRows] = useState([]);
-  const testGroupOptions = testMeasures ? Object.keys(testMeasures).map(key => Object.keys(testMeasures[key])[0]) : [];
+  // const testGroupOptions = testMeasures ? Object.keys(testMeasures).map(key => Object.keys(testMeasures[key])[0]) : [];
   const [soilWtMap, setSoilWtMap] = useState({});
 
 
 
 
   useEffect(() => {
-      const fetchData = async () => {
-        try {
-          const response = await fetch('/test-measures.json');
-          const jsonData = await response.json();
-          const carpetData = jsonData["Carpet"];
-          console.log('Carpet Data:', carpetData)
-          setTestMeasures(carpetData);
-        } catch (error) {
-          console.error('Error fetching data', error);
-        }
-      };
-      fetchData();
-    }, []);
+    const fetchData = async () => {
+      try {
+        const response = await fetch('/test-measures.json');
+        const jsonData = await response.json();
 
+        console.log('Fetched Data:', jsonData); // Log the fetched data
+
+        const carpetData = jsonData["Carpet"];
+        console.log('Carpet Data:', carpetData); // Log the specific "Carpet" data
+
+        setTestMeasuress(carpetData);
+      } catch (error) {
+        console.error('Error fetching data', error);
+      }
+    };
+
+    fetchData();
+  }, []); // Empty dependency array, ensuring the effect runs only once on mount
+
+  useEffect(() => {
+    console.log('testMeasures - CARPET', testMeasuress);
+  }, [testMeasuress]);
 
   useEffect(() => {
     // Fetch rows from the database and update the 'allRows' state
@@ -52,27 +60,41 @@ function TestDetailsTableRowCarpet(props){
       });
 
   }, []); // Fetch only once on component mount
+  //
+  // useEffect(() => {
+  //   // Your logic to fetch and generate soilWtMap from the provided TestMeasures data
+  //   if (testMeasures) {
+  //     const soilWtMapData = {};
+  //
+  //     const measure = testMeasures[0]; // Assuming there's only one testMeasure data
+  //     const key = Object.keys(measure)[0];
+  //     const valuesArray = measure[key]; // Assuming there's an array of values for each key
+  //
+  //
+  //     }
+  //
+  // }, [testMeasures]);
 
-  useEffect(() => {
-    const testMeasure = Array.isArray(testMeasures)
-          ? testMeasures
-          : [testMeasures];
-    // Your logic to fetch and generate soilWtMap from the provided TestMeasures data
-    if (testMeasure) {
-      const soilWtMapData = {}; // Object to store Soil_Wt values for different keys
-
-
-        const key = Object.keys(testMeasure)[0]; // Extracting the key, e.g., 'Sand', 'Rice', etc.
-        const values = testMeasure[key]; // Assuming there's only one set of values for each key
-
-        if (values.Soil_Wt && values.Soil_Wt.value) {
-          soilWtMapData[key] = parseFloat(values.Soil_Wt.value); // Storing Soil_Wt value as a number
-        }
-
-
-      setSoilWtMap(soilWtMapData); // Set the soilWtMap state
-    }
-  }, [testMeasures]);
+  // useEffect(() => {
+  //   console.log('Carpet Measures:', testMeasures?.Carpet);
+  //
+  //   if (testMeasures?.Carpet) {
+  //     const values = testMeasures.Carpet?.Soil_Wt || {}; // Assuming "Soil_Wt" is a key in the "Carpet" data
+  //     const keys = Object.keys(values);
+  //
+  //     console.log('Soil_Wt Values:', values);
+  //     console.log('Soil_Wt Keys:', keys);
+  //
+  //     // Update the rows state with "Soil_Wt" values and keys
+  //     setRows((prevRows) =>
+  //       prevRows.map((row) => ({
+  //         ...row,
+  //         values: { ...values },
+  //         keys: keys,
+  //       }))
+  //     );
+  //   }
+  // }, [testMeasures]);
 
 
   useEffect(() => {
@@ -97,36 +119,37 @@ function TestDetailsTableRowCarpet(props){
   }, [props.testId, props.testTarget, props.testGroup, props.tester]);
 
 
-  useEffect(() => {
-    console.log('Test Measures:', testMeasures);
-
-    if (testMeasures) {
-      let selectedMeasures = Array.isArray(testMeasures) ? testMeasures : [testMeasures];
-
-      // Find the object that contains "Sand"
-      const sandMeasure = selectedMeasures.find(measure => Object.keys(measure)[0] === "Sand");
-
-      if (sandMeasure) {
-        const values = sandMeasure["Sand"][0]; // Accessing the values for "Sand"
-        const keys = Object.keys(values);
-
-        console.log('Sand Values:', values);
-        console.log('Sand Keys:', keys);
-
-        // Update the rows state with "Sand" values and keys
-        setRows(prevRows =>
-          prevRows.map(row => ({
-            ...row,
-            values: { ...values },
-            keys: keys
-          }))
-        );
-
-        setValues(values);
-        setKeys(keys);
-      }
-    }
-  }, [testMeasures]);
+  // useEffect(() => {
+  //   // console.log('Test Measures Sand:', testMeasures);
+  //   console.log('Carpet Measures:', testMeasures[0]["Carpet"])
+  //
+  //   if (testMeasures) {
+  //     let selectedMeasures = Array.isArray(testMeasures) ? testMeasures : [testMeasures];
+  //
+  //     // Find the object that contains "Sand"
+  //     const sandMeasure = selectedMeasures.find(measure => Object.keys(measure)[0] === "Sand");
+  //
+  //     if (sandMeasure) {
+  //       const values = sandMeasure["Sand"][0]; // Accessing the values for "Sand"
+  //       const keys = Object.keys(values);
+  //
+  //       console.log('Sand Values:', values);
+  //       console.log('Sand Keys:', keys);
+  //
+  //       // Update the rows state with "Sand" values and keys
+  //       setRows(prevRows =>
+  //         prevRows.map(row => ({
+  //           ...row,
+  //           values: { ...values },
+  //           keys: keys
+  //         }))
+  //       );
+  //
+  //       setValues(values);
+  //       setKeys(keys);
+  //     }
+  //   }
+  // }, [testMeasures]);
 
 
   useEffect(() => {
@@ -490,7 +513,7 @@ function TestDetailsTableRowCarpet(props){
                 submitRow={submitRow}
                 setRows={setRows}
                 rows={rows}
-                testGroupOptions={testGroupOptions}
+                // testGroupOptions={testGroupOptions}
                 soilWtMap={soilWtMap}
                 onCancelEdit={(cancelIdx) => {
                   setRows((prevRows) =>
@@ -509,7 +532,7 @@ function TestDetailsTableRowCarpet(props){
                   keys={keys}
                   handleEdit={handleEdit}
                   handleDelete={handleDelete}
-                  testGroupOptions={testGroupOptions}
+                  // testGroupOptions={testGroupOptions}
                 />
               )
             ))}
