@@ -5,6 +5,7 @@ import Typography from '@mui/material/Typography';
 import axiosInstance from "../../axios";
 import TestDetailsTableRow from "./TestDetailsTableRow";
 import TestDetailsTableRowBare from "./TestDetailsTableRowBare";
+import TestDetailsTableRowCarpet from "./TestDetailsTableRowCarpet";
 
 const TestDetailsTable = (props) => {
   const [testMeasures, setTestMeasures] = useState(null);
@@ -113,6 +114,17 @@ const TestDetailsTable = (props) => {
         <th>
           Carpet
         </th>
+        <tbody>
+          <TestDetailsTableRowCarpet
+
+            testId={props.testId}
+            sample={props.sample}
+            brushType={props.brushType}
+            tester={props.tester}
+            testCase={props.testCase}
+
+              />
+          </tbody>
       </table>
       <table>
         <th>
