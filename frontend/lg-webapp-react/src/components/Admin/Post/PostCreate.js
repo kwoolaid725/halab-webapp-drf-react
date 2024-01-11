@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import axiosInstance from '../../../axios';
 import { useNavigate } from 'react-router-dom';
-//MaterialUI
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -67,21 +66,21 @@ export default function PostCreate() {
 	};
 
 	const handleSubmit = (e) => {
-					e.preventDefault();
-					let formData = new FormData();
-					formData.append('title', postData.title);
-					formData.append('slug', postData.slug);
-					formData.append('author', 1);
-					formData.append('excerpt', postData.excerpt);
-					formData.append('content', postData.content);
-					formData.append('image', postImage.image[0]);
-					axiosInstance.post(`admin/posts/create/`, formData,{
-									headers: {
-										'Content-Type': 'multipart/form-data'
-									}
-					});
-					navigate('/admin/');
-					window.location.reload();
+		e.preventDefault();
+		let formData = new FormData();
+		formData.append('title', postData.title);
+		formData.append('slug', postData.slug);
+		formData.append('author', 1);
+		formData.append('excerpt', postData.excerpt);
+		formData.append('content', postData.content);
+		formData.append('image', postImage.image[0]);
+		axiosInstance.post(`admin/posts/create/`, formData,{
+						headers: {
+							'Content-Type': 'multipart/form-data'
+						}
+		});
+		navigate('/admin/');
+		window.location.reload();
 	};
 
 	// const config = { headers: { 'Content-Type': 'multipart/form-data' } };

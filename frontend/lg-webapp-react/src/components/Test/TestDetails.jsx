@@ -18,6 +18,8 @@ import {useParams} from "react-router-dom";
 import axiosInstance from "../../axios";
 import TestDetailsTableCR from "./TestDetailsTableCR";
 import TestDetailsBody from "./TestDetailsBody";
+import Button from "@mui/material/Button";
+import TestDetailsAddModal from "./TestDetailsAddModal";
 
 export default function TestDetails(props) {
   const [openFirst, setOpenFirst] = useState(true);
@@ -25,6 +27,8 @@ export default function TestDetails(props) {
   const [invNoValue, setInvNoValue] = useState('');
   const [brushTypeValue, setBrushTypeValue] = useState('');
   const [testCaseValue, setTestCaseValue] = useState('');
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const {id} = useParams();
 
@@ -59,6 +63,9 @@ export default function TestDetails(props) {
     }
   }, [data?.id]);
 
+  const handleToggleModal = () => {
+    setIsModalOpen((prevIsModalOpen) => !prevIsModalOpen);
+  };
 
 
 
@@ -74,10 +81,22 @@ export default function TestDetails(props) {
         completionDate={data?.completion_date}
       />
 
+      <Button onClick={handleToggleModal}>
+        {isModalOpen ? 'Close' : 'Open Modal'}
+      </Button>
 
-      <TestDetailsBody/>
-      {/* First collapsible section */}
-      <div>Add Sample</div>
+       {isModalOpen && (
+        <div style={{ marginBottom: '20px' }}>
+          <TestDetailsAddModal
+            testId={data?.id}
+          />
+        </div>
+      )}
+      <TestDetailsBody
+          test={data}
+          testDetails={dataDetails}
+      />
+
     </React.Fragment>
   );
 }
