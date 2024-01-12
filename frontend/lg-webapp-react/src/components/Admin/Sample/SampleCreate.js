@@ -103,19 +103,19 @@ export default function SampleCreate() {
 	};
 
 	const handleSubmit = (e) => {
-					e.preventDefault();
-					let formData = new FormData();
-					formData.append('inv_no', sampleData.inv_no);
-					formData.append('product', sampleData.product);
-					formData.append('product_stage', sampleData.product_stage);
-					formData.append('serial_no', sampleData.serial_no);
-					formData.append('remarks', sampleData.remarks);
-					formData.append('owner', 1);
+			e.preventDefault();
+			let formData = new FormData();
+			formData.append('inv_no', sampleData.inv_no);
+			formData.append('product', sampleData.product);
+			formData.append('product_stage', sampleData.product_stage);
+			formData.append('serial_no', sampleData.serial_no);
+			formData.append('remarks', sampleData.remarks);
+			formData.append('owner', 1);
 
 
-					axiosInstance.post(`admin/samples/create/`, formData);
-					navigate('/admin/');
-					window.location.reload();
+			axiosInstance.post(`admin/samples/create/`, formData);
+			navigate('/admin/');
+			window.location.reload();
 	};
 
 

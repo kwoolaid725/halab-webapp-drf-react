@@ -6,6 +6,7 @@ import axiosInstance from "../../axios";
 import TestDetailsTableRow from "./TestDetailsTableRow";
 import TestDetailsTableRowBare from "./TestDetailsTableRowBare";
 import TestDetailsTableRowCarpet from "./TestDetailsTableRowCarpet";
+import TestDetailsTableRowEdge from "./TestDetailsTableRowEdge";
 
 const TestDetailsTable = (props) => {
   const [testMeasures, setTestMeasures] = useState(null);
@@ -130,6 +131,17 @@ const TestDetailsTable = (props) => {
         <th>
           Edge
         </th>
+        <tbody>
+          <TestDetailsTableRowEdge
+
+            testId={props.testId}
+            sample={props.sample}
+            brushType={props.brushType}
+            tester={props.tester}
+            testCase={props.testCase}
+
+              />
+          </tbody>
       </table>
       <table>
         <th>

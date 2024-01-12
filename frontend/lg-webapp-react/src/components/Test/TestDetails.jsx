@@ -89,6 +89,7 @@ export default function TestDetails(props) {
         <div style={{ marginBottom: '20px' }}>
           <TestDetailsAddModal
             testId={data?.id}
+            productCategory={data?.product_category}
           />
         </div>
       )}

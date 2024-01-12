@@ -13,13 +13,13 @@ import StaticRow  from './StaticRow'
 
 function TestDetailsTableRowCarpet(props){
 
-  const [testMeasuress, setTestMeasuress] = useState(null);
+  const [testMeasures, setTestMeasures] = useState(null);
   const [rows, setRows] = useState([]);
   const [keys, setKeys] = useState([]);
   const [values, setValues] = useState({});
   const [allRows, setAllRows] = useState([]);
   const [fetchedRows, setFetchedRows] = useState([]);
-  // const testGroupOptions = testMeasures ? Object.keys(testMeasures).map(key => Object.keys(testMeasures[key])[0]) : [];
+  const testGroupOptions = testMeasures ? Object.keys(testMeasures): [];
   const [soilWtMap, setSoilWtMap] = useState({});
 
 
@@ -36,7 +36,7 @@ function TestDetailsTableRowCarpet(props){
         const carpetData = jsonData["Carpet"];
         console.log('Carpet Data:', carpetData); // Log the specific "Carpet" data
 
-        setTestMeasuress(carpetData);
+        setTestMeasures(carpetData);
       } catch (error) {
         console.error('Error fetching data', error);
       }
@@ -46,12 +46,12 @@ function TestDetailsTableRowCarpet(props){
   }, []); // Empty dependency array, ensuring the effect runs only once on mount
 
   useEffect(() => {
-    console.log('testMeasures - CARPET', testMeasuress);
-  }, [testMeasuress]);
+    console.log('testMeasures - CARPET', testMeasures);
+  }, [testMeasures]);
 
   useEffect(() => {
     // Fetch rows from the database and update the 'allRows' state
-    axiosInstance.get('admin/tests/vacuum/testdetail/')
+    axiosInstance.get(`admin/tests/vacuum/testdetail/${props.testId}/?test_target=Carpet`)
       .then(response => {
         setAllRows(response.data);
       })
@@ -60,41 +60,39 @@ function TestDetailsTableRowCarpet(props){
       });
 
   }, []); // Fetch only once on component mount
-  //
-  // useEffect(() => {
-  //   // Your logic to fetch and generate soilWtMap from the provided TestMeasures data
-  //   if (testMeasures) {
-  //     const soilWtMapData = {};
-  //
-  //     const measure = testMeasures[0]; // Assuming there's only one testMeasure data
-  //     const key = Object.keys(measure)[0];
-  //     const valuesArray = measure[key]; // Assuming there's an array of values for each key
-  //
-  //
-  //     }
-  //
-  // }, [testMeasures]);
 
-  // useEffect(() => {
-  //   console.log('Carpet Measures:', testMeasures?.Carpet);
-  //
-  //   if (testMeasures?.Carpet) {
-  //     const values = testMeasures.Carpet?.Soil_Wt || {}; // Assuming "Soil_Wt" is a key in the "Carpet" data
-  //     const keys = Object.keys(values);
-  //
-  //     console.log('Soil_Wt Values:', values);
-  //     console.log('Soil_Wt Keys:', keys);
-  //
-  //     // Update the rows state with "Soil_Wt" values and keys
-  //     setRows((prevRows) =>
-  //       prevRows.map((row) => ({
-  //         ...row,
-  //         values: { ...values },
-  //         keys: keys,
-  //       }))
-  //     );
-  //   }
-  // }, [testMeasures]);
+//  useEffect(() => {
+//     // Your logic to fetch and generate soilWtMap from the provided TestMeasures data
+//     if (testMeasures && testMeasures.length > 0) {
+//       const soilWtMapData = {};
+//
+//       // const measure = testMeasures[0]; // Assuming there's only one testMeasure data
+//
+//          console.log('Measure Carpet:', testMeasures);
+//
+//         const key = Object.keys(testMeasures);
+//         console.log('Key Carpet:', key);
+//
+//         const values = testMeasures[key];
+//         console.log('Values Carpet:', values);
+//         // Check if 'values' is defined and contains 'Soil_Wt' property
+//         if (values && values.Soil_Wt && values.Soil_Wt.value) {
+//           soilWtMapData[key] = parseFloat(values.Soil_Wt.value); // Storing Soil_Wt value as a number
+//         }
+//         setSoilWtMap(soilWtMapData);
+//       }
+//
+//
+//   }, [testMeasures]);
+//
+//
+// useEffect(() => {
+//     console.log('soilWtMap', soilWtMap);
+//
+//   }
+// , [soilWtMap]);
+
+
 
 
   useEffect(() => {
@@ -119,50 +117,57 @@ function TestDetailsTableRowCarpet(props){
   }, [props.testId, props.testTarget, props.testGroup, props.tester]);
 
 
-  // useEffect(() => {
-  //   // console.log('Test Measures Sand:', testMeasures);
-  //   console.log('Carpet Measures:', testMeasures[0]["Carpet"])
-  //
-  //   if (testMeasures) {
-  //     let selectedMeasures = Array.isArray(testMeasures) ? testMeasures : [testMeasures];
-  //
-  //     // Find the object that contains "Sand"
-  //     const sandMeasure = selectedMeasures.find(measure => Object.keys(measure)[0] === "Sand");
-  //
-  //     if (sandMeasure) {
-  //       const values = sandMeasure["Sand"][0]; // Accessing the values for "Sand"
-  //       const keys = Object.keys(values);
-  //
-  //       console.log('Sand Values:', values);
-  //       console.log('Sand Keys:', keys);
-  //
-  //       // Update the rows state with "Sand" values and keys
-  //       setRows(prevRows =>
-  //         prevRows.map(row => ({
-  //           ...row,
-  //           values: { ...values },
-  //           keys: keys
-  //         }))
-  //       );
-  //
-  //       setValues(values);
-  //       setKeys(keys);
-  //     }
-  //   }
-  // }, [testMeasures]);
+  useEffect(() => {
+    // console.log('Test Measures Sand:', testMeasures);
+    console.log('Carpet Measuress:', testMeasures)
+
+    if (testMeasures) {
+      let selectedMeasures = Array.isArray(testMeasures) ? testMeasures : [testMeasures];
+      const soilWtMapData = {};
+
+      if (selectedMeasures) {
+        const values = selectedMeasures[0]['Sand']; // Accessing the values for "Sand"
+        const keys = Object.keys(values);
+
+        console.log('Carpet Values:', values);
+        console.log('Carpet Keys:', keys);
+
+        if (values && values.Soil_Wt && values.Soil_Wt.value) {
+          soilWtMapData['Sand'] = parseFloat(values.Soil_Wt.value); // Storing Soil_Wt value as a number
+        }
+        setSoilWtMap(soilWtMapData);
+
+        // Update the rows state with "Sand" values and keys
+        setRows(prevRows =>
+          prevRows.map(row => ({
+            ...row,
+            values: { ...values },
+            keys: keys
+          }))
+        );
+
+        setValues(values);
+        setKeys(keys);
+      }
+    }
+  }, [testMeasures]);
 
 
   useEffect(() => {
     if (props.testId) {
-      axiosInstance(`/admin/tests/vacuum/testdetail/${props.testId}/?sample=${props.sample}&brush_type=${props.brushType}&test_case=${props.testCase}`)
-        .then((res) => {
-          const fetchedRows = res.data || [];
-          setFetchedRows(fetchedRows);
-        })
-        .catch((error) => {
-          console.error('Error fetching detailed data: ', error);
-        });
-    }
+      axiosInstance(`/samples/?inv_no=${props.sample}`)
+        .then(response => {
+          const sampleId = response.data[0]?.id;
+            axiosInstance(`/admin/tests/vacuum/testdetail/${props.testId}/?sample=${sampleId}&brush_type=${props.brushType}&test_case=${props.testCase}&test_target=Carpet`)
+              .then((res) => {
+                const fetchedRows = res.data || [];
+                setFetchedRows(fetchedRows);
+              })
+              .catch((error) => {
+                console.error('Error fetching detailed data: ', error);
+              });
+            })
+          }
   }, [props.testId]);
 
   useEffect(() => {
@@ -206,14 +211,13 @@ function TestDetailsTableRowCarpet(props){
       units: row.units || {}, // Setting the units from combinedRows
     }));
 
-    console.log('transformedRows', transformedRows);
 
     setRows(transformedRows);
   }
 }, [fetchedRows]);
 
   useEffect(() => {
-    console.log('rows', rows);
+    console.log('rows Carpet', rows);
   }, [rows]);
 
 
@@ -513,7 +517,7 @@ function TestDetailsTableRowCarpet(props){
                 submitRow={submitRow}
                 setRows={setRows}
                 rows={rows}
-                // testGroupOptions={testGroupOptions}
+                testGroupOptions={testGroupOptions}
                 soilWtMap={soilWtMap}
                 onCancelEdit={(cancelIdx) => {
                   setRows((prevRows) =>
@@ -532,7 +536,7 @@ function TestDetailsTableRowCarpet(props){
                   keys={keys}
                   handleEdit={handleEdit}
                   handleDelete={handleDelete}
-                  // testGroupOptions={testGroupOptions}
+                  testGroupOptions={testGroupOptions}
                 />
               )
             ))}
