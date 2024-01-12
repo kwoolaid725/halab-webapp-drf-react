@@ -140,10 +140,13 @@ class ProductList(generics.ListAPIView):
         queryset = Product.objects.all()
         category = self.request.query_params.get('category', None)
         brand = self.request.query_params.get('brand', None)
+        model_name = self.request.query_params.get('model_name', None)
         if category is not None:
             queryset = queryset.filter(category=category)
         if brand is not None:
             queryset = queryset.filter(brand__name=brand)
+        if model_name is not None:
+            queryset = queryset.filter(model_name=model_name)
         return queryset
 
 
@@ -199,9 +202,26 @@ class DeleteProduct(generics.DestroyAPIView):
 
 
 class SampleList(generics.ListCreateAPIView):
-    queryset = Sample.objects.all()
+    # queryset = Sample.objects.all()
     serializer_class = SampleSerializer
-    pass
+
+    def get_queryset(self):
+        """
+        Optionally restricts the returned products to a given category and brand,
+        by filtering against `category` and `brand` query parameters in the URL.
+        """
+        queryset = Sample.objects.all()
+        product = self.request.query_params.get('product', None)
+        inv_no = self.request.query_params.get('inv_no', None)
+
+
+        if product is not None:
+            queryset = queryset.filter(product=product)
+
+        if inv_no is not None:
+            queryset = queryset.filter(inv_no=inv_no)
+
+        return queryset
 
 class CreateSample(generics.CreateAPIView):
     # permission_classes = [permissions.IsAuthenticated]
@@ -282,18 +302,22 @@ class TestDetailVacuumSample(generics.ListCreateAPIView):
 
     def get_queryset(self):
         queryset = TestDetailVacuum.objects.all()
-        sample_inv_no = self.request.query_params.get('sample_inv_no')
+        sample = self.request.query_params.get('sample')
         brush_type = self.request.query_params.get('brush_type')
         test_case = self.request.query_params.get('test_case')
+        test_target = self.request.query_params.get('test_target')
 
-        if sample_inv_no:
-            queryset = queryset.filter(sample__inv_no=sample_inv_no)
+        if sample:
+            queryset = queryset.filter(sample=sample)
 
         if brush_type:
             queryset = queryset.filter(brush_type=brush_type)
 
         if test_case:
             queryset = queryset.filter(test_case=test_case)
+
+        if test_target:
+            queryset = queryset.filter(test_target=test_target)
 
         return queryset
 

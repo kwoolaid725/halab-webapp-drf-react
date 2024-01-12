@@ -92,7 +92,7 @@ export default function TestDetailsBody(props) {
                       <TableHead>
                         <TableRow>
                           <TableCell>Test Sample</TableCell>
-                          <TableCell align="left">Inv. No.</TableCell>
+                          <TableCell align="left">Inventory Number</TableCell>
                           <TableCell align="left">Brush Type</TableCell>
                           <TableCell align="left">Test Case</TableCell>
                         </TableRow>

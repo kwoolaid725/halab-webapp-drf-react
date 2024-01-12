@@ -43,7 +43,7 @@ function TestDetailsTableRowBare(props){
 
   useEffect(() => {
     // Fetch rows from the database and update the 'allRows' state
-    axiosInstance.get('admin/tests/vacuum/testdetail/')
+    axiosInstance.get(`admin/tests/vacuum/testdetail/${props.testId}/?test_target=Bare`)
       .then(response => {
         setAllRows(response.data);
       })
@@ -128,15 +128,19 @@ function TestDetailsTableRowBare(props){
 
   useEffect(() => {
     if (props.testId) {
-      axiosInstance(`/admin/tests/vacuum/testdetail/${props.testId}/?sample=${props.sample}&brush_type=${props.brushType}&test_case=${props.testCase}`)
-        .then((res) => {
-          const fetchedRows = res.data || [];
-          setFetchedRows(fetchedRows);
-        })
-        .catch((error) => {
-          console.error('Error fetching detailed data: ', error);
-        });
-    }
+      axiosInstance(`/samples/?inv_no=${props.sample}`)
+        .then(response => {
+          const sampleId = response.data[0]?.id;
+            axiosInstance(`/admin/tests/vacuum/testdetail/${props.testId}/?sample=${sampleId}&brush_type=${props.brushType}&test_case=${props.testCase}&test_target=Bare`)
+              .then((res) => {
+                const fetchedRows = res.data || [];
+                setFetchedRows(fetchedRows);
+              })
+              .catch((error) => {
+                console.error('Error fetching detailed data: ', error);
+              });
+            })
+          }
   }, [props.testId]);
 
   useEffect(() => {
