@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import (ProductList, ProductDetail, CreateProduct, AdminProductDetail, EditProduct, DeleteProduct,
+from .views import (ProductList, ProductDetail, CreateProduct, AdminProductDetail, EditProduct, DeleteProduct, ProductListDetailfilter,
                     CategoryList, BrandList, PostList, PostDetail, PostListDetailfilter,
                     CreatePost, AdminPostDetail, EditPost, DeletePost,
                     SampleList, CreateSample, AdminSampleDetail, EditSample, DeleteSample,
@@ -33,6 +33,8 @@ urlpatterns = [
     # Product URLs
     path('products/', ProductList.as_view(), name='product_listcreate'),
     path('products/<str:slug>/', ProductDetail.as_view(), name='product_detailcreate'),
+    path('products/search/custom/<int:category>/', ProductListDetailfilter.as_view(), name='product_productsearch'),
+
     # Product Admin URLs
     path('admin/products/create/', CreateProduct.as_view(), name='product_createproduct'),
     path('admin/products/edit/productdetail/<int:pk>/', AdminProductDetail.as_view(), name='product_admindetailproduct'),

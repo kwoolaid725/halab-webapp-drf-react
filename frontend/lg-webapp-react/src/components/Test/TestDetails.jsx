@@ -40,7 +40,7 @@ export default function TestDetails(props) {
       .then((res) => {
         const test = res.data.find((test) => test.id === parseInt(id));
         setData(test);
-        console.log('test:',test);
+        console.log('test123:',test);
       })
       .catch((error) => {
         console.error("Error fetching data: ", error);
@@ -48,20 +48,20 @@ export default function TestDetails(props) {
       });
   }, [id]);
   //
-  useEffect(() => {
-    if (data?.id) {
-      axiosInstance(`/admin/tests/vacuum/testdetail/?test_no=${data.id}`)
-        .then((res) => {
-          const testDataDetails = res.data;
-          setDataDetails(testDataDetails);
-          console.log('testDataDetails:', testDataDetails);
-        })
-        .catch((error) => {
-          console.error("Error fetching detailed data: ", error);
-          // handle erroz r appropriately
-        });
-    }
-  }, [data?.id]);
+  // useEffect(() => {
+  //   if (data?.id) {
+  //     axiosInstance(`/admin/tests/vacuum/testdetail/`)
+  //       .then((res) => {
+  //         const testDataDetails = res.data;
+  //         setDataDetails(testDataDetails);
+  //         console.log('testDataDetails1111:', testDataDetails);
+  //       })
+  //       .catch((error) => {
+  //         console.error("Error fetching detailed data: ", error);
+  //         // handle erroz r appropriately
+  //       });
+  //   }
+  // }, [data?.id]);
 
   const handleToggleModal = () => {
     setIsModalOpen((prevIsModalOpen) => !prevIsModalOpen);
@@ -95,7 +95,8 @@ export default function TestDetails(props) {
       )}
       <TestDetailsBody
           test={data}
-          testDetails={dataDetails}
+          // testDetails={dataDetails}
+
       />
 
     </React.Fragment>

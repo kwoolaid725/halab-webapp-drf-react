@@ -159,18 +159,6 @@ class ProductDetail(generics.RetrieveAPIView):
         return get_object_or_404(Product, slug=item)
 
 
-# search post
-class ProductListDetailfilter(generics.ListAPIView):
-
-    queryset = Product.objects.all()
-    serializer_class = ProductSerializer
-    filter_backends = [filters.SearchFilter]
-    search_fields = ['^slug']
-
-    # '^' starts-with search.
-    # '=' exact matches.
-    # '@' full-text search (currently only supported Django's PostgreSQL backend).
-    # '$' regex search.
 
 # Product Admin
 
@@ -199,6 +187,31 @@ class DeleteProduct(generics.DestroyAPIView):
     # permission_classes = [permissions.IsAuthenticated]
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+
+
+# search post
+class ProductListDetailfilter(generics.ListAPIView):
+
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    filter_backends = [filters.SearchFilter]
+
+    search_fields = ['^brand__name', '^model_name', '^slug']
+
+    def get_queryset(self):
+        queryset = Product.objects.all()
+        # category = self.request.query_params.get('category', None)
+        category = self.kwargs.get('category')
+
+        if category is not None:
+            queryset = queryset.filter(category=category)
+
+
+        return queryset
+    # '^' starts-with search.
+    # '=' exact matches.
+    # '@' full-text search (currently only supported Django's PostgreSQL backend).
+    # '$' regex search.
 
 
 class SampleList(generics.ListCreateAPIView):
@@ -307,6 +320,8 @@ class TestDetailVacuumSample(generics.ListCreateAPIView):
         test_case = self.request.query_params.get('test_case')
         test_target = self.request.query_params.get('test_target')
 
+        test = self.kwargs.get('test')
+
         if sample:
             queryset = queryset.filter(sample=sample)
 
@@ -318,6 +333,9 @@ class TestDetailVacuumSample(generics.ListCreateAPIView):
 
         if test_target:
             queryset = queryset.filter(test_target=test_target)
+
+        if test is not None:
+            queryset = queryset.filter(test=test)
 
         return queryset
 

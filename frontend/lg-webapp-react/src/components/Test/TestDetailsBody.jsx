@@ -28,18 +28,40 @@ export default function TestDetailsBody(props) {
   const {id} = useParams();
 
   const [data, setData] = useState();
-  const [dataDetails, setDataDetails] = useState();
 
-  const { test, testDetails } = props;
+
+  const { test } = props;
+  const [testDetails, setTestDetails] = useState();
+
   const [openDetails, setOpenDetails] = useState({});
 
 
   const [groupedDetails, setGroupedDetails] = useState({});
 
+  useEffect(
+    () => {
+      console.log('test1111:', test);
+    }
+  )
+   useEffect(() => {
+    if (test?.id) {
+      axiosInstance(`/admin/tests/vacuum/testdetail/${test?.id}/`)
+        .then((res) => {
+          const testDataDetails = res.data;
+          setTestDetails(testDataDetails);
+          console.log('testDataDetails1111:', testDataDetails);
+        })
+        .catch((error) => {
+          console.error("Error fetching detailed data: ", error);
+          // handle erroz r appropriately
+        });
+    }
+  }, [test?.id]);
+
    useEffect(() => {
     if (Array.isArray(testDetails)) {
       const grouped = testDetails.reduce((grouped, detail) => {
-        const key = `${detail.sample}${detail.brush_type}${detail.test_case}`;
+        const key = `${detail.test}${detail.sample}${detail.brush_type}${detail.test_case}`;
         if (!grouped[key]) {
           grouped[key] = [];
         }
