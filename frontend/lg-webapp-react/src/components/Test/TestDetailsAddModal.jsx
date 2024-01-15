@@ -36,6 +36,9 @@ export default function TestDetailsAddModal (props) {
 
   const [samples, setSamples] = useState([]);
   const [categoryId, setCategoryId] = useState(null);
+  const [testMeasures, setTestMeasures] = useState([]);
+  const [values, setValues] = useState([]);
+  const [keys, setKeys] = useState([]);
 
   const [products, setProducts] = useState([]);
 // const [selectedCategory, setSelectedCategory] = useState('');
@@ -48,6 +51,53 @@ export default function TestDetailsAddModal (props) {
   const [selectedSearchResult, setSelectedSearchResult] = useState(null);
     // const [product, setProduct] = useState('');
 
+
+  useEffect(() => {
+      const fetchData = async () => {
+        try {
+          const response = await fetch('/test-measures.json');
+          const jsonData = await response.json();
+          const bareData = jsonData["Bare"];
+          console.log('Bare Data:', bareData)
+          setTestMeasures(bareData);
+        } catch (error) {
+          console.error('Error fetching data', error);
+        }
+      };
+      fetchData();
+    }, []);
+
+
+  useEffect(() => {
+    console.log('Test Measures:', testMeasures);
+
+    if (testMeasures) {
+      let selectedMeasures = Array.isArray(testMeasures) ? testMeasures : [testMeasures];
+
+      // Find the object that contains "Sand"
+      const sandMeasure = selectedMeasures.find(measure => Object.keys(measure)[0] === "Sand");
+
+      if (sandMeasure) {
+        const values = sandMeasure["Sand"][0]; // Accessing the values for "Sand"
+        const keys = Object.keys(values);
+
+        console.log('measureValues:', values);
+        console.log('measureKeys:', keys);
+
+        // Update the rows state with "Sand" values and keys
+        // setRows(prevRows =>
+        //   prevRows.map(row => ({
+        //     ...row,
+        //     values: { ...values },
+        //     keys: keys
+        //   }))
+        // );
+
+        setValues(values);
+        setKeys(keys);
+      }
+    }
+  }, [testMeasures]);
 
 
 
@@ -127,7 +177,7 @@ export default function TestDetailsAddModal (props) {
         const slug = `${props.testId}-Bare-${sampleValue}${brushTypeValue}${testCaseValue}-1`;
         e.preventDefault();
         let formData = new FormData();
-        formData.append('test_measure', '');
+            formData.append('test_measure', '');
             formData.append('value', '');
             formData.append('units', '');
             formData.append('test', props.testId);

@@ -61,29 +61,29 @@ function TestDetailsTableRowCarpet(props){
 
   }, []); // Fetch only once on component mount
 
-//  useEffect(() => {
-//     // Your logic to fetch and generate soilWtMap from the provided TestMeasures data
-//     if (testMeasures && testMeasures.length > 0) {
-//       const soilWtMapData = {};
-//
-//       // const measure = testMeasures[0]; // Assuming there's only one testMeasure data
-//
-//          console.log('Measure Carpet:', testMeasures);
-//
-//         const key = Object.keys(testMeasures);
-//         console.log('Key Carpet:', key);
-//
-//         const values = testMeasures[key];
-//         console.log('Values Carpet:', values);
-//         // Check if 'values' is defined and contains 'Soil_Wt' property
-//         if (values && values.Soil_Wt && values.Soil_Wt.value) {
-//           soilWtMapData[key] = parseFloat(values.Soil_Wt.value); // Storing Soil_Wt value as a number
-//         }
-//         setSoilWtMap(soilWtMapData);
-//       }
-//
-//
-//   }, [testMeasures]);
+ useEffect(() => {
+    // Your logic to fetch and generate soilWtMap from the provided TestMeasures data
+    if (testMeasures && testMeasures.length > 0) {
+      const soilWtMapData = {};
+
+      // const measure = testMeasures[0]; // Assuming there's only one testMeasure data
+
+         console.log('Measure Carpet:', testMeasures);
+
+        const key = Object.keys(testMeasures);
+        console.log('Key Carpet:', key);
+
+        const values = testMeasures[key];
+        console.log('Values Carpet:', values);
+        // Check if 'values' is defined and contains 'Soil_Wt' property
+        if (values && values.Soil_Wt && values.Soil_Wt.value) {
+          soilWtMapData[key] = parseFloat(values.Soil_Wt.value); // Storing Soil_Wt value as a number
+        }
+        setSoilWtMap(soilWtMapData);
+      }
+
+
+  }, [testMeasures]);
 //
 //
 // useEffect(() => {

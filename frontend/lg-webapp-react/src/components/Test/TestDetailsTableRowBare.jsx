@@ -54,6 +54,37 @@ function TestDetailsTableRowBare(props){
   }, []); // Fetch only once on component mount
 
   useEffect(() => {
+    console.log('Test Measures:', testMeasures);
+
+    if (testMeasures) {
+      let selectedMeasures = Array.isArray(testMeasures) ? testMeasures : [testMeasures];
+
+      // Find the object that contains "Sand"
+      const sandMeasure = selectedMeasures.find(measure => Object.keys(measure)[0] === "Sand");
+
+      if (sandMeasure) {
+        const values = sandMeasure["Sand"][0]; // Accessing the values for "Sand"
+        const keys = Object.keys(values);
+
+        console.log('measureValues:', values);
+        console.log('measureKeys:', keys);
+
+        // Update the rows state with "Sand" values and keys
+        setRows(prevRows =>
+          prevRows.map(row => ({
+            ...row,
+            values: { ...values },
+            keys: keys
+          }))
+        );
+
+        setValues(values);
+        setKeys(keys);
+      }
+    }
+  }, [testMeasures]);
+
+  useEffect(() => {
     // Your logic to fetch and generate soilWtMap from the provided TestMeasures data
     if (testMeasures) {
       const soilWtMapData = {}; // Object to store Soil_Wt values for different keys
@@ -61,15 +92,39 @@ function TestDetailsTableRowBare(props){
       testMeasures.forEach((measure) => {
         const key = Object.keys(measure)[0]; // Extracting the key, e.g., 'Sand', 'Rice', etc.
         const values = measure[key][0]; // Assuming there's only one set of values for each key
-
-        if (values.Soil_Wt && values.Soil_Wt.value) {
-          soilWtMapData[key] = parseFloat(values.Soil_Wt.value); // Storing Soil_Wt value as a number
-        }
+        soilWtMapData[key] = { ...values };
+      //   if (values.Soil_Wt && values.Soil_Wt.value) {
+      //     soilWtMapData[key] = parseFloat(values.Soil_Wt.value); // Storing Soil_Wt value as a number
+      //   }
       });
-
+      console.log('soilWtMapData', soilWtMapData)
       setSoilWtMap(soilWtMapData); // Set the soilWtMap state
     }
   }, [testMeasures]);
+
+
+   // Function to handle input changes for each cell in a row
+   const handleInputChange = (rows, setRows, slug, key, value) => {
+    const updatedRows = rows.map((row) => {
+      if (row.slug === slug) {
+        const updatedValues = { ...row.values };
+        updatedValues[key] = {
+          ...(updatedValues[key] || {}),
+          value: value,
+        };
+
+        return {
+          ...row,
+          values: updatedValues,
+        };
+      }
+      return row;
+    });
+
+    setRows([...updatedRows]); // Ensure you always set it as an array
+
+  };
+
 
 
   useEffect(() => {
@@ -92,38 +147,6 @@ function TestDetailsTableRowBare(props){
       // console.log('initialRowState', initialRowState);
 
   }, [props.testId, props.testTarget, props.testGroup, props.tester]);
-
-
-  useEffect(() => {
-    console.log('Test Measures:', testMeasures);
-
-    if (testMeasures) {
-      let selectedMeasures = Array.isArray(testMeasures) ? testMeasures : [testMeasures];
-
-      // Find the object that contains "Sand"
-      const sandMeasure = selectedMeasures.find(measure => Object.keys(measure)[0] === "Sand");
-
-      if (sandMeasure) {
-        const values = sandMeasure["Sand"][0]; // Accessing the values for "Sand"
-        const keys = Object.keys(values);
-
-        console.log('Sand Values:', values);
-        console.log('Sand Keys:', keys);
-
-        // Update the rows state with "Sand" values and keys
-        setRows(prevRows =>
-          prevRows.map(row => ({
-            ...row,
-            values: { ...values },
-            keys: keys
-          }))
-        );
-
-        setValues(values);
-        setKeys(keys);
-      }
-    }
-  }, [testMeasures]);
 
 
   useEffect(() => {
@@ -231,8 +254,8 @@ function TestDetailsTableRowBare(props){
           // Set other values as empty strings
           ...(Object.fromEntries(
             Object.keys(previousRow.values)
-              .filter(key => key !== 'Soil_Wt')
-              .map(key => [key, { value: '', units: rowUnits[key] || '' }])
+              .filter((key) => key !== 'Soil_Wt')
+              .map((key) => [key, { value: '', units: rowUnits[key] || '' }])
           )),
         },
         units: { ...rowUnits }, // Copy units
@@ -273,8 +296,8 @@ function TestDetailsTableRowBare(props){
     updatedRows[slug].isEditing = true;
     setRows(updatedRows);
     console.log('slug', slug);
-    console.log('rows', rows);
-    console.log('updatedRows', updatedRows);
+    console.log('rowsssss', rows);
+    console.log('updatedRowsssss', updatedRows);
     // editRow(testTarget, testGroup);
   };
 
@@ -481,25 +504,26 @@ function TestDetailsTableRowBare(props){
           {rows.map((row, idx) => (
               row.isEditing ? (
                 <EditableRow
-                key={idx}
-                row={row}
-                idx={idx}
-                // testGroup='Sand'
-                testId={props.testId}
-                keys={keys}
-                // handleInputChange={(slug, key, value) => handleInputChange(rows, setRows, slug, key, value)}
-                submitRow={submitRow}
-                setRows={setRows}
-                rows={rows}
-                testGroupOptions={testGroupOptions}
-                soilWtMap={soilWtMap}
-                onCancelEdit={(cancelIdx) => {
-                  setRows((prevRows) =>
-                    prevRows.map((r, index) =>
-                      index === cancelIdx ? { ...r, isEditing: false } : r
-                    )
-                  );
-                }}
+                  key={idx}
+                  row={row}
+                  idx={idx}
+                  // testGroup='Sand'
+                  testId={props.testId}
+                  keys={keys}
+                  values={values}
+                  handleInputChange={(slug, key, value) => handleInputChange(rows, setRows, slug, key, value)}
+                  submitRow={submitRow}
+                  setRows={setRows}
+                  rows={rows}
+                  testGroupOptions={testGroupOptions}
+                  soilWtMap={soilWtMap}
+                  onCancelEdit={(cancelIdx) => {
+                    setRows((prevRows) =>
+                      prevRows.map((r, index) =>
+                        index === cancelIdx ? { ...r, isEditing: false } : r
+                      )
+                    );
+                  }}
               />
               ) : (
                 <StaticRow

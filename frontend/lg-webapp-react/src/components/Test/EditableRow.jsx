@@ -20,7 +20,10 @@ const EditableRow = ({
   onCancelEdit
 
 }) => {
-    const initialRow = useRef({ ...row }); // Preserve the initial row prop
+    const initialRow = useRef({ ...row } ); // Preserve the initial row prop
+
+
+
 
 
     const handleFieldChange = (fieldName, value) => {
@@ -35,11 +38,15 @@ const EditableRow = ({
 
   // Function to handle changes in testGroup selection
   const handleTestGroupChange = (selectedTestGroup) => {
-    const soilWt = soilWtMap[selectedTestGroup] || 0;
+    const soilWt = soilWtMap[selectedTestGroup].Soil_Wt.value || 0;
+    console.log('row:', row)
+    
+      
     const updatedValues = {
       ...row.values,
       Soil_Wt: { value: soilWt, units: 'g' }
     };
+
 
     const sameGroupRows = rows.filter((r) => r.testGroup === selectedTestGroup);
     const maxRunInGroup = sameGroupRows.reduce((maxRun, r) => {
@@ -60,35 +67,38 @@ const EditableRow = ({
     });
   };
 
-    const handleInputChange = (slug, key, value) => {
-      let updatedValues = { ...row.values, [key]: { value, units: row.values[key]?.units || '' } };
+    // const handleInputChange = (row, setRows, slug, key, value) => {
+    //   let updatedValues = { ...row.values, [key]: { value, units: row.values[key]?.units || '' } };
+    //   console.log('updatedValues123:', updatedValues);
+    //
+    //   // Calculate Weight Diff. when Pre-Wt. or Post-Wt. changes
+    //   if (key === 'Pre-Wt.' || key === 'Post-Wt.') {
+    //     const preWt = parseFloat(updatedValues['Pre-Wt.'].value) || 0;
+    //     const postWt = parseFloat(updatedValues['Post-Wt.'].value) || 0;
+    //     const weightDiff = (postWt - preWt).toFixed(2).replace(/\.?0+$/, '');
+    //     const soilWt = parseFloat(updatedValues['Soil_Wt'].value) || 0; // Assuming Soil_Wt exists in values
+    //     const pickup = soilWt !== 0 ? ((weightDiff / soilWt) * 100).toFixed(2).replace(/\.?0+$/, '') : 0;
+    //
+    //     updatedValues = {
+    //       ...updatedValues,
+    //       'Wt.-Diff.': { value: weightDiff, units: 'g' },
+    //       'Pickup': { value: pickup, units: '%' } // Setting Pickup value and units
+    //     };
+    //   }
+    //
+    //   const updatedRow = {
+    //     ...row,
+    //     values: updatedValues
+    //   };
+    //
+    //   setRows((prevRows) => {
+    //     const updatedRows = [...prevRows];
+    //     updatedRows[idx] = updatedRow;
+    //     return updatedRows;
+    //   });
+    // };
 
-      // Calculate Weight Diff. when Pre-Wt. or Post-Wt. changes
-      if (key === 'Pre-Wt.' || key === 'Post-Wt.') {
-        const preWt = parseFloat(updatedValues['Pre-Wt.'].value) || 0;
-        const postWt = parseFloat(updatedValues['Post-Wt.'].value) || 0;
-        const weightDiff = (postWt - preWt).toFixed(2).replace(/\.?0+$/, '');
-        const soilWt = parseFloat(updatedValues['Soil_Wt'].value) || 0; // Assuming Soil_Wt exists in values
-        const pickup = soilWt !== 0 ? ((weightDiff / soilWt) * 100).toFixed(2).replace(/\.?0+$/, '') : 0;
 
-        updatedValues = {
-          ...updatedValues,
-          'Wt.-Diff.': { value: weightDiff, units: 'g' },
-          'Pickup': { value: pickup, units: '%' } // Setting Pickup value and units
-        };
-      }
-
-      const updatedRow = {
-        ...row,
-        values: updatedValues
-      };
-
-      setRows((prevRows) => {
-        const updatedRows = [...prevRows];
-        updatedRows[idx] = updatedRow;
-        return updatedRows;
-      });
-    };
 
    const handleCancel = async () => {
       await setRows((prevRows) => {
