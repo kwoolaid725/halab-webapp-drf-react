@@ -8,7 +8,7 @@ import TestDetailsTableRowBare from "./TestDetailsTableRowBare";
 import TestDetailsTableRowCarpet from "./TestDetailsTableRowCarpet";
 import TestDetailsTableRowEdge from "./TestDetailsTableRowEdge";
 
-const TestDetailsTable = (props) => {
+const TestDetailsTableCR = (props) => {
   const [testMeasures, setTestMeasures] = useState(null);
   const [fetchedRows, setFetchedRows] = useState([]);
   const [rows, setRows] = useState();
@@ -90,15 +90,17 @@ const TestDetailsTable = (props) => {
   // }, [fetchedRows]);
 
   useEffect(() => {
-    console.log('rows', rows);
+    // console.log('rows', rows);
   }, [rows]);
 
    return (
     <React.Fragment>
       <table>
-        <th>
+        <tr>
+          <th>
           Bare
-        </th>
+          </th>
+        </tr>
           <tbody>
           <TestDetailsTableRowBare
 
@@ -112,9 +114,11 @@ const TestDetailsTable = (props) => {
           </tbody>
       </table>
       <table>
-        <th>
-          Carpet
-        </th>
+        <tr>
+          <th>
+            Carpet
+          </th>
+        </tr>
         <tbody>
           <TestDetailsTableRowCarpet
 
@@ -128,9 +132,11 @@ const TestDetailsTable = (props) => {
           </tbody>
       </table>
       <table>
-        <th>
-          Edge
-        </th>
+        <tr>
+          <th>
+            Edge
+          </th>
+        </tr>
         <tbody>
           <TestDetailsTableRowEdge
 
@@ -144,14 +150,18 @@ const TestDetailsTable = (props) => {
           </tbody>
       </table>
       <table>
-        <th>
-          Pet Hair
-        </th>
+        <tr>
+          <th>
+            Pet Hair
+          </th>
+        </tr>
       </table>
       <table>
-        <th>
-          Noise
-        </th>
+        <tr>
+          <th>
+            Noise
+          </th>
+        </tr>
       </table>
 
 
@@ -163,4 +173,4 @@ const TestDetailsTable = (props) => {
 
 };
 
-export default TestDetailsTable;
+export default TestDetailsTableCR;

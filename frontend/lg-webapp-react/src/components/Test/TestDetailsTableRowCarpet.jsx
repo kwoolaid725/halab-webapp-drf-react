@@ -31,10 +31,10 @@ function TestDetailsTableRowCarpet(props){
         const response = await fetch('/test-measures.json');
         const jsonData = await response.json();
 
-        console.log('Fetched Data:', jsonData); // Log the fetched data
+        // console.log('Fetched Data:', jsonData); // Log the fetched data
 
         const carpetData = jsonData["Carpet"];
-        console.log('Carpet Data:', carpetData); // Log the specific "Carpet" data
+        // console.log('Carpet Data:', carpetData); // Log the specific "Carpet" data
 
         setTestMeasures(carpetData);
       } catch (error) {
@@ -46,7 +46,7 @@ function TestDetailsTableRowCarpet(props){
   }, []); // Empty dependency array, ensuring the effect runs only once on mount
 
   useEffect(() => {
-    console.log('testMeasures - CARPET', testMeasures);
+    // console.log('testMeasures - CARPET', testMeasures);
   }, [testMeasures]);
 
   useEffect(() => {
@@ -68,13 +68,13 @@ function TestDetailsTableRowCarpet(props){
 
       // const measure = testMeasures[0]; // Assuming there's only one testMeasure data
 
-         console.log('Measure Carpet:', testMeasures);
+         // console.log('Measure Carpet:', testMeasures);
 
         const key = Object.keys(testMeasures);
-        console.log('Key Carpet:', key);
+        // console.log('Key Carpet:', key);
 
         const values = testMeasures[key];
-        console.log('Values Carpet:', values);
+        // console.log('Values Carpet:', values);
         // Check if 'values' is defined and contains 'Soil_Wt' property
         if (values && values.Soil_Wt && values.Soil_Wt.value) {
           soilWtMapData[key] = parseFloat(values.Soil_Wt.value); // Storing Soil_Wt value as a number
@@ -119,7 +119,7 @@ function TestDetailsTableRowCarpet(props){
 
   useEffect(() => {
     // console.log('Test Measures Sand:', testMeasures);
-    console.log('Carpet Measuress:', testMeasures)
+    // console.log('Carpet Measuress:', testMeasures)
 
     if (testMeasures) {
       let selectedMeasures = Array.isArray(testMeasures) ? testMeasures : [testMeasures];
@@ -129,8 +129,8 @@ function TestDetailsTableRowCarpet(props){
         const values = selectedMeasures[0]['Sand']; // Accessing the values for "Sand"
         const keys = Object.keys(values);
 
-        console.log('Carpet Values:', values);
-        console.log('Carpet Keys:', keys);
+        // console.log('Carpet Values:', values);
+        // console.log('Carpet Keys:', keys);
 
         if (values && values.Soil_Wt && values.Soil_Wt.value) {
           soilWtMapData['Sand'] = parseFloat(values.Soil_Wt.value); // Storing Soil_Wt value as a number
@@ -217,7 +217,7 @@ function TestDetailsTableRowCarpet(props){
 }, [fetchedRows]);
 
   useEffect(() => {
-    console.log('rows Carpet', rows);
+    // console.log('rows Carpet', rows);
   }, [rows]);
 
 
@@ -290,7 +290,7 @@ function TestDetailsTableRowCarpet(props){
 
       // Other state updates or triggers for related effects
 
-      console.log('Rows:', rows);
+      // console.log('Rows:', rows);
   };
 
 
@@ -298,9 +298,9 @@ function TestDetailsTableRowCarpet(props){
     const updatedRows = [...rows];
     updatedRows[slug].isEditing = true;
     setRows(updatedRows);
-    console.log('slug', slug);
-    console.log('rows', rows);
-    console.log('updatedRows', updatedRows);
+    // console.log('slug', slug);
+    // console.log('rows', rows);
+    // console.log('updatedRows', updatedRows);
     // editRow(testTarget, testGroup);
   };
 
@@ -313,7 +313,7 @@ function TestDetailsTableRowCarpet(props){
           .then((response) => {
             const rowsToDelete = response.data; // Get the rows with the specified slug
             // Iterate through the rows to delete each one
-            console.log('rowsToDelete', rowsToDelete)
+            // console.log('rowsToDelete', rowsToDelete)
             rowsToDelete.forEach((row) => {
               axiosInstance.delete(`/admin/tests/vacuum/testdetail/${props.testId}/${slug}/${row.id}/`)
                   .then((deleteResponse) => {
@@ -343,7 +343,7 @@ function TestDetailsTableRowCarpet(props){
 
 
   const submitRow = (idx) => {
-    console.log('row', rows[idx])
+    // console.log('row', rows[idx])
     const editedRow = rows[idx];
 
     // Filter rows to find all rows with the same slug
@@ -376,7 +376,7 @@ function TestDetailsTableRowCarpet(props){
 
           const url = `admin/tests/vacuum/testdetail/${rowToUpdate.test}/${rowToUpdate.slug}/${rowToUpdate.id}/`;
           const requestType = 'PUT'; // Use PUT for updating existing rows
-          console.log('formData', formData);
+          // console.log('formData', formData);
 
           axiosInstance({
           method: requestType,
@@ -387,7 +387,7 @@ function TestDetailsTableRowCarpet(props){
           }
         })
         .then((response) => {
-          console.log('Posted successfully!', response);
+          // console.log('Posted successfully!', response);
           // Fetch updated data after successful update
           axiosInstance.get('admin/tests/vacuum/testdetail/')
             .then(response => {
@@ -409,7 +409,7 @@ function TestDetailsTableRowCarpet(props){
         // New entry, perform a POST request
         const formDataArray = [];
 
-        console.log('editedRow', editedRow)
+        // console.log('editedRow', editedRow)
 
         editedRow.keys.forEach((key) => {
           const formData = new FormData();

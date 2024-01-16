@@ -31,7 +31,7 @@ function TestDetailsTableRowBare(props){
           const response = await fetch('/test-measures.json');
           const jsonData = await response.json();
           const bareData = jsonData["Bare"];
-          console.log('Bare Data:', bareData)
+          // console.log('Bare Data:', bareData)
           setTestMeasures(bareData);
         } catch (error) {
           console.error('Error fetching data', error);
@@ -54,7 +54,7 @@ function TestDetailsTableRowBare(props){
   }, []); // Fetch only once on component mount
 
   useEffect(() => {
-    console.log('Test Measures:', testMeasures);
+    // console.log('Test Measures:', testMeasures);
 
     if (testMeasures) {
       let selectedMeasures = Array.isArray(testMeasures) ? testMeasures : [testMeasures];
@@ -66,8 +66,8 @@ function TestDetailsTableRowBare(props){
         const values = sandMeasure["Sand"][0]; // Accessing the values for "Sand"
         const keys = Object.keys(values);
 
-        console.log('measureValues:', values);
-        console.log('measureKeys:', keys);
+        // console.log('measureValues:', values);
+        // console.log('measureKeys:', keys);
 
         // Update the rows state with "Sand" values and keys
         setRows(prevRows =>
@@ -97,32 +97,66 @@ function TestDetailsTableRowBare(props){
       //     soilWtMapData[key] = parseFloat(values.Soil_Wt.value); // Storing Soil_Wt value as a number
       //   }
       });
-      console.log('soilWtMapData', soilWtMapData)
+      // console.log('soilWtMapData', soilWtMapData)
       setSoilWtMap(soilWtMapData); // Set the soilWtMap state
     }
   }, [testMeasures]);
 
 
    // Function to handle input changes for each cell in a row
+  //  const handleInputChange = (rows, setRows, slug, key, value) => {
+  //   const updatedRows = rows.map((row) => {
+  //     if (row.slug === slug) {
+  //       const updatedValues = { ...row.values };
+  //       updatedValues[key] = {
+  //         ...(updatedValues[key] || {}),
+  //         value: value,
+  //       };
+  //
+  //       return {
+  //         ...row,
+  //         values: updatedValues,
+  //       };
+  //     }
+  //     return row;
+  //   });
+  //
+  //   setRows([...updatedRows]); // Ensure you always set it as an array
+  //
+  // };
+
    const handleInputChange = (rows, setRows, slug, key, value) => {
     const updatedRows = rows.map((row) => {
       if (row.slug === slug) {
-        const updatedValues = { ...row.values };
-        updatedValues[key] = {
-          ...(updatedValues[key] || {}),
-          value: value,
+        let updatedValues = { ...row.values, [key]: { value, units: row.values[key]?.units || '' } };
+
+        // Calculate Weight Diff. when Pre-Wt. or Post-Wt. changes
+        if (key === 'Pre-Wt.' || key === 'Post-Wt.') {
+          const preWt = parseFloat(updatedValues['Pre-Wt.'].value) || 0;
+          const postWt = parseFloat(updatedValues['Post-Wt.'].value) || 0;
+          const weightDiff = (postWt - preWt).toFixed(2).replace(/\.?0+$/, '');
+          const soilWt = parseFloat(updatedValues['Soil_Wt'].value) || 0;
+
+          const pickup = soilWt !== 0 ? ((weightDiff / soilWt) * 100).toFixed(2).replace(/\.?0+$/, '') : 0;
+
+          updatedValues = {
+            ...updatedValues,
+            'Wt.-Diff.': { value: weightDiff, units: 'g' },
+            'Pickup': { value: pickup, units: '%' }
+          };
+        }
+
+        const updatedRow = {
+          ...row,
+          values: updatedValues
         };
 
-        return {
-          ...row,
-          values: updatedValues,
-        };
+        return updatedRow;
       }
       return row;
     });
 
-    setRows([...updatedRows]); // Ensure you always set it as an array
-
+    setRows([...updatedRows]);
   };
 
 
@@ -207,14 +241,14 @@ function TestDetailsTableRowBare(props){
       units: row.units || {}, // Setting the units from combinedRows
     }));
 
-    console.log('transformedRows', transformedRows);
+    // console.log('transformedRows', transformedRows);
 
     setRows(transformedRows);
   }
 }, [fetchedRows]);
 
   useEffect(() => {
-    console.log('rows', rows);
+    // console.log('rows', rows);
   }, [rows]);
 
 
@@ -287,7 +321,7 @@ function TestDetailsTableRowBare(props){
 
       // Other state updates or triggers for related effects
 
-      console.log('Rows:', rows);
+      // console.log('Rows:', rows);
   };
 
 
@@ -295,9 +329,9 @@ function TestDetailsTableRowBare(props){
     const updatedRows = [...rows];
     updatedRows[slug].isEditing = true;
     setRows(updatedRows);
-    console.log('slug', slug);
-    console.log('rowsssss', rows);
-    console.log('updatedRowsssss', updatedRows);
+    // console.log('slug', slug);
+    // console.log('rowsssss', rows);
+    // console.log('updatedRowsssss', updatedRows);
     // editRow(testTarget, testGroup);
   };
 
@@ -310,7 +344,7 @@ function TestDetailsTableRowBare(props){
           .then((response) => {
             const rowsToDelete = response.data; // Get the rows with the specified slug
             // Iterate through the rows to delete each one
-            console.log('rowsToDelete', rowsToDelete)
+            // console.log('rowsToDelete', rowsToDelete)
             rowsToDelete.forEach((row) => {
               axiosInstance.delete(`/admin/tests/vacuum/testdetail/${props.testId}/${slug}/${row.id}/`)
                   .then((deleteResponse) => {
@@ -340,7 +374,7 @@ function TestDetailsTableRowBare(props){
 
 
   const submitRow = (idx) => {
-    console.log('row', rows[idx])
+    // console.log('row', rows[idx])
     const editedRow = rows[idx];
 
     // Filter rows to find all rows with the same slug
@@ -373,7 +407,7 @@ function TestDetailsTableRowBare(props){
 
           const url = `admin/tests/vacuum/testdetail/${rowToUpdate.test}/${rowToUpdate.slug}/${rowToUpdate.id}/`;
           const requestType = 'PUT'; // Use PUT for updating existing rows
-          console.log('formData', formData);
+          // console.log('formData', formData);
 
           axiosInstance({
           method: requestType,
@@ -384,7 +418,7 @@ function TestDetailsTableRowBare(props){
           }
         })
         .then((response) => {
-          console.log('Posted successfully!', response);
+          // console.log('Posted successfully!', response);
           // Fetch updated data after successful update
           axiosInstance.get('admin/tests/vacuum/testdetail/')
             .then(response => {
@@ -406,7 +440,7 @@ function TestDetailsTableRowBare(props){
         // New entry, perform a POST request
         const formDataArray = [];
 
-        console.log('editedRow', editedRow)
+        // console.log('editedRow', editedRow)
 
         editedRow.keys.forEach((key) => {
           const formData = new FormData();

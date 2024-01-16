@@ -10,7 +10,7 @@ const EditableRow = ({
   idx,
   testGroup,
   keys,
-  // handleInputChange,
+  handleInputChange,
   submitRow,
   setRows,
   rows,
@@ -21,10 +21,6 @@ const EditableRow = ({
 
 }) => {
     const initialRow = useRef({ ...row } ); // Preserve the initial row prop
-
-
-
-
 
     const handleFieldChange = (fieldName, value) => {
       const updatedRow = { ...row, [fieldName]: value };
@@ -39,7 +35,7 @@ const EditableRow = ({
   // Function to handle changes in testGroup selection
   const handleTestGroupChange = (selectedTestGroup) => {
     const soilWt = soilWtMap[selectedTestGroup].Soil_Wt.value || 0;
-    console.log('row:', row)
+    // console.log('row:', row)
     
       
     const updatedValues = {
@@ -69,7 +65,7 @@ const EditableRow = ({
 
     // const handleInputChange = (row, setRows, slug, key, value) => {
     //   let updatedValues = { ...row.values, [key]: { value, units: row.values[key]?.units || '' } };
-    //   console.log('updatedValues123:', updatedValues);
+    //   // console.log('updatedValues123:', updatedValues);
     //
     //   // Calculate Weight Diff. when Pre-Wt. or Post-Wt. changes
     //   if (key === 'Pre-Wt.' || key === 'Post-Wt.') {
@@ -136,18 +132,31 @@ const EditableRow = ({
           ))}
         </select>
       </td>
+        {/*{*/}
+        {/*  keys.map((key, index) => (*/}
+        {/*    <td key={index}>*/}
+        {/*      {key === 'Pre-Wt.' || key === 'Post-Wt.' ? (*/}
+        {/*        <input*/}
+        {/*          type="text"*/}
+        {/*          value={row.values[key]?.value || ''}*/}
+        {/*          onChange={(e) => handleInputChange(row.slug, key, e.target.value)}*/}
+        {/*        />*/}
+        {/*      ) : (*/}
+        {/*        <span>{row.values[key]?.value || ''}</span>*/}
+        {/*      )}*/}
+        {/*      <span>{row.values[key]?.units || ''}</span>*/}
+        {/*    </td>*/}
+        {/*  ))*/}
+        {/*}*/}
+
         {
           keys.map((key, index) => (
             <td key={index}>
-              {key === 'Pre-Wt.' || key === 'Post-Wt.' ? (
-                <input
-                  type="text"
-                  value={row.values[key]?.value || ''}
-                  onChange={(e) => handleInputChange(row.slug, key, e.target.value)}
-                />
-              ) : (
-                <span>{row.values[key]?.value || ''}</span>
-              )}
+              <input
+                type="text"
+                value={row.values[key]?.value || ''}
+                onChange={(e) => handleInputChange(row.slug, key, e.target.value)}
+              />
               <span>{row.values[key]?.units || ''}</span>
             </td>
           ))
