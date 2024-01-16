@@ -32,6 +32,10 @@ export default function TestDetailsBody(props) {
 
   const { test } = props;
   const [testDetails, setTestDetails] = useState();
+  const [productsArray, setProductsArray] = useState([]);
+  const [sampleData, setSampleData] = useState();
+  const [dataFetched, setDataFetched] = useState(false);
+
 
   const [openDetails, setOpenDetails] = useState({});
 
@@ -43,25 +47,32 @@ export default function TestDetailsBody(props) {
       console.log('test1111:', test);
     }
   )
-   useEffect(() => {
-    if (test?.id) {
-      axiosInstance(`/admin/tests/vacuum/testdetail/${test?.id}/`)
-        .then((res) => {
-          const testDataDetails = res.data;
-          setTestDetails(testDataDetails);
-          console.log('testDataDetails1111:', testDataDetails);
-        })
-        .catch((error) => {
-          console.error("Error fetching detailed data: ", error);
-          // handle erroz r appropriately
-        });
-    }
+
+  useEffect(() => {
+    // Fetch data and update state
+    const fetchData = async () => {
+      try {
+        // Fetch test details
+        const response = await axiosInstance(`/admin/tests/vacuum/testdetail/${test?.id}/`);
+        setTestDetails(response.data);
+
+
+      } catch (error) {
+        console.error("Error fetching data: ", error);
+        // Handle errors appropriately
+      }
+    };
+
+    fetchData();
   }, [test?.id]);
+
+
+
 
    useEffect(() => {
     if (Array.isArray(testDetails)) {
       const grouped = testDetails.reduce((grouped, detail) => {
-        const key = `${detail.test}${detail.sample}${detail.brush_type}${detail.test_case}`;
+        const key = `${detail.test}${detail.model}${detail.sample}${detail.brush_type}${detail.test_case}`;
         if (!grouped[key]) {
           grouped[key] = [];
         }
@@ -72,9 +83,8 @@ export default function TestDetailsBody(props) {
     }
   }, [testDetails]);
 
-  useEffect(() => {
-    console.log('groupedDetails:', groupedDetails);
-  }, [groupedDetails]);
+
+   console.log('groupedDetails:', groupedDetails)
 
 
   const handleCollapseToggle = (key) => {
@@ -91,6 +101,7 @@ export default function TestDetailsBody(props) {
       {Object.keys(groupedDetails).map((key, index) => {
         const details = groupedDetails[key];
         const firstDetail = details[0];
+
         return (
           <div key={index}>
             <Box>
@@ -122,7 +133,7 @@ export default function TestDetailsBody(props) {
                       <TableBody>
 
                         <TableRow key={index}>
-                          <TableCell>{firstDetail.sample}</TableCell>
+                          <TableCell>{firstDetail.model}</TableCell>
                           <TableCell>{firstDetail.sample}</TableCell>
                           <TableCell>{firstDetail.brush_type}</TableCell>
                           <TableCell>{firstDetail.test_case}</TableCell>
@@ -139,6 +150,7 @@ export default function TestDetailsBody(props) {
                 <Collapse in={openDetails[key]} timeout="auto" unmountOnExit>
                   <TestDetailsTableCR
                     testId={test?.id}
+                    model={firstDetail.model}
                     sample={firstDetail.sample}
                     brushType={firstDetail.brush_type}
                     tester={props.tester}
@@ -149,10 +161,10 @@ export default function TestDetailsBody(props) {
                 <Collapse in={openDetails[key]} timeout="auto" unmountOnExit>
                   <TestDetailsTable
                     testId={test?.id}
-                    sample={sampleValue}
-                    brushType={brushTypeValue}
+                    // sample={sampleValue}
+                    // brushType={brushTypeValue}
                     tester={props.tester}
-                    testCase={testCaseValue}
+                    // testCase={testCaseValue}
                   />
                 </Collapse>
               )}
@@ -160,6 +172,7 @@ export default function TestDetailsBody(props) {
           </div>
         );
       })}
+
     </React.Fragment>
   );
 }

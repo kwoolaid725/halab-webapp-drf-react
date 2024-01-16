@@ -61,36 +61,117 @@ function TestDetailsTableRowEdge(props){
 
   }, []); // Fetch only once on component mount
 
-//  useEffect(() => {
-//     // Your logic to fetch and generate soilWtMap from the provided TestMeasures data
-//     if (testMeasures && testMeasures.length > 0) {
-//       const soilWtMapData = {};
-//
-//       // const measure = testMeasures[0]; // Assuming there's only one testMeasure data
-//
-//          console.log('Measure Carpet:', testMeasures);
-//
-//         const key = Object.keys(testMeasures);
-//         console.log('Key Carpet:', key);
-//
-//         const values = testMeasures[key];
-//         console.log('Values Carpet:', values);
-//         // Check if 'values' is defined and contains 'Soil_Wt' property
-//         if (values && values.Soil_Wt && values.Soil_Wt.value) {
-//           soilWtMapData[key] = parseFloat(values.Soil_Wt.value); // Storing Soil_Wt value as a number
-//         }
-//         setSoilWtMap(soilWtMapData);
-//       }
-//
-//
-//   }, [testMeasures]);
-//
-//
-// useEffect(() => {
-//     console.log('soilWtMap', soilWtMap);
-//
-//   }
-// , [soilWtMap]);
+   useEffect(() => {
+      if (testMeasures && Object.keys(testMeasures).length > 0) {
+        let soilWtMapData = {};
+
+        Object.keys(testMeasures).forEach((key) => {
+          const values = testMeasures[key];
+          soilWtMapData[key] = { ...values };
+        });
+
+        setSoilWtMap(soilWtMapData);
+      }
+    }, [testMeasures]);
+
+   const handleInputChange = (rows, setRows, slug, key, value) => {
+    const updatedRows = rows.map((row) => {
+      if (row.slug === slug) {
+        let updatedValues = { ...row.values, [key]: { value, units: row.values[key]?.units || '' } };
+
+        // Calculate Weight Diff. when Pre-Wt. or Post-Wt. changes
+        if (key === 'L_Pre-Wt.' || key === 'L_Post-Wt.' ) {
+          const preWt = parseFloat(updatedValues['L_Pre-Wt.'].value) || 0;
+          const postWt = parseFloat(updatedValues['L_Post-Wt.'].value) || 0;
+          const weightDiff = (postWt - preWt).toFixed(2).replace(/\.?0+$/, '');
+          const soilWt = parseFloat(updatedValues['Soil_Wt'].value) || 0; // Assuming Soil_Wt exists in values
+          const pickup = soilWt !== 0 ? ((weightDiff / soilWt) * 100).toFixed(2).replace(/\.?0+$/, '') : 0;
+
+          updatedValues = {
+            ...updatedValues,
+            'L_Pickup': { value: pickup, units: '%' } // Setting Pickup value and units
+          };
+        }
+
+        if (key === 'R_Pre-Wt.' || key === 'R_Post-Wt.' ) {
+          const preWt = parseFloat(updatedValues['R_Pre-Wt.'].value) || 0;
+          const postWt = parseFloat(updatedValues['R_Post-Wt.'].value) || 0;
+          const weightDiff = (postWt - preWt).toFixed(2).replace(/\.?0+$/, '');
+          const soilWt = parseFloat(updatedValues['Soil_Wt'].value) || 0; // Assuming Soil_Wt exists in values
+          const pickup = soilWt !== 0 ? ((weightDiff / soilWt) * 100).toFixed(2).replace(/\.?0+$/, '') : 0;
+
+          updatedValues = {
+            ...updatedValues,
+            'R_Pickup': { value: pickup, units: '%' } // Setting Pickup value and units
+          };
+        }
+
+        if (key === 'F1' || key === 'F2' || key === 'F3' || key === 'F4' || key === 'F5' || key === 'F6' ) {
+          const F_values = ['F1', 'F2', 'F3', 'F4', 'F5', 'F6'];
+
+          // Filter out the values that are not defined or not valid floats
+          const validValues = F_values.map(f => parseFloat(updatedValues[f]?.value)).filter(value => !isNaN(value));
+
+          // Calculate the sum of valid values
+          const sum = validValues.reduce((acc, value) => acc + value, 0);
+
+          // Calculate the average based on the number of valid values
+          const F_Avg = validValues.length > 0 ? (sum / validValues.length).toFixed(2).replace(/\.?0+$/, '') : 0;
+
+          updatedValues = {
+            ...updatedValues,
+            'F_AVG': { value: F_Avg, units: 'in' } // Setting Pickup value and units
+          };
+        }
+        if (key === 'L1' || key === 'L2' || key === 'L3' ) {
+          const L_values = ['L1', 'L2', 'L3'];
+
+          // Filter out the values that are not defined or not valid floats
+          const validValues = L_values.map(f => parseFloat(updatedValues[f]?.value)).filter(value => !isNaN(value));
+
+          // Calculate the sum of valid values
+          const sum = validValues.reduce((acc, value) => acc + value, 0);
+
+          // Calculate the average based on the number of valid values
+          const L_Avg = validValues.length > 0 ? (sum / validValues.length).toFixed(2).replace(/\.?0+$/, '') : 0;
+
+          updatedValues = {
+            ...updatedValues,
+            'L_AVG': { value: L_Avg, units: 'in' } // Setting Pickup value and units
+          };
+        }
+
+        if (key === 'R1' || key === 'R2' || key === 'R3' ) {
+          const L_values = ['R1', 'R2', 'R3'];
+
+          // Filter out the values that are not defined or not valid floats
+          const validValues = L_values.map(f => parseFloat(updatedValues[f]?.value)).filter(value => !isNaN(value));
+
+          // Calculate the sum of valid values
+          const sum = validValues.reduce((acc, value) => acc + value, 0);
+
+          // Calculate the average based on the number of valid values
+          const R_Avg = validValues.length > 0 ? (sum / validValues.length).toFixed(2).replace(/\.?0+$/, '') : 0;
+
+          updatedValues = {
+            ...updatedValues,
+            'R_AVG': { value: R_Avg, units: 'in' } // Setting Pickup value and units
+          };
+        }
+
+        const updatedRow = {
+          ...row,
+          values: updatedValues
+        };
+
+        return updatedRow;
+      }
+      return row;
+    });
+
+    setRows([...updatedRows]);
+  };
+
 
 
 
@@ -110,6 +191,7 @@ function TestDetailsTableRowEdge(props){
         isEditing: false,
         values: {},
         units: {},
+        model: ''
       };
       setRows([initialRowState]);
       // console.log('initialRowState', initialRowState);
@@ -123,19 +205,12 @@ function TestDetailsTableRowEdge(props){
 
     if (testMeasures) {
       let selectedMeasures = Array.isArray(testMeasures) ? testMeasures : [testMeasures];
-      const soilWtMapData = {};
+
 
       if (selectedMeasures) {
         const values = selectedMeasures[0]['Sand']; // Accessing the values for "Sand"
         const keys = Object.keys(values);
 
-        // console.log('Edge Values:', values);
-        // console.log('Edge Keys:', keys);
-
-        if (values && values.Soil_Wt && values.Soil_Wt.value) {
-          soilWtMapData['Sand'] = parseFloat(values.Soil_Wt.value); // Storing Soil_Wt value as a number
-        }
-        setSoilWtMap(soilWtMapData);
 
         // Update the rows state with "Sand" values and keys
         setRows(prevRows =>
@@ -232,8 +307,9 @@ function TestDetailsTableRowEdge(props){
     created_at: '',
     last_updated: '',
     isEditing: false,
-    values: {}, // Initialize as an empty object
-    units: {}   // Initialize as an empty object
+    values: {},
+    units: {},
+    model: ''
   });
 
   useEffect(() => {
@@ -373,6 +449,7 @@ function TestDetailsTableRowEdge(props){
           formData.append('slug', editedRow.slug);
           formData.append('run', editedRow.run);
           formData.append('remarks', editedRow.remarks);
+          formData.append('model', props.model);
 
           const url = `admin/tests/vacuum/testdetail/${rowToUpdate.test}/${rowToUpdate.slug}/${rowToUpdate.id}/`;
           const requestType = 'PUT'; // Use PUT for updating existing rows
@@ -432,6 +509,7 @@ function TestDetailsTableRowEdge(props){
           formData.append('slug', editedRow.slug);
           formData.append('run', editedRow.run);
           formData.append('remarks', editedRow.remarks);
+          formData.append('model', props.model);
 
           formDataArray.push(formData);
 
@@ -513,7 +591,7 @@ function TestDetailsTableRowEdge(props){
                 // testGroup='Sand'
                 testId={props.testId}
                 keys={keys}
-                // handleInputChange={(slug, key, value) => handleInputChange(rows, setRows, slug, key, value)}
+                handleInputChange={(slug, key, value) => handleInputChange(rows, setRows, slug, key, value)}
                 submitRow={submitRow}
                 setRows={setRows}
                 rows={rows}

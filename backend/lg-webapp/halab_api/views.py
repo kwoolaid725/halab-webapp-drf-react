@@ -141,12 +141,15 @@ class ProductList(generics.ListAPIView):
         category = self.request.query_params.get('category', None)
         brand = self.request.query_params.get('brand', None)
         model_name = self.request.query_params.get('model_name', None)
+        id = self.request.query_params.get('id', None)
         if category is not None:
             queryset = queryset.filter(category=category)
         if brand is not None:
             queryset = queryset.filter(brand__name=brand)
         if model_name is not None:
             queryset = queryset.filter(model_name=model_name)
+        if id is not None:
+            queryset = queryset.filter(id=id)
         return queryset
 
 

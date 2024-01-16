@@ -31,7 +31,7 @@ function TestDetailsTableRowBare(props){
           const response = await fetch('/test-measures.json');
           const jsonData = await response.json();
           const bareData = jsonData["Bare"];
-          // console.log('Bare Data:', bareData)
+          console.log('Bare Data:', bareData)
           setTestMeasures(bareData);
         } catch (error) {
           console.error('Error fetching data', error);
@@ -176,11 +176,12 @@ function TestDetailsTableRowBare(props){
         isEditing: false,
         values: {},
         units: {},
+        // model: `${props.model}`,
       };
       setRows([initialRowState]);
       // console.log('initialRowState', initialRowState);
 
-  }, [props.testId, props.testTarget, props.testGroup, props.tester]);
+  }, [props.testId, props.testTarget, props.testGroup, props.tester, props.model]);
 
 
   useEffect(() => {
@@ -264,7 +265,8 @@ function TestDetailsTableRowBare(props){
     last_updated: '',
     isEditing: false,
     values: {}, // Initialize as an empty object
-    units: {}   // Initialize as an empty object
+    units: {}   ,// Initialize as an empty object
+    // model: props.model,
   });
 
   useEffect(() => {
@@ -404,6 +406,8 @@ function TestDetailsTableRowBare(props){
           formData.append('slug', editedRow.slug);
           formData.append('run', editedRow.run);
           formData.append('remarks', editedRow.remarks);
+          formData.append('model', props.model);
+
 
           const url = `admin/tests/vacuum/testdetail/${rowToUpdate.test}/${rowToUpdate.slug}/${rowToUpdate.id}/`;
           const requestType = 'PUT'; // Use PUT for updating existing rows
@@ -463,6 +467,7 @@ function TestDetailsTableRowBare(props){
           formData.append('slug', editedRow.slug);
           formData.append('run', editedRow.run);
           formData.append('remarks', editedRow.remarks);
+          formData.append('model', props.model);
 
           formDataArray.push(formData);
 
