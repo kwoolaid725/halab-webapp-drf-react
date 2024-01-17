@@ -19,27 +19,9 @@ import axiosInstance from "../../axios";
 import TestDetailsTableCR from "./TestDetailsTableCR";
 
 export default function TestDetailsBody(props) {
-  const [openFirst, setOpenFirst] = useState(true);
-  const [sampleValue, setSampleValue] = useState('');
-  const [invNoValue, setInvNoValue] = useState('');
-  const [brushTypeValue, setBrushTypeValue] = useState('');
-  const [testCaseValue, setTestCaseValue] = useState('');
-
-  const {id} = useParams();
-
-  const [data, setData] = useState();
-
-
   const { test } = props;
   const [testDetails, setTestDetails] = useState();
-  const [productsArray, setProductsArray] = useState([]);
-  const [sampleData, setSampleData] = useState();
-  const [dataFetched, setDataFetched] = useState(false);
-
-
   const [openDetails, setOpenDetails] = useState({});
-
-
   const [groupedDetails, setGroupedDetails] = useState({});
 
   useEffect(
