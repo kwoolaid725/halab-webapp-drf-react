@@ -82,7 +82,7 @@ export default function TestDetails(props) {
       />
 
       <Button onClick={handleToggleModal}>
-        {isModalOpen ? 'Close' : 'Open Modal'}
+        {isModalOpen ? 'Close' : 'Add Sample'}
       </Button>
 
        {isModalOpen && (

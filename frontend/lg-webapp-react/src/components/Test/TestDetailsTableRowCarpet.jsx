@@ -9,6 +9,14 @@ import Typography from '@mui/material/Typography';
 import TableCell from '@mui/material/TableCell';
 import EditableRow  from './EditableRow'
 import StaticRow  from './StaticRow'
+import TableContainer from "@mui/material/TableContainer";
+import Paper from "@mui/material/Paper";
+import Table from "@mui/material/Table";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import TableBody from "@mui/material/TableBody";
+import IconButton from "@mui/material/IconButton";
+import AddIcon from "@mui/icons-material/Add";
 
 
 function TestDetailsTableRowCarpet(props){
@@ -502,47 +510,77 @@ function TestDetailsTableRowCarpet(props){
     };
   };
 
+  const sortedData = rows.sort((a, b) => {
+    // Assuming testGroup is a string, modify accordingly if it's a different type
+    const testGroupComparison = b.testGroup.localeCompare(a.testGroup); // Reverse the order
+    if (testGroupComparison !== 0) {
+      return testGroupComparison;
+    }
+    // If testGroup is the same, compare by run
+    return a.run - b.run; // Assuming run is a number, adjust accordingly if it's a string
+  });
+
   return (
-    <div>
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Tester</th>
-            <th>Test Group</th>
+     <TableContainer component={Paper}>
+      <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
+        <TableHead>
+          <TableRow>
+            <TableCell align="center">
+              <Typography variant="subtitle1" fontWeight="bold">Row ID</Typography>
+            </TableCell>
+            <TableCell align="center">
+              <Typography variant="subtitle1" fontWeight="bold">Tester</Typography>
+            </TableCell>
+            <TableCell align="center">
+              <Typography variant="subtitle1" fontWeight="bold">Test Group</Typography>
+            </TableCell>
             {keys && keys.map((key, index) => (
-              <th key={index}>{key}</th>
+              <TableCell align="center" key={index}>
+                <Typography variant="subtitle1" fontWeight="bold">{key}</Typography>
+              </TableCell>
             ))}
-            <th>Run</th>
-            <th>Remarks</th>
-            <th>Created</th>
-            <th>Updated</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((row, idx) => (
+            <TableCell align="center">
+              <Typography variant="subtitle1" fontWeight="bold">Run</Typography>
+            </TableCell>
+            <TableCell align="center">
+              <Typography variant="subtitle1" fontWeight="bold">Remarks</Typography>
+            </TableCell>
+            <TableCell align="center">
+              <Typography variant="subtitle1" fontWeight="bold">Created</Typography>
+            </TableCell>
+            <TableCell align="center">
+              <Typography variant="subtitle1" fontWeight="bold">Updated</Typography>
+            </TableCell>
+            <TableCell align="center">
+              <Typography variant="subtitle1" fontWeight="bold">Actions</Typography>
+            </TableCell>
+          </TableRow>
+        </TableHead>
+
+        <TableBody>
+          {sortedData.map((row, idx) => (
               row.isEditing ? (
                 <EditableRow
-                key={idx}
-                row={row}
-                idx={idx}
-                // testGroup='Sand'
-                testId={props.testId}
-                keys={keys}
-                handleInputChange={(slug, key, value) => handleInputChange(rows, setRows, slug, key, value)}
-                submitRow={submitRow}
-                setRows={setRows}
-                rows={rows}
-                testGroupOptions={testGroupOptions}
-                soilWtMap={soilWtMap}
-                onCancelEdit={(cancelIdx) => {
-                  setRows((prevRows) =>
-                    prevRows.map((r, index) =>
-                      index === cancelIdx ? { ...r, isEditing: false } : r
-                    )
-                  );
-                }}
+                  key={idx}
+                  row={row}
+                  idx={idx}
+                  // testGroup='Sand'
+                  testId={props.testId}
+                  keys={keys}
+                  values={values}
+                  handleInputChange={(slug, key, value) => handleInputChange(rows, setRows, slug, key, value)}
+                  submitRow={submitRow}
+                  setRows={setRows}
+                  rows={rows}
+                  testGroupOptions={testGroupOptions}
+                  soilWtMap={soilWtMap}
+                  onCancelEdit={(cancelIdx) => {
+                    setRows((prevRows) =>
+                      prevRows.map((r, index) =>
+                        index === cancelIdx ? { ...r, isEditing: false } : r
+                      )
+                    );
+                  }}
               />
               ) : (
                 <StaticRow
@@ -557,17 +595,19 @@ function TestDetailsTableRowCarpet(props){
                 />
               )
             ))}
+           <tr>
+            <td colSpan={keys.length + 7} align={"center"}>
 
-          <tr>
-            <td colSpan={keys.length + 7}>
-              <Button variant="contained" onClick={handleAddRow}>
-                Add Row
-              </Button>
+              <IconButton variant="outlined" onClick={handleAddRow} style={{ color: 'steelblue' }} >
+                <AddIcon />
+              </IconButton>
             </td>
           </tr>
-        </tbody>
-      </table>
-    </div>
+
+        </TableBody>
+      </Table>
+    </TableContainer>
+
   );
 };
 
