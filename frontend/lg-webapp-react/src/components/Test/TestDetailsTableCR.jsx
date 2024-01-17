@@ -1,135 +1,107 @@
-import React, { useEffect, useState } from 'react';
-import Box from '@mui/material/Box';
-import TableCell from '@mui/material/TableCell';
-import Typography from '@mui/material/Typography';
-import axiosInstance from "../../axios";
-import TestDetailsTableRow from "./TestDetailsTableRow";
+import React from 'react';
 import TestDetailsTableRowBare from "./TestDetailsTableRowBare";
 import TestDetailsTableRowCarpet from "./TestDetailsTableRowCarpet";
 import TestDetailsTableRowEdge from "./TestDetailsTableRowEdge";
+import CustomTabPanel from "../UI/TabPanel";
+
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import Box from '@mui/material/Box';
+
 
 const TestDetailsTableCR = (props) => {
-  const [testMeasures, setTestMeasures] = useState(null);
-  const [fetchedRows, setFetchedRows] = useState([]);
-  const [rows, setRows] = useState();
 
-  const [selectedComponent, setSelectedComponent] = useState(null);
+  const [value, setValue] = React.useState(0);
 
-  const handleButtonClick = (componentName) => {
-    setSelectedComponent(componentName);
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
   };
-
-  useEffect(() => {
-    fetch('/test-measures.json')
-      .then((response) => response.json())
-      .then((jsonData) => {
-        setTestMeasures(jsonData);
-      })
-      .catch((error) => {
-        console.error('Error fetching data', error);
-      });
-  }, []);
-
-
-
-  // fetch Bare rows from API
-
-    useEffect(() => {
-    axiosInstance.get(`/admin/tests/vacuum/testdetail/${props.testId}/?test_target=Bare`)
-      .then((response) => {
-        setFetchedRows(response.data);
-      })
-      .catch((error) => {
-        console.error('Error fetching data', error);
-      });
-    }, []);
-
-
-
-
 
 
    return (
-    <React.Fragment>
-      <table>
-        <tr>
-          <th>
-          Bare
-          </th>
-        </tr>
-          <tbody>
-          <TestDetailsTableRowBare
+    <Box sx={{ width: '100%', marginLeft: '100px' }}>
+      <Box sx={{ borderBottom: 1, borderColor: 'divider',  marginLeft: '20px' }}>
+        <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
+          <Tab label="Bare" />
+          <Tab label="Carpet" />
+          <Tab label="Edge" />
+          {/* Add more tabs as needed */}
+        </Tabs>
+      </Box>
 
-            testId={props.testId}
-            sample={props.sample}
-            brushType={props.brushType}
-            tester={props.tester}
-            testCase={props.testCase}
-            model={props.model}
-
+      {/* Content for Bare (Item One) */}
+      <CustomTabPanel value={value} index={0}>
+          <table style={{ borderCollapse: 'collapse', width: '100%' }}>
+            <thead>
+              <tr>
+                <th style={{ borderBottom: '2px solid #ddd', padding: '2px', textAlign: 'left', backgroundColor: '#F08080' }}>
+                  <h3 style={{ margin: '0', fontSize: '1.5rem',  marginLeft: '5px' }}>Bare Floor</h3>
+                </th>
+              </tr>
+            </thead>
+            <tbody style={{ border: '1px solid #ddd' }}>
+              <TestDetailsTableRowBare
+                testId={props.testId}
+                sample={props.sample}
+                brushType={props.brushType}
+                tester={props.tester}
+                testCase={props.testCase}
+                model={props.model}
               />
-          </tbody>
-      </table>
-      <table>
-        <tr>
-          <th>
-            Carpet
-          </th>
-        </tr>
-        <tbody>
-          <TestDetailsTableRowCarpet
+            </tbody>
+          </table>
+        </CustomTabPanel>
 
-            testId={props.testId}
-            sample={props.sample}
-            brushType={props.brushType}
-            tester={props.tester}
-            testCase={props.testCase}
-            model={props.model}
 
+        <CustomTabPanel value={value} index={1}>
+          <table style={{ borderCollapse: 'collapse', width: '100%' }}>
+
+           <thead>
+              <tr>
+                <th style={{ borderBottom: '2px solid #ddd', padding: '2px', textAlign: 'left', backgroundColor: '#d9e1e8' }}>
+                  <h3 style={{ margin: '0', fontSize: '1.5rem', marginLeft: '5px' }}>Carpet</h3>
+                </th>
+              </tr>
+            </thead>
+            <tbody style={{ border: '1px solid #ddd' }}>
+              <TestDetailsTableRowCarpet
+                testId={props.testId}
+                sample={props.sample}
+                brushType={props.brushType}
+                tester={props.tester}
+                testCase={props.testCase}
+                model={props.model}
               />
-          </tbody>
-      </table>
-      <table>
-        <tr>
-          <th>
-            Edge
-          </th>
-        </tr>
-        <tbody>
-          <TestDetailsTableRowEdge
+            </tbody>
+          </table>
+        </CustomTabPanel>
 
-            testId={props.testId}
-            sample={props.sample}
-            brushType={props.brushType}
-            tester={props.tester}
-            testCase={props.testCase}
-            model={props.model}
+        <CustomTabPanel value={value} index={2}>
+          <table style={{ borderCollapse: 'collapse', width: '100%' }}>
 
+            <thead>
+              <tr>
+                <th style={{ borderBottom: '2px solid #ddd', padding: '2px', textAlign: 'left', backgroundColor: '#f1f8a2' }}>
+                  <h3 style={{ margin: '0', fontSize: '1.5rem', marginLeft: '5px' }}>Edge</h3>
+                </th>
+              </tr>
+            </thead>
+            <tbody style={{ border: '1px solid #ddd' }}>
+              <TestDetailsTableRowEdge
+                testId={props.testId}
+                sample={props.sample}
+                brushType={props.brushType}
+                tester={props.tester}
+                testCase={props.testCase}
+                model={props.model}
               />
-          </tbody>
-      </table>
-      <table>
-        <tr>
-          <th>
-            Pet Hair
-          </th>
-        </tr>
-      </table>
-      <table>
-        <tr>
-          <th>
-            Noise
-          </th>
-        </tr>
-      </table>
+            </tbody>
+          </table>
+        </CustomTabPanel>
 
-
-
-    </React.Fragment>
+      {/* Add more CustomTabPanel components for additional tabs as needed */}
+    </Box>
   );
-
-
-
 };
 
 export default TestDetailsTableCR;

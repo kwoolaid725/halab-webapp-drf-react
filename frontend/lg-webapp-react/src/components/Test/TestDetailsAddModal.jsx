@@ -28,8 +28,8 @@ import FormControl from "@mui/material/FormControl";
 
 export default function TestDetailsAddModal (props) {
 
-	const navigate = useNavigate();
-	const [sampleValue, setSampleValue] = useState('');
+  const navigate = useNavigate();
+  const [sampleValue, setSampleValue] = useState('');
   const [invNoValue, setInvNoValue] = useState('');
   const [brushTypeValue, setBrushTypeValue] = useState('');
   const [testCaseValue, setTestCaseValue] = useState('');

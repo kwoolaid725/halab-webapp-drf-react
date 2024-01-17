@@ -3,7 +3,20 @@ import React, {
   useState,
   useRef
 } from 'react'
-import axiosInstance from '../../axios'
+
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
+import Button from '@mui/material/Button';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import Box from '@mui/material/Box';
+import SaveIcon from '@mui/icons-material/Save';
+import CloseIcon from '@mui/icons-material/Close';
 
 const EditableRow = ({
   row,
@@ -68,38 +81,6 @@ const EditableRow = ({
     });
   };
 
-    // const handleInputChange = (row, setRows, slug, key, value) => {
-    //   let updatedValues = { ...row.values, [key]: { value, units: row.values[key]?.units || '' } };
-    //   // console.log('updatedValues123:', updatedValues);
-    //
-    //   // Calculate Weight Diff. when Pre-Wt. or Post-Wt. changes
-    //   if (key === 'Pre-Wt.' || key === 'Post-Wt.') {
-    //     const preWt = parseFloat(updatedValues['Pre-Wt.'].value) || 0;
-    //     const postWt = parseFloat(updatedValues['Post-Wt.'].value) || 0;
-    //     const weightDiff = (postWt - preWt).toFixed(2).replace(/\.?0+$/, '');
-    //     const soilWt = parseFloat(updatedValues['Soil_Wt'].value) || 0; // Assuming Soil_Wt exists in values
-    //     const pickup = soilWt !== 0 ? ((weightDiff / soilWt) * 100).toFixed(2).replace(/\.?0+$/, '') : 0;
-    //
-    //     updatedValues = {
-    //       ...updatedValues,
-    //       'Wt.-Diff.': { value: weightDiff, units: 'g' },
-    //       'Pickup': { value: pickup, units: '%' } // Setting Pickup value and units
-    //     };
-    //   }
-    //
-    //   const updatedRow = {
-    //     ...row,
-    //     values: updatedValues
-    //   };
-    //
-    //   setRows((prevRows) => {
-    //     const updatedRows = [...prevRows];
-    //     updatedRows[idx] = updatedRow;
-    //     return updatedRows;
-    //   });
-    // };
-
-
 
    const handleCancel = async () => {
       await setRows((prevRows) => {
@@ -114,83 +95,103 @@ const EditableRow = ({
 
 
   return (
-    <tr key={idx}>
-      <td>{row.slug}</td>
-      <td>
+    <TableRow key={idx} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+      <TableCell component="th" scope="row">
+        {row.slug}
+      </TableCell>
+      <TableCell>
         <input
           type="text"
           value={row.tester}
           onChange={(e) => handleFieldChange('tester', e.target.value)}
+          style={{ width: '30px', fontSize: '16px', textAlign: 'center', backgroundColor: row.tester === '' ? 'lightpink' : ''}}
         />
-      </td>
+      </TableCell>
 
-      <td>
-        <select
+      <TableCell>
+        <Select
           value={row.testGroup}
           onChange={(e) => handleTestGroupChange(e.target.value)}
+          sx={{ height: '25px' }}
         >
-          <option value="">Select Test Group</option>
+          <MenuItem value="">Select Test Group</MenuItem>
           {testGroupOptions.map((option, index) => (
-            <option key={index} value={option}>
+            <MenuItem key={index} value={option}>
               {option}
-            </option>
+            </MenuItem>
           ))}
-        </select>
-      </td>
-        {/*{*/}
-        {/*  keys.map((key, index) => (*/}
-        {/*    <td key={index}>*/}
-        {/*      {key === 'Pre-Wt.' || key === 'Post-Wt.' ? (*/}
-        {/*        <input*/}
-        {/*          type="text"*/}
-        {/*          value={row.values[key]?.value || ''}*/}
-        {/*          onChange={(e) => handleInputChange(row.slug, key, e.target.value)}*/}
-        {/*        />*/}
-        {/*      ) : (*/}
-        {/*        <span>{row.values[key]?.value || ''}</span>*/}
-        {/*      )}*/}
-        {/*      <span>{row.values[key]?.units || ''}</span>*/}
-        {/*    </td>*/}
-        {/*  ))*/}
-        {/*}*/}
+        </Select>
+      </TableCell>
 
-        {
-          keys.map((key, index) => (
-            <td key={index}>
-              <input
+      {keys.map((key, index) => (
+        <TableCell key={index} align={"center"}>
+
+        {["Pre-Wt.", "Post-Wt."].includes(key) ? (
+            <input
                 type="text"
                 value={row.values[key]?.value || ''}
                 onChange={(e) => handleInputChange(row.slug, key, e.target.value)}
-              />
-              <span>{row.values[key]?.units || ''}</span>
-            </td>
-          ))
-        }
-      {/*<td>{row.run}</td>*/}
-      <td>
+                style={{
+                    width: '75px',
+                    fontSize: '16px',
+                    marginRight: '5px',
+                    textAlign: 'right',
+                    // backgroundColor: (row.values[key]?.value || '') === '' ? 'yellow' : (key === "Pre-Wt." ? 'lightblue' : 'lightgreen')
+                    backgroundColor: (row.values[key]?.value || '') === '' ? 'lightpink' : ''
+            }}
+            />
+        ) : (
+            <span style={{ width: '75px', fontSize: '16px', marginRight: '5px', textAlign: 'right' }}>
+                {row.values[key]?.value || ''}
+            </span>
+        )}
+        <span>{row.values[key]?.units || ''}</span>
+
+        </TableCell>
+    ))}
+
+      <TableCell>
         <input
           type="number"
           value={row.run}
-          onChange={(e) => handleFieldChange('run', parseInt(e.target.value))}
-          style={{ width: '25px' }} // Adjust width as needed
-        />
-      </td>
+          onChange={(e) =>{
+              const run = parseInt(e.target.value);
+              console.log('row.run value:', run);
 
-      <td>
+              handleFieldChange('run', parseInt(e.target.value))}}
+          style={{
+              width: '30px',
+              textAlign: 'center',
+              fontSize: '16px',
+              backgroundColor: isNaN(row.run) || row.run === 0 ? 'lightpink' : 'transparent'
+
+        }} // Adjust width as needed
+
+        />
+      </TableCell>
+
+      <TableCell>
         <input
           type="text"
           value={row.remarks}
           onChange={(e) => handleFieldChange('remarks', e.target.value)}
-
+          style={{ width: '300px', textAlign: 'left', fontSize: '16px' }}
         />
-      </td>
-      <td>{row.created_at}</td>
-      <td>{row.last_updated}</td>
-      <td>
-        <button onClick={() => submitRow(idx)}>Save</button>
-        <button onClick={handleCancel}>Cancel</button>
-      </td>
-    </tr>
+      </TableCell>
+      <TableCell>{row.created_at}</TableCell>
+      <TableCell>{row.last_updated}</TableCell>
+     <TableCell>
+        <Box sx={{ '& button': { m: 0.5 } }}>
+            <Button variant="outlined" size="small" onClick={() => submitRow(idx)} style={{ color: 'green', borderColor: 'green' }}>
+                <SaveIcon /> SAVE
+            </Button>
+            <Button variant="outlined" size="small" onClick={handleCancel} style={{ color: 'red', borderColor: 'red' }}>
+                <CloseIcon />
+            </Button>
+        </Box>
+    </TableCell>
+    </TableRow>
+
   );
 };
 
