@@ -40,7 +40,7 @@ export default function TestDetailsAddModal (props) {
   const [values, setValues] = useState([]);
   const [keys, setKeys] = useState([]);
 
-  const [products, setProducts] = useState([]);
+  const [brandModel, setBrandModel] = useState([]);
 // const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedBrand, setSelectedBrand] = useState('');
   const [brands, setBrands] = useState([]);
@@ -161,12 +161,22 @@ export default function TestDetailsAddModal (props) {
       }
     }, [selectedSearchResult]);
 
-    useEffect(
-        () => {
-            // console.log('selected product:', selectedProduct);
-            // console.log('sampleValue:', sampleValue);
-        }
-    )
+    useEffect(() => {
+      if (selectedSearchResult) {
+        // console.log('selectedSearchResult123:', selectedSearchResult)
+          axiosInstance.get(`/products/?id=${selectedSearchResult.id}`)
+          .then(response => {
+            const fetchedBrand = response.data[0]?.brand; // Assuming the API returns an array
+            const fetchedModel = response.data[0]?.model_name; // Assuming the API returns an array
+            // concat the brand and model name
+            const model = `${fetchedBrand} ${fetchedModel}`;
+            setBrandModel(model);
+          })
+          .catch(error => {
+            console.error('Error:', error);
+          });
+      }
+    }, [selectedSearchResult]);
     const handleSubmit = async (e) => {
       e.preventDefault();
       const formDataArray = [];
@@ -190,6 +200,7 @@ export default function TestDetailsAddModal (props) {
         formData.append('slug', slug);
         formData.append('run', 1);
         formData.append('remarks', '');
+        formData.append('model', brandModel);
 
         formDataArray.push(formData);
       });

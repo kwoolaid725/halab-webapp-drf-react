@@ -34,7 +34,7 @@ function TestDetailsTableRowCarpet(props){
         // console.log('Fetched Data:', jsonData); // Log the fetched data
 
         const carpetData = jsonData["Carpet"];
-        // console.log('Carpet Data:', carpetData); // Log the specific "Carpet" data
+        console.log('Carpet Data:', carpetData); // Log the specific "Carpet" data
 
         setTestMeasures(carpetData);
       } catch (error) {
@@ -62,37 +62,58 @@ function TestDetailsTableRowCarpet(props){
   }, []); // Fetch only once on component mount
 
  useEffect(() => {
-    // Your logic to fetch and generate soilWtMap from the provided TestMeasures data
-    if (testMeasures && testMeasures.length > 0) {
-      const soilWtMapData = {};
+    if (testMeasures && Object.keys(testMeasures).length > 0) {
+      let soilWtMapData = {};
 
-      // const measure = testMeasures[0]; // Assuming there's only one testMeasure data
-
-         // console.log('Measure Carpet:', testMeasures);
-
-        const key = Object.keys(testMeasures);
-        // console.log('Key Carpet:', key);
-
+      Object.keys(testMeasures).forEach((key) => {
         const values = testMeasures[key];
-        // console.log('Values Carpet:', values);
-        // Check if 'values' is defined and contains 'Soil_Wt' property
-        if (values && values.Soil_Wt && values.Soil_Wt.value) {
-          soilWtMapData[key] = parseFloat(values.Soil_Wt.value); // Storing Soil_Wt value as a number
-        }
-        setSoilWtMap(soilWtMapData);
-      }
+        soilWtMapData[key] = { ...values };
+      });
 
-
+      setSoilWtMap(soilWtMapData);
+    }
   }, [testMeasures]);
 //
 //
-// useEffect(() => {
-//     console.log('soilWtMap', soilWtMap);
+//   useEffect(() => {
+//       console.log('soilWtMap', soilWtMap);
 //
-//   }
-// , [soilWtMap]);
+//     }
+//   , [soilWtMap]);
 
+ const handleInputChange = (rows, setRows, slug, key, value) => {
+    const updatedRows = rows.map((row) => {
+      if (row.slug === slug) {
+        let updatedValues = { ...row.values, [key]: { value, units: row.values[key]?.units || '' } };
 
+        // Calculate Weight Diff. when Pre-Wt. or Post-Wt. changes
+        if (key === 'Pre-Wt.' || key === 'Post-Wt.') {
+          const preWt = parseFloat(updatedValues['Pre-Wt.'].value) || 0;
+          const postWt = parseFloat(updatedValues['Post-Wt.'].value) || 0;
+          const weightDiff = (postWt - preWt).toFixed(2).replace(/\.?0+$/, '');
+          const soilWt = parseFloat(updatedValues['Soil_Wt'].value) || 0;
+
+          const pickup = soilWt !== 0 ? ((weightDiff / soilWt) * 100).toFixed(2).replace(/\.?0+$/, '') : 0;
+
+          updatedValues = {
+            ...updatedValues,
+            'Wt.-Diff.': { value: weightDiff, units: 'g' },
+            'Pickup': { value: pickup, units: '%' }
+          };
+        }
+
+        const updatedRow = {
+          ...row,
+          values: updatedValues
+        };
+
+        return updatedRow;
+      }
+      return row;
+    });
+
+    setRows([...updatedRows]);
+  };
 
 
   useEffect(() => {
@@ -110,11 +131,12 @@ function TestDetailsTableRowCarpet(props){
         isEditing: false,
         values: {},
         units: {},
+        model: ''
       };
       setRows([initialRowState]);
       // console.log('initialRowState', initialRowState);
 
-  }, [props.testId, props.testTarget, props.testGroup, props.tester]);
+  }, [props.testId, props.testTarget, props.testGroup, props.tester, props.model]);
 
 
   useEffect(() => {
@@ -123,19 +145,11 @@ function TestDetailsTableRowCarpet(props){
 
     if (testMeasures) {
       let selectedMeasures = Array.isArray(testMeasures) ? testMeasures : [testMeasures];
-      const soilWtMapData = {};
 
       if (selectedMeasures) {
         const values = selectedMeasures[0]['Sand']; // Accessing the values for "Sand"
         const keys = Object.keys(values);
 
-        // console.log('Carpet Values:', values);
-        // console.log('Carpet Keys:', keys);
-
-        if (values && values.Soil_Wt && values.Soil_Wt.value) {
-          soilWtMapData['Sand'] = parseFloat(values.Soil_Wt.value); // Storing Soil_Wt value as a number
-        }
-        setSoilWtMap(soilWtMapData);
 
         // Update the rows state with "Sand" values and keys
         setRows(prevRows =>
@@ -233,7 +247,8 @@ function TestDetailsTableRowCarpet(props){
     last_updated: '',
     isEditing: false,
     values: {}, // Initialize as an empty object
-    units: {}   // Initialize as an empty object
+    units: {},
+    model: ''// Initialize as an empty object
   });
 
   useEffect(() => {
@@ -373,6 +388,7 @@ function TestDetailsTableRowCarpet(props){
           formData.append('slug', editedRow.slug);
           formData.append('run', editedRow.run);
           formData.append('remarks', editedRow.remarks);
+          formData.append('model', props.model);
 
           const url = `admin/tests/vacuum/testdetail/${rowToUpdate.test}/${rowToUpdate.slug}/${rowToUpdate.id}/`;
           const requestType = 'PUT'; // Use PUT for updating existing rows
@@ -432,6 +448,7 @@ function TestDetailsTableRowCarpet(props){
           formData.append('slug', editedRow.slug);
           formData.append('run', editedRow.run);
           formData.append('remarks', editedRow.remarks);
+          formData.append('model', props.model);
 
           formDataArray.push(formData);
 
@@ -513,7 +530,7 @@ function TestDetailsTableRowCarpet(props){
                 // testGroup='Sand'
                 testId={props.testId}
                 keys={keys}
-                // handleInputChange={(slug, key, value) => handleInputChange(rows, setRows, slug, key, value)}
+                handleInputChange={(slug, key, value) => handleInputChange(rows, setRows, slug, key, value)}
                 submitRow={submitRow}
                 setRows={setRows}
                 rows={rows}

@@ -34,6 +34,11 @@ const EditableRow = ({
 
   // Function to handle changes in testGroup selection
   const handleTestGroupChange = (selectedTestGroup) => {
+
+      if (selectedTestGroup === '') {
+          return;
+      }
+
     const soilWt = soilWtMap[selectedTestGroup].Soil_Wt.value || 0;
     // console.log('row:', row)
     
