@@ -234,71 +234,76 @@ export default function TestDetailsAddModal (props) {
 		<React.Fragment>
           <Box>
             <form onSubmit={handleSubmit}>
-            <TableContainer component={Paper}>
-              <Table aria-label="fixed table">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Test Sample</TableCell>
-                    <TableCell align="left">Inventory Number</TableCell>
-                    <TableCell align="left">Brush Type</TableCell>
-                    <TableCell align="left">Test Case</TableCell>
-                  </TableRow>
-                </TableHead>
+          <TableContainer component={Paper}>
+            <Table aria-label="fixed table">
+              <TableHead>
+                <TableRow>
+                  <TableCell>Test Sample</TableCell>
+                  <TableCell align="left">Inventory Number</TableCell>
+                  <TableCell align="left">Brush Type</TableCell>
+                  <TableCell align="left">Test Case</TableCell>
+                </TableRow>
+              </TableHead>
                 <TableBody>
                   <TableRow>
-
-                    <Autocomplete
-                      // options={searchResults.flatMap((option) => (option.model_name || option.brand ? option : []))}
-                      options={searchResults.filter((option) => option.model_name || option.brand)}
-                      groupBy={(option) => option.brand || 'Other'}
-                      getOptionLabel={(option) => `${option.brand || ''} ${option.model_name || ''}`}
-                      value={selectedSearchResult}
-                      onInputChange={(event, newInputValue) => {
-                        setSearchValue(newInputValue);
-                        handleSearch(newInputValue); // Call handleSearch while typing
-                        // console.log('Search Results:', searchResults)
-                      }}
-                      onChange={(event, newValue) => {
-                        // console.log('Option selected:', newValue);
-                        setSelectedSearchResult(newValue);
-                      }}
-                      renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          variant="outlined"
-                          size="small"
-                          label="Search"
-                        />
+                    <TableCell style={{ width: '25%' }}>
+                      <Autocomplete
+                        // options={searchResults.flatMap((option) => (option.model_name || option.brand ? option : []))}
+                        options={searchResults.filter((option) => option.model_name || option.brand)}
+                        groupBy={(option) => option.brand || 'Other'}
+                        getOptionLabel={(option) => `${option.brand || ''} ${option.model_name || ''}`}
+                        value={selectedSearchResult}
+                        onInputChange={(event, newInputValue) => {
+                          setSearchValue(newInputValue);
+                          handleSearch(newInputValue); // Call handleSearch while typing
+                          // console.log('Search Results:', searchResults)
+                        }}
+                        onChange={(event, newValue) => {
+                          // console.log('Option selected:', newValue);
+                          setSelectedSearchResult(newValue);
+                        }}
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            variant="outlined"
+                            size="small"
+                            label="Search"
+                          />
+                        )}
+                        renderOption={(props, option) => (
+                          <li {...props}>
+                            {option.model_name}
+                          </li>
                       )}
-                      renderOption={(props, option) => (
-                        <li {...props}>
-                          {option.model_name}
-                        </li>
-                    )}
 
-                  />
-                    <TableCell>
-                     <FormControl variant="outlined" fullWidth required>
+                      />
+                    </TableCell>
+                    <TableCell style={{ width: '25%' }}>
+                      <FormControl
+                        variant="outlined"
+                        fullWidth
+                        required
+                        style={{ height: 'fit-content' }} // Adjust the height as needed
+                      >
                         <InputLabel id="product-label">Samples</InputLabel>
                         <Select
-                            value={sampleValue}
-                            onChange={(event) => handleSelectionChange(event, 'sample')}
-                            labelId="sample-label"
-                            id="sample"
-                            name="sample"
-                            label="Sample"
+                          value={sampleValue}
+                          onChange={(event) => handleSelectionChange(event, 'sample')}
+                          labelId="sample-label"
+                          id="sample"
+                          name="sample"
+                          label="Sample"
                         >
-                            {samples.map((option) => (
-                                <MenuItem key={option.id} value={option.inv_no}>
-                                    {option.inv_no}
-                                </MenuItem>
-                            ))}
+                          {samples.map((option) => (
+                            <MenuItem key={option.id} value={option.inv_no}>
+                              {option.inv_no}
+                            </MenuItem>
+                          ))}
                         </Select>
-                     </FormControl>
+                      </FormControl>
+                    </TableCell>
 
-                  </TableCell>
-
-                    <TableCell>
+                    <TableCell style={{ width: '25%' }}>
                      <TextField
                         variant="outlined"
                         size="small"
@@ -306,7 +311,7 @@ export default function TestDetailsAddModal (props) {
                         onChange={(e) => setBrushTypeValue(e.target.value)}
                       />
                     </TableCell>
-                    <TableCell>
+                    <TableCell style={{ width: '25%' }}>
                       <TextField
                         variant="outlined"
                         size="small"

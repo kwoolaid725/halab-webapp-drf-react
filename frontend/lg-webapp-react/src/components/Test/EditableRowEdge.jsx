@@ -98,7 +98,7 @@ const EditableRowEdge = ({
           type="text"
           value={row.tester}
           onChange={(e) => handleFieldChange('tester', e.target.value)}
-          style={{ width: '30px', fontSize: '16px', textAlign: 'center', backgroundColor: row.tester === '' ? 'lightpink' : ''}}
+          style={{ width: '30px', fontSize: '14px', textAlign: 'center', backgroundColor: row.tester === '' ? 'lightpink' : ''}}
         />
       </TableCell>
 
@@ -118,36 +118,50 @@ const EditableRowEdge = ({
       </TableCell>
 
       {keys.map((key, index) => (
-        <TableCell key={index} align={"center"}>
+          <TableCell key={index} align={"center"}>
 
-            {['F1','F2','F3','F4','F5','F6',
-                'L1','L2','L3',
-                'R1','R2','R3',
-              'L_Pre-Wt.', 'L_Post-Wt.',
-              'R_Pre-Wt.', 'R_Post-Wt.'
-            ].includes(key) ? (
-                <input
-                    type="text"
-                    value={row.values[key]?.value || ''}
-                    onChange={(e) => handleInputChange(row.slug, key, e.target.value)}
-                    style={{
-                        width: '30px',
-                        fontSize: '14px',
-                        // marginRight: '1px',
-                        textAlign: 'right',
-                        // backgroundColor: (row.values[key]?.value || '') === '' ? 'yellow' : (key === "Pre-Wt." ? 'lightblue' : 'lightgreen')
-                        backgroundColor: (row.values[key]?.value || '') === '' ? 'lightpink' : ''
+            {['F1','F2','F3','F4','F5','F6', 'L1','L2','L3', 'R1','R2','R3'].includes(key) ? (
+              <input
+                type="text"
+                value={row.values[key]?.value || ''}
+                onChange={(e) => handleInputChange(row.slug, key, e.target.value)}
+                style={{
+                  width: '30px', // Adjust the width as needed
+                  fontSize: '14px',
+                  marginRight: '1px',
+                  textAlign: 'right',
+                  backgroundColor: (row.values[key]?.value || '') === '' ? 'lightpink' : ''
                 }}
-                />
+              />
             ) : (
-                <span style={{ width: '75px', fontSize: '16px', marginRight: '5px', textAlign: 'right' }}>
-                    {row.values[key]?.value || ''}
+              ['L_Pre-Wt.', 'L_Post-Wt.', 'R_Pre-Wt.', 'R_Post-Wt.'].includes(key) ? (
+                <input
+                  type="text"
+                  value={row.values[key]?.value || ''}
+                  onChange={(e) => handleInputChange(row.slug, key, e.target.value)}
+                  style={{
+                    width: '45px', // Adjust the width as needed
+                    fontSize: '14px',
+                    marginRight: '1px',
+                    textAlign: 'right',
+                    backgroundColor: (row.values[key]?.value || '') === '' ? 'lightpink' : ''
+                  }}
+                />
+              ) : (
+                <span style={{
+                  width: '30px', // Default width for other keys
+                  fontSize: '14px',
+                  marginRight: '1px',
+                  textAlign: 'right'
+                }}>
+                  {row.values[key]?.value || ''}
                 </span>
+              )
             )}
             <span>{row.values[key]?.units || ''}</span>
 
-        </TableCell>
-    ))}
+          </TableCell>
+        ))}
 
       <TableCell>
         <input
@@ -161,7 +175,7 @@ const EditableRowEdge = ({
           style={{
               width: '30px',
               textAlign: 'center',
-              fontSize: '16px',
+              fontSize: '14px',
               backgroundColor: isNaN(row.run) || row.run === 0 ? 'lightpink' : 'transparent'
 
         }} // Adjust width as needed
@@ -174,7 +188,7 @@ const EditableRowEdge = ({
           type="text"
           value={row.remarks}
           onChange={(e) => handleFieldChange('remarks', e.target.value)}
-          style={{ width: '300px', textAlign: 'left', fontSize: '16px' }}
+          style={{ width: '200px', textAlign: 'left', fontSize: '14px' }}
         />
       </TableCell>
       <TableCell>{row.created_at}</TableCell>

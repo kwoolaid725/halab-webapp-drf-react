@@ -8,7 +8,7 @@ import axiosInstance from '../../axios'
 import Typography from '@mui/material/Typography';
 import TableCell from '@mui/material/TableCell';
 import EditableRowEdge  from './EditableRowEdge'
-import StaticRow  from './StaticRow'
+import StaticRowEdge  from './StaticRowEdge'
 import TableRow from "@mui/material/TableRow";
 import TableHead from "@mui/material/TableHead";
 import IconButton from "@mui/material/IconButton";
@@ -419,113 +419,104 @@ function TestDetailsTableRowEdge(props){
 
 
 
-  const toggleEditing = (slug) => {
+  const toggleEditing = (index) => {
     const updatedRows = [...rows];
-    updatedRows[slug].isEditing = !updatedRows[slug].isEditing;
+    updatedRows[index].isEditing = !updatedRows[index].isEditing;
     setRows(updatedRows);
   };
 
 
 
-  const submitRow = (idx) => {
-    // console.log('row', rows[idx])
-    const editedRow = rows[idx];
-
-    // Filter rows to find all rows with the same slug
+  const submitRow = async (index) => {
+    const editedRow = rows[index];
     const rowsWithSameSlug = allRows.filter(row => row.slug === editedRow.slug);
 
     if (rowsWithSameSlug.length > 0) {
-    rowsWithSameSlug.forEach(row => {
-      Object.keys(editedRow.values).forEach(key => {
-        const value = editedRow.values[key]?.value || '';
-        const units = editedRow.values[key]?.units || '';
-        const rowToUpdate = rowsWithSameSlug.find(r => r.id === row.id && r.test_measure === key);
-
-        if (rowToUpdate) {
-          const formData = new FormData();
-
-          formData.append('test_measure', key);
-          formData.append('value', value);
-          formData.append('units', units);
-          formData.append('test', 1);
-          formData.append('sample', props.sample);
-          formData.append('brush_type', props.brushType);
-          formData.append('tester', 1);
-          formData.append('owner', 1);
-          formData.append('test_target', editedRow.testTarget);
-          formData.append('test_group', editedRow.testGroup);
-          formData.append('test_case', props.testCase);
-          formData.append('slug', editedRow.slug);
-          formData.append('run', editedRow.run);
-          formData.append('remarks', editedRow.remarks);
-          formData.append('model', props.model);
-
-          const url = `admin/tests/vacuum/testdetail/${rowToUpdate.test}/${rowToUpdate.slug}/${rowToUpdate.id}/`;
-          const requestType = 'PUT'; // Use PUT for updating existing rows
-          // console.log('formData', formData);
-
-          axiosInstance({
-          method: requestType,
-          url: url,
-          data: formData,
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          }
-        })
-        .then((response) => {
-          // console.log('Posted successfully!', response);
-          // Fetch updated data after successful update
-          axiosInstance.get('admin/tests/vacuum/testdetail/')
-            .then(response => {
-              setAllRows(response.data);
-            })
-            .catch(error => {
-              console.error('Error fetching rows', error);
-            });
-          toggleEditing(idx);
-        })
-        .catch((error) => {
-          console.error('Error posting data', error);
-          // Handle errors
-        });
-      }
-    });
-  });
-      } else {
-        // New entry, perform a POST request
-        const formDataArray = [];
-
-        // console.log('editedRow', editedRow)
-
-        editedRow.keys.forEach((key) => {
-          const formData = new FormData();
-
+      const putRequests = rowsWithSameSlug.map(row => {
+        return Object.keys(editedRow.values).map(key => {
           const value = editedRow.values[key]?.value || '';
           const units = editedRow.values[key]?.units || '';
+          const rowToUpdate = rowsWithSameSlug.find(r => r.id === row.id && r.test_measure === key);
 
-          // Populate formData with appropriate values for the current key
-          formData.append('test_measure', key);
-          formData.append('value', value);
-          formData.append('units', units);
-          formData.append('test', 1);
-          formData.append('sample', props.sample);
-          formData.append('brush_type', props.brushType);
-          formData.append('tester', 1);
-          formData.append('owner', 1);
-          formData.append('test_target', editedRow.testTarget);
-          formData.append('test_group', editedRow.testGroup);
-          formData.append('test_case', props.testCase);
-          formData.append('slug', editedRow.slug);
-          formData.append('run', editedRow.run);
-          formData.append('remarks', editedRow.remarks);
-          formData.append('model', props.model);
+          if (rowToUpdate) {
+            const formData = new FormData();
 
-          formDataArray.push(formData);
+            formData.append('test_measure', key);
+            formData.append('value', value);
+            formData.append('units', units);
+            formData.append('test', 1);
+            formData.append('sample', props.sample);
+            formData.append('brush_type', props.brushType);
+            formData.append('tester', 1);
+            formData.append('owner', 1);
+            formData.append('test_target', editedRow.testTarget);
+            formData.append('test_group', editedRow.testGroup);
+            formData.append('test_case', props.testCase);
+            formData.append('slug', editedRow.slug);
+            formData.append('run', editedRow.run);
+            formData.append('remarks', editedRow.remarks);
+            formData.append('model', props.model);
 
+            const url = `admin/tests/vacuum/testdetail/${rowToUpdate.test}/${rowToUpdate.slug}/${rowToUpdate.id}/`;
+            const requestType = 'PUT';
 
+            return axiosInstance({
+              method: requestType,
+              url: url,
+              data: formData,
+              headers: {
+                'Content-Type': 'multipart/form-data'
+              }
+            });
+          }
         });
+      });
 
-       // Submit each formData instance separately
+      let successfulRequests = 0;
+
+      Promise.all(putRequests.flat())
+        .then(responses => {
+          // Handle responses if needed
+
+          successfulRequests = responses.length;
+
+          if (successfulRequests === rowsWithSameSlug.length * Object.keys(editedRow.values).length) {
+            // All PUT requests were successful, toggleEditing
+            toggleEditing(index);
+          }
+        })
+        .catch((error) => {
+          console.error('Error updating row:', error);
+        });
+    } else {
+      // New entry, perform a POST request
+      const formDataArray = [];
+
+      editedRow.keys.forEach((key) => {
+        const formData = new FormData();
+
+        const value = editedRow.values[key]?.value || '';
+        const units = editedRow.values[key]?.units || '';
+
+        formData.append('test_measure', key);
+        formData.append('value', value);
+        formData.append('units', units);
+        formData.append('test', 1);
+        formData.append('sample', props.sample);
+        formData.append('brush_type', props.brushType);
+        formData.append('tester', 1);
+        formData.append('owner', 1);
+        formData.append('test_target', editedRow.testTarget);
+        formData.append('test_group', editedRow.testGroup);
+        formData.append('test_case', props.testCase);
+        formData.append('slug', editedRow.slug);
+        formData.append('run', editedRow.run);
+        formData.append('remarks', editedRow.remarks);
+        formData.append('model', props.model);
+
+        formDataArray.push(formData);
+      });
+
       const postRequests = formDataArray.map(formData => {
         const url = `admin/tests/vacuum/testdetail/`;
         const requestType = 'POST';
@@ -540,14 +531,11 @@ function TestDetailsTableRowEdge(props){
         });
       });
 
-      // Wait for all POST requests to complete
       Promise.all(postRequests)
         .then(responses => {
-          // Fetch updated data after all POST requests are completed
           axiosInstance.get('admin/tests/vacuum/testdetail/')
             .then(response => {
               const updatedRows = response.data.map(row => {
-                // Adjust this logic based on the structure of your response
                 if (row.slug === editedRow.slug) {
                   return {
                     ...row,
@@ -557,9 +545,9 @@ function TestDetailsTableRowEdge(props){
                 }
                 return row;
               });
-              setAllRows(response.data); // Update allRows state with the latest data
-              setRows(updatedRows); // Update rows state with new 'created_at' and 'last_updated' values
-              toggleEditing(idx);
+              setAllRows(response.data);
+              setRows(updatedRows);
+              toggleEditing(index);
             })
             .catch(error => {
               console.error('Error fetching rows', error);
@@ -567,9 +555,8 @@ function TestDetailsTableRowEdge(props){
         })
         .catch(errors => {
           console.error('Error posting data', errors);
-          // Handle errors
         });
-    };
+    }
   };
 
    const sortedData = rows.sort((a, b) => {
@@ -583,41 +570,42 @@ function TestDetailsTableRowEdge(props){
     });
 
   return (
-    <TableContainer component={Paper}>
+    <TableContainer component={Paper} sx={{ overflowX: 'auto' }} >
       <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
-        <TableHead>
-          <TableRow>
-            <TableCell align="center">
-              <Typography variant="subtitle1" fontWeight="bold">Row ID</Typography>
+     <TableHead>
+        <TableRow>
+          <TableCell align="center" sx={{ margin: '0.1px', padding: '0.5px' }}>
+            <Typography variant="subtitle2" fontWeight="bold">Row ID</Typography>
+          </TableCell>
+          <TableCell align="center" sx={{ margin: '0.1px', padding: '0.5px' }}>
+            <Typography variant="subtitle2" fontWeight="bold">Tester</Typography>
+          </TableCell>
+          <TableCell align="center" sx={{ margin: '0.1px', padding: '0.5px' }}>
+            <Typography variant="subtitle2" fontWeight="bold">Test Group</Typography>
+          </TableCell>
+          {keys && keys.map((key, index) => (
+            <TableCell align="center" key={index} sx={{ margin: '0.1px', padding: '0.5px' }}>
+              <Typography variant="subtitle2" fontWeight="bold">{key}</Typography>
             </TableCell>
-            <TableCell align="center">
-              <Typography variant="subtitle1" fontWeight="bold">Tester</Typography>
-            </TableCell>
-            <TableCell align="center">
-              <Typography variant="subtitle1" fontWeight="bold">Test Group</Typography>
-            </TableCell>
-            {keys && keys.map((key, index) => (
-              <TableCell align="center" key={index}>
-                <Typography variant="subtitle1" fontWeight="bold">{key}</Typography>
-              </TableCell>
-            ))}
-            <TableCell align="center">
-              <Typography variant="subtitle1" fontWeight="bold">Run</Typography>
-            </TableCell>
-            <TableCell align="center">
-              <Typography variant="subtitle1" fontWeight="bold">Remarks</Typography>
-            </TableCell>
-            <TableCell align="center">
-              <Typography variant="subtitle1" fontWeight="bold">Created</Typography>
-            </TableCell>
-            <TableCell align="center">
-              <Typography variant="subtitle1" fontWeight="bold">Updated</Typography>
-            </TableCell>
-            <TableCell align="center">
-              <Typography variant="subtitle1" fontWeight="bold">Actions</Typography>
-            </TableCell>
-          </TableRow>
-        </TableHead>
+          ))}
+          <TableCell align="center" sx={{ margin: '0.1px', padding: '0.5px' }}>
+            <Typography variant="subtitle2" fontWeight="bold">Run</Typography>
+          </TableCell>
+          <TableCell align="center" sx={{ margin: '0.1px', padding: '0.5px' }}>
+            <Typography variant="subtitle2" fontWeight="bold">Remarks</Typography>
+          </TableCell>
+          <TableCell align="center" sx={{ margin: '0.1px', padding: '0.5px' }}>
+            <Typography variant="subtitle2" fontWeight="bold">Created</Typography>
+          </TableCell>
+          <TableCell align="center" sx={{ margin: '0.1px', padding: '0.5px' }}>
+            <Typography variant="subtitle2" fontWeight="bold">Updated</Typography>
+          </TableCell>
+          <TableCell align="center" sx={{ margin: '0.1px', padding: '0.5px' }}>
+            <Typography variant="subtitle2" fontWeight="bold">Actions</Typography>
+          </TableCell>
+        </TableRow>
+      </TableHead>
+
 
         <TableBody>
           {sortedData.map((row, idx) => (
@@ -644,7 +632,7 @@ function TestDetailsTableRowEdge(props){
                 }}
               />
               ) : (
-                <StaticRow
+                <StaticRowEdge
                   key={idx}
                   row={row}
                   idx={idx}
