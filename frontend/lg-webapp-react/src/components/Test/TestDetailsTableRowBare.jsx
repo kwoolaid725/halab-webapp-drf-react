@@ -355,9 +355,9 @@ function TestDetailsTableRowBare(props){
 
 
 
-  const toggleEditing = (slug) => {
+  const toggleEditing = (index) => {
     const updatedRows = [...rows];
-    updatedRows[slug].isEditing = !updatedRows[slug].isEditing;
+    updatedRows[index].isEditing = !updatedRows[index].isEditing;
     setRows(updatedRows);
   };
 
