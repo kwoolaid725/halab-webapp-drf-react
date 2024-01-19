@@ -293,12 +293,12 @@ class AdminTestDetail(generics.RetrieveAPIView):
 class EditTest(generics.UpdateAPIView):
     # permission_classes = [permissions.IsAuthenticated]
     queryset = Test.objects.all()
-    serializer_class = SampleSerializer
+    serializer_class = TestSerializer
 
 class DeleteTest(generics.DestroyAPIView):
     # permission_classes = [permissions.IsAuthenticated]
     queryset = Test.objects.all()
-    serializer_class = SampleSerializer
+    serializer_class = TestSerializer
 
 
 class TestDetailVacuumList(generics.ListCreateAPIView):

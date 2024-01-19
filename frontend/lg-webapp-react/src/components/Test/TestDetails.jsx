@@ -19,14 +19,13 @@ import axiosInstance from "../../axios";
 import TestDetailsTableCR from "./TestDetailsTableCR";
 import TestDetailsBody from "./TestDetailsBody";
 import Button from "@mui/material/Button";
-import TestDetailsAddModal from "./TestDetailsAddModal";
+import TestDetailsAddSample from "./TestDetailsAddSample";
+import AddCircleOutlineTwoToneIcon from '@mui/icons-material/AddCircleOutlineTwoTone';
+import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
+
+import ModalComponent from "../UI/Modal";
 
 export default function TestDetails(props) {
-  const [openFirst, setOpenFirst] = useState(true);
-  const [sampleValue, setSampleValue] = useState('');
-  const [invNoValue, setInvNoValue] = useState('');
-  const [brushTypeValue, setBrushTypeValue] = useState('');
-  const [testCaseValue, setTestCaseValue] = useState('');
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -34,6 +33,14 @@ export default function TestDetails(props) {
 
   const [data, setData] = useState();
   const [dataDetails, setDataDetails] = useState();
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
 
   useEffect(() => {
     axiosInstance(`/tests/`)
@@ -48,20 +55,35 @@ export default function TestDetails(props) {
       });
   }, [id]);
   //
-  // useEffect(() => {
-  //   if (data?.id) {
-  //     axiosInstance(`/admin/tests/vacuum/testdetail/`)
-  //       .then((res) => {
-  //         const testDataDetails = res.data;
-  //         setDataDetails(testDataDetails);
-  //         console.log('testDataDetails1111:', testDataDetails);
-  //       })
-  //       .catch((error) => {
-  //         console.error("Error fetching detailed data: ", error);
-  //         // handle erroz r appropriately
-  //       });
-  //   }
-  // }, [data?.id]);
+  useEffect(() => {
+  if (data?.id) {
+    axiosInstance(`/admin/tests/vacuum/testdetail/${data?.id}/`)
+      .then((res) => {
+        const testDataDetails = res.data;
+        setDataDetails(testDataDetails);
+        console.log('testDataDetails1111:', testDataDetails);
+
+        // Check if there are test details
+        const hasTestDetails = testDataDetails.length > 0;
+
+        // If there are test details, set the test_status to 'IN_PROGRESS'
+        // If there are no test details, set the test_status to 'PENDING'
+        const newTestStatus = hasTestDetails ? 'IN_PROGRESS' : 'PENDING';
+
+        // Update the test_status in the main data
+        axiosInstance.patch(`admin/tests/edit/${data.id}/`, { test_status: newTestStatus })
+          .then((res) => {
+            console.log('Test status updated to', newTestStatus);
+          })
+          .catch((error) => {
+            console.error("Error updating test status: ", error);
+          });
+      })
+      .catch((error) => {
+        console.error("Error fetching detailed data: ", error);
+      });
+  }
+}, [data?.id]);
 
   const handleToggleModal = () => {
     setIsModalOpen((prevIsModalOpen) => !prevIsModalOpen);
@@ -75,24 +97,34 @@ export default function TestDetails(props) {
       <TestDetailsHeader
         testCategory={data?.test_category}
         productCategory={data?.product_category}
+        testStatus={data?.test_status}
         testId={data?.id}
         description={data?.description}
         dueDate={data?.due_date}
         completionDate={data?.completion_date}
       />
 
-      <Button onClick={handleToggleModal}>
-        {isModalOpen ? 'Close' : 'Add Sample'}
-      </Button>
 
-       {isModalOpen && (
-        <div style={{ marginBottom: '20px' }}>
-          <TestDetailsAddModal
-            testId={data?.id}
-            productCategory={data?.product_category}
-          />
-        </div>
-      )}
+   <Box >
+     <Button
+         variant="contained"
+         onClick={openModal}
+         size="large"
+         endIcon={<PlaylistAddIcon />}
+         style={{ backgroundColor: 'white', color: 'steelblue', fontWeight: 'bold', margin: '15px' }}
+     >
+        {isModalOpen ? '' : 'Add Sample'}
+     </Button>
+    </Box>
+
+      <ModalComponent open={isModalOpen} onClose={closeModal}>
+        <TestDetailsAddSample
+          testId={data?.id}
+          productCategory={data?.product_category}
+        />
+      </ModalComponent>
+
+
       <TestDetailsBody
           test={data}
           // testDetails={dataDetails}

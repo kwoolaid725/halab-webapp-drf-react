@@ -30,8 +30,16 @@ const StaticRowEdge = ({ row, idx, keys, handleEdit, handleDelete }) => {
         {row.testGroup}
       </TableCell>
        {keys.map((key, idx) => (
-          <TableCell align={"center"} key={idx} sx={{ fontSize: '14px' }}>
-            {row.values[key]?.value} {row.values[key]?.units}
+          <TableCell align={"center"} key={idx} sx={{
+              fontSize: '14px',
+              padding: '6px',
+              fontWeight: ['F_AVG', 'R_AVG', 'L_Pickup', 'R_Pickup'].includes(key) ? 'bold' : 'normal',
+              color: ['F_AVG', 'R_AVG', 'L_Pickup', 'R_Pickup'].includes(key) ? 'blue' : 'inherit' }}>
+
+            {row.values[key]?.value}
+              <Box sx={{ display: 'inline-block', marginLeft: '2px' }}>
+                {row.values[key]?.units}
+              </Box>
       </TableCell>
         ))}
       <TableCell component="th" scope="row" align={"center"}>

@@ -58,7 +58,7 @@ const TestDetailsTableCR = (props) => {
 
            <thead>
               <tr>
-                <th style={{ borderBottom: '2px solid #ddd', padding: '2px', textAlign: 'left', backgroundColor: '#d9e1e8' }}>
+                <th style={{ borderBottom: '2px solid #ddd', padding: '2px', textAlign: 'left', backgroundColor: '#a3cef1' }}>
                   <h3 style={{ margin: '0', fontSize: '1.5rem', marginLeft: '5px' }}>Carpet</h3>
                 </th>
               </tr>
