@@ -70,19 +70,25 @@ import { styled } from '@mui/system';
     const RightPanel = styled(Grid)(({ theme }) => ({
       marginBottom: '10px',
       marginLeft: '-15px', // Adjust the negative margin to minimize the gap
+      marginRight: '10px', // Adjust the negative margin to minimize the gap
     }));
 
     function TestDetailsHeader(props) {
       const navigate = useNavigate();
 
-      const [testStatus, setTestStatus] = useState(props.testStatus);
+      // const [testStatus, setTestStatus] = useState(props.testStatus);
       const [isCompletedChecked, setIsCompletedChecked] = useState(props.testStatus === 'COMPLETED');
       const testStatusLabel = TEST_STATUS.find(status => status.value === props.testStatus)?.label;
-      const [remarksValue, setRemarksValue] = useState(''); // Add remarksValue state
+      // Set the default value of remarksValue to props.remarks
+      const [remarksValue, setRemarksValue] = useState();
 
       useEffect(() => {
-        setIsCompletedChecked(testStatus === 'COMPLETED');
-      }, [testStatus]);
+        setIsCompletedChecked(props.testStatus === 'COMPLETED');
+      }, [props.testStatus]);
+
+      useEffect(() => {
+        setRemarksValue(props.remarks || '');
+      }, [props.remarks]);
 
       let statusIcon;
 
@@ -102,17 +108,9 @@ import { styled } from '@mui/system';
       }
 
 
-       const handleCheckboxClick = () => {
-          let newStatus;
-          if (isCompletedChecked) {
-            newStatus = 'IN_PROGRESS';
-          } else {
-            newStatus = testStatus === 'COMPLETED' ? 'IN_PROGRESS' : 'COMPLETED';
-          }
-          setTestStatus(newStatus);
-          console.log('newStatus:', newStatus);
-          setIsCompletedChecked(!isCompletedChecked);
-        };
+     const handleCheckboxClick = () => {
+        setIsCompletedChecked((prevIsCompletedChecked) => !prevIsCompletedChecked);
+      };
 
       const handleRemarksChange = (event) => {
         // Update remarksValue state when TextField value changes
@@ -135,6 +133,7 @@ import { styled } from '@mui/system';
             // Handle error, show a notification, etc.
           });
       };
+
 
       return (
          <ThemeProvider theme={theme}>
@@ -304,70 +303,82 @@ import { styled } from '@mui/system';
             </LeftPanel>
 
             {/* Right Panel */}
-            <RightPanel item xs={12} md lg xl>
-              {/* Remarks header */}
-              <TableRow>
-                <StyledTableCell
-                  sx={{
-                    width: '75%',
-                    fontWeight: 'bold',
-                    textAlign: 'center',
-                    borderBottom: 'None',
-                    fontSize: '18px'
-                  }}
-                  colSpan={2}
-                >
-                  <NotesTwoToneIcon /> Remarks :
-                </StyledTableCell>
+              <RightPanel item xs={12} md={6} lg={6} xl={6}>
+                {/* Remarks header */}
+                <TableRow>
+                  <StyledTableCell
+                    sx={{
+                      width: '75%',
+                      fontWeight: 'bold',
+                      textAlign: 'center',
+                      borderBottom: 'None',
+                      fontSize: '18px',
 
-                <StyledTableCell colSpan={1}>
-                   Mark as Completed :
-                  <Checkbox
-                    checked={isCompletedChecked}
-                    onChange={handleCheckboxClick}
+                    }}
+                    colSpan={4}
+                  >
+                    <NotesTwoToneIcon /> Remarks :
+                  </StyledTableCell>
+
+                  <StyledTableCell
+                    sx={{
+                      width: '50%',
+                      fontWeight: 'bold',
+                      textAlign: 'center',
+                      borderBottom: 'None',
+                      fontSize: '18px',
+                      whiteSpace: 'revert',
+                    }}
+                    colSpan={2}
+                  >
+                    Mark as Completed :
+                    <Checkbox
+                      checked={isCompletedChecked}
+                      onChange={handleCheckboxClick}
+                      color="primary"
+                      size="large"
+                    />
+                  </StyledTableCell>
+
+                </TableRow>
+
+                {/* Fourth row: Remarks */}
+                <TableRow>
+                  <StyledTableCell
+                    sx={{
+                      width: '75%',
+                      // borderBottom: 'solid steelblue',
+                    }}
+                    colSpan={4}
+                  >
+                   <TextField
+                      variant="outlined"
+                      multiline
+                      fullWidth
+                      rows={1.8} // Adjust the number of rows based on your preference
+                      value={remarksValue}
+                      onChange={handleRemarksChange}
+                    />
+                  </StyledTableCell>
+                  <StyledTableCell
+                    sx={{
+                      width: '50%',
+                      borderBottom: 'solid steelblue',
+                    }}
+                    colSpan={2}
+                  >
+                  <Button
+                    onClick={handleButtonSubmit}
+                    startIcon={<UpdateIcon style={{ color: 'steelblue' }} />}
+                    variant="contained"
                     color="primary"
-                  />
-
-
-                </StyledTableCell>
-
-
-              </TableRow>
-
-              {/* Fourth row: Remarks */}
-              <TableRow>
-                <StyledTableCell
-                    sx={{
-                    borderBottom: 'solid steelblue',
-                  }}
-                    colSpan={2}
-                     >
-                  <TextField
-                    variant="outlined"
-                    multiline
-                    fullWidth
-                    rows={2.2}
-                    value={remarksValue} // Controlled component using state
-                    onChange={handleRemarksChange} // Handle TextField value change
-                  />
-                </StyledTableCell>
-                <StyledTableCell
-                    sx={{
-                    borderBottom: 'solid steelblue',
-                  }}
-                    colSpan={2}
-                     >
-                   <Button onClick={handleButtonSubmit} startIcon={<UpdateIcon />} variant="contained" color="primary">
-                    Submit
+                    style={{ backgroundColor: 'white', color: 'steelblue', marginLeft: 'auto', marginRight: 'auto', display: 'block' }}
+                  >
+                    Submit Changes
                   </Button>
-                </StyledTableCell>
-
-
-
-              </TableRow>
-
-
-            </RightPanel>
+                  </StyledTableCell>
+                </TableRow>
+              </RightPanel>
           </Grid>
         </ThemeProvider>
       );

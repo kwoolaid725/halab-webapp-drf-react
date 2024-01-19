@@ -54,7 +54,7 @@ export default function TestDetails(props) {
         // handle error appropriately
       });
   }, [id]);
-  //
+
   useEffect(() => {
   if (data?.id) {
     axiosInstance(`/admin/tests/vacuum/testdetail/${data?.id}/`)
@@ -67,23 +67,25 @@ export default function TestDetails(props) {
         const hasTestDetails = testDataDetails.length > 0;
 
         // If there are test details, set the test_status to 'IN_PROGRESS'
-        // If there are no test details, set the test_status to 'PENDING'
-        const newTestStatus = hasTestDetails ? 'IN_PROGRESS' : 'PENDING';
+        // If there are no test details and the test_status is not 'COMPLETED', set the test_status to 'PENDING'
+        const newTestStatus = hasTestDetails ? 'IN_PROGRESS' : (data?.test_status !== 'COMPLETED' ? 'PENDING' : data?.test_status);
 
         // Update the test_status in the main data
-        axiosInstance.patch(`admin/tests/edit/${data.id}/`, { test_status: newTestStatus })
-          .then((res) => {
-            console.log('Test status updated to', newTestStatus);
-          })
-          .catch((error) => {
-            console.error("Error updating test status: ", error);
-          });
+        if (data?.test_status !== 'COMPLETED') {
+          axiosInstance.patch(`admin/tests/edit/${data.id}/`, { test_status: newTestStatus })
+            .then((res) => {
+              console.log('Test status updated to', newTestStatus);
+            })
+            .catch((error) => {
+              console.error("Error updating test status: ", error);
+            });
+        }
       })
-      .catch((error) => {
-        console.error("Error fetching detailed data: ", error);
-      });
-  }
-}, [data?.id]);
+        .catch((error) => {
+          console.error("Error fetching detailed data: ", error);
+        });
+     }
+  }, [data?.id]);
 
   const handleToggleModal = () => {
     setIsModalOpen((prevIsModalOpen) => !prevIsModalOpen);
@@ -102,6 +104,7 @@ export default function TestDetails(props) {
         description={data?.description}
         dueDate={data?.due_date}
         completionDate={data?.completion_date}
+        remarks={data?.remarks}
       />
 
 
