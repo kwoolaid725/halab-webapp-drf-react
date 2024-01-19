@@ -64,7 +64,7 @@ class SampleSerializer(serializers.ModelSerializer):
 class TestSerializer(serializers.ModelSerializer):
     product_category = serializers.CharField(source='product_category.name')
     created_at = serializers.DateTimeField(read_only=True)
-    completion_date = serializers.DateField(read_only=True) #Change to DateTimeField Later 11.2.2023
+    completion_date = serializers.DateField() #Change to DateTimeField Later 11.2.2023
 
     class Meta:
         model = Test
