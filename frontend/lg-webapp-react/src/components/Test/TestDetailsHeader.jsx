@@ -95,15 +95,15 @@ import { styled } from '@mui/system';
         setCompletionDate(props.completionDate || '');
       }, [props.completionDate]);
 
-       useEffect(() => {
-          if (isCompletedChecked) {
-            // Set completion date to current date when status is COMPLETED
-            setCompletionDate(new Date().toLocaleDateString());
-          } else {
-            setCompletionDate(props.completionDate || '');
-          }
-          console.log('completionDate:', completionDate);
-        }, [isCompletedChecked, props.completionDate]);
+       // useEffect(() => {
+       //    if (isCompletedChecked) {
+       //      // Set completion date to current date when status is COMPLETED
+       //      setCompletionDate(new Date().toLocaleDateString());
+       //    } else {
+       //      setCompletionDate(props.completionDate || '');
+       //    }
+       //    console.log('completionDate:', completionDate);
+       //  }, [isCompletedChecked, props.completionDate]);
 
       let statusIcon;
 
@@ -136,6 +136,7 @@ import { styled } from '@mui/system';
         // Make sure to update this endpoint and payload structure according to your API
         const newTestStatus = isCompletedChecked ? 'COMPLETED' : 'IN_PROGRESS';
         const remarks = remarksValue;
+
         const currentDate = new Date();
         const formattedDate = currentDate.toISOString().split('T')[0];
         const newCompletionDate = isCompletedChecked ? formattedDate : props.completionDate;
