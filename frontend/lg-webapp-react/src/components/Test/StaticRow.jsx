@@ -30,7 +30,9 @@ const StaticRow = ({ row, idx, keys, handleEdit, handleDelete }) => {
         {row.testGroup}
       </TableCell>
        {keys.map((key, idx) => (
-          <TableCell align={"center"} key={idx}>
+          <TableCell align={"center"} key={idx}
+                     sx={{fontWeight: [ 'Pickup' ].includes(key) ? 'bold' : 'normal',
+                        color: ['Pickup'].includes(key) ? 'blue' : 'inherit' }}>
             {row.values[key]?.value} {row.values[key]?.units}
       </TableCell>
         ))}

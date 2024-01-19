@@ -213,6 +213,23 @@ function TestDetailsTableRowBare(props){
       return acc;
     }, {});
 
+    const convertToAMPM = (timestamp) => {
+      const date = new Date(timestamp);
+
+      const options = {
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        hour12: true
+      };
+
+      // const formattedTime = date.toLocaleTimeString('en-US', options).replace(/:\d{2}\s/, ' ').replace(/^0/, '');
+
+      return date.toLocaleDateString('en-US', options)
+    };
+
     // Transform combinedRows to match the initialState structure
     const transformedRows = Object.values(combinedRows).map(row => ({
 
@@ -223,8 +240,8 @@ function TestDetailsTableRowBare(props){
       testGroup: row.test_group, // Assuming 'testGroup' exists in fetchedRows
       run: row.run, // Adjust as needed
       remarks: row.remarks, // Adjust as needed
-      created_at: row.created_at.split('.')[0], // Adjust as needed
-      last_updated: row.last_updated.split('.')[0], // Adjust as needed
+      created_at: convertToAMPM(row.created_at.split('.')[0]), // Adjust as needed
+      last_updated: convertToAMPM(row.last_updated.split('.')[0]), // Adjust as needed
       isEditing: false, // Assuming default isEditing as false
       values: row.values || {}, // Setting the values from combinedRows
       units: row.units || {}, // Setting the units from combinedRows
@@ -363,72 +380,69 @@ function TestDetailsTableRowBare(props){
 
 
 
-  const submitRow = (idx) => {
-    // console.log('row', rows[idx])
-    const editedRow = rows[idx];
-
+  const submitRow = (index) => {
+    const editedRow = rows[index];
     // Filter rows to find all rows with the same slug
     const rowsWithSameSlug = allRows.filter(row => row.slug === editedRow.slug);
 
     if (rowsWithSameSlug.length > 0) {
-    rowsWithSameSlug.forEach(row => {
-      Object.keys(editedRow.values).forEach(key => {
-        const value = editedRow.values[key]?.value || '';
-        const units = editedRow.values[key]?.units || '';
-        const rowToUpdate = rowsWithSameSlug.find(r => r.id === row.id && r.test_measure === key);
+      const putRequests = rowsWithSameSlug.map(row => {
+        return Object.keys(editedRow.values).map(key => {
+          const value = editedRow.values[key]?.value || '';
+          const units = editedRow.values[key]?.units || '';
+          const rowToUpdate = rowsWithSameSlug.find(r => r.id === row.id && r.test_measure === key);
 
-        if (rowToUpdate) {
-          const formData = new FormData();
+          if (rowToUpdate) {
+            const formData = new FormData();
 
-          formData.append('test_measure', key);
-          formData.append('value', value);
-          formData.append('units', units);
-          formData.append('test', props.testId);
-          formData.append('sample', props.sample);
-          formData.append('brush_type', props.brushType);
-          formData.append('tester', 1);
-          formData.append('owner', 1);
-          formData.append('test_target', editedRow.testTarget);
-          formData.append('test_group', editedRow.testGroup);
-          formData.append('test_case', props.testCase);
-          formData.append('slug', editedRow.slug);
-          formData.append('run', editedRow.run);
-          formData.append('remarks', editedRow.remarks);
-          formData.append('model', props.model);
+            formData.append('test_measure', key);
+            formData.append('value', value);
+            formData.append('units', units);
+            formData.append('test', 1);
+            formData.append('sample', props.sample);
+            formData.append('brush_type', props.brushType);
+            formData.append('tester', 1);
+            formData.append('owner', 1);
+            formData.append('test_target', editedRow.testTarget);
+            formData.append('test_group', editedRow.testGroup);
+            formData.append('test_case', props.testCase);
+            formData.append('slug', editedRow.slug);
+            formData.append('run', editedRow.run);
+            formData.append('remarks', editedRow.remarks);
+            formData.append('model', props.model);
 
+            const url = `admin/tests/vacuum/testdetail/${rowToUpdate.test}/${rowToUpdate.slug}/${rowToUpdate.id}/`;
+            const requestType = 'PUT';
 
-          const url = `admin/tests/vacuum/testdetail/${rowToUpdate.test}/${rowToUpdate.slug}/${rowToUpdate.id}/`;
-          const requestType = 'PUT'; // Use PUT for updating existing rows
-          // console.log('formData', formData);
+            return axiosInstance({
+              method: requestType,
+              url: url,
+              data: formData,
+              headers: {
+                'Content-Type': 'multipart/form-data'
+              }
+            });
+          }
+        });
+      });
 
-          axiosInstance({
-          method: requestType,
-          url: url,
-          data: formData,
-          headers: {
-            'Content-Type': 'multipart/form-data'
+      let successfulRequests = 0;
+
+      Promise.all(putRequests.flat())
+        .then(responses => {
+          // Handle responses if needed
+
+          successfulRequests = responses.length;
+
+          if (successfulRequests === rowsWithSameSlug.length * Object.keys(editedRow.values).length) {
+            // All PUT requests were successful, toggleEditing
+            toggleEditing(index);
           }
         })
-        .then((response) => {
-          // console.log('Posted successfully!', response);
-          // Fetch updated data after successful update
-          axiosInstance.get('admin/tests/vacuum/testdetail/')
-            .then(response => {
-              setAllRows(response.data);
-            })
-            .catch(error => {
-              console.error('Error fetching rows', error);
-            });
-          toggleEditing(idx);
-        })
         .catch((error) => {
-          console.error('Error posting data', error);
-          // Handle errors
+          console.error('Error updating row:', error);
         });
-      }
-    });
-  });
-      } else {
+    } else {
         // New entry, perform a POST request
         const formDataArray = [];
 
@@ -496,7 +510,7 @@ function TestDetailsTableRowBare(props){
               });
               setAllRows(response.data); // Update allRows state with the latest data
               setRows(updatedRows); // Update rows state with new 'created_at' and 'last_updated' values
-              toggleEditing(idx);
+              toggleEditing(index);
             })
             .catch(error => {
               console.error('Error fetching rows', error);

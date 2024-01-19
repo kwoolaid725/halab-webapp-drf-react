@@ -118,7 +118,7 @@ const EditableRowEdge = ({
       </TableCell>
 
       {keys.map((key, index) => (
-          <TableCell key={index} align={"center"}>
+          <TableCell key={index} align={"center"} sx={{ margin: '1px', padding: '2px' }}>
 
             {['F1','F2','F3','F4','F5','F6', 'L1','L2','L3', 'R1','R2','R3'].includes(key) ? (
               <input

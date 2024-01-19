@@ -278,6 +278,23 @@ function TestDetailsTableRowEdge(props){
       return acc;
     }, {});
 
+    const convertToAMPM = (timestamp) => {
+      const date = new Date(timestamp);
+
+      const options = {
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        hour12: true
+      };
+
+      // const formattedTime = date.toLocaleTimeString('en-US', options).replace(/:\d{2}\s/, ' ').replace(/^0/, '');
+
+      return date.toLocaleDateString('en-US', options)
+    };
+
     // Transform combinedRows to match the initialState structure
     const transformedRows = Object.values(combinedRows).map(row => ({
 
@@ -288,8 +305,8 @@ function TestDetailsTableRowEdge(props){
       testGroup: row.test_group, // Assuming 'testGroup' exists in fetchedRows
       run: row.run, // Adjust as needed
       remarks: row.remarks, // Adjust as needed
-      created_at: row.created_at.split('.')[0], // Adjust as needed
-      last_updated: row.last_updated.split('.')[0], // Adjust as needed
+      created_at: convertToAMPM(row.created_at.split('.')[0]), // Adjust as needed
+      last_updated: convertToAMPM(row.last_updated.split('.')[0]), // Adjust as needed
       isEditing: false, // Assuming default isEditing as false
       values: row.values || {}, // Setting the values from combinedRows
       units: row.units || {}, // Setting the units from combinedRows

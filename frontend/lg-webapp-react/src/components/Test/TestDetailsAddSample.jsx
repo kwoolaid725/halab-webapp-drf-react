@@ -24,15 +24,15 @@ import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
+import Typography from "@mui/material/Typography";
 
 
-export default function TestDetailsAddModal (props) {
+export default function TestDetailsAddSample (props) {
 
   const navigate = useNavigate();
   const [sampleValue, setSampleValue] = useState('');
   const [invNoValue, setInvNoValue] = useState('');
-  const [brushTypeValue, setBrushTypeValue] = useState('');
-  const [testCaseValue, setTestCaseValue] = useState('');
+
 
   const [samples, setSamples] = useState([]);
   const [categoryId, setCategoryId] = useState(null);
@@ -49,11 +49,19 @@ export default function TestDetailsAddModal (props) {
   const [searchValue, setSearchValue] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [selectedSearchResult, setSelectedSearchResult] = useState(null);
-    // const [product, setProduct] = useState('');
 
-  // const [row, setRow] = useState();
+  const [brushTypeValue, setBrushTypeValue] = useState({
+      value: 'Carpet',
+      customInput: '',
+    });
 
+  const [testCaseValue, setTestCaseValue] = useState({
+      value: 'REG',
+      customInput: '',
+    });
 
+  const brushTypeOptions = ['Carpet', 'Fluffy', 'Dual', 'DMS', 'Other'];
+  const testCaseOptions = ['REG', 'HARD', 'SOFT', 'Other'];
 
 
 
@@ -144,6 +152,16 @@ export default function TestDetailsAddModal (props) {
 
     if (type === 'sample') {
       setSampleValue(selectedValue);
+    } else if (type === 'brushType') {
+      setBrushTypeValue((prev) => ({
+        value: selectedValue,
+        customInput: prev.customInput,
+      }));
+    } else if (type === 'testCase') {
+      setTestCaseValue((prev) => ({
+        value: selectedValue,
+        customInput: prev.customInput,
+      }));
     }
 
   };
@@ -180,7 +198,8 @@ export default function TestDetailsAddModal (props) {
     const handleSubmit = async (e) => {
       e.preventDefault();
       const formDataArray = [];
-      const slug = `${props.testId}-Bare-${sampleValue}${brushTypeValue}${testCaseValue}-1`;
+      const slug = `${props.testId}-Bare-${sampleValue}${brushTypeValue.customInput || brushTypeValue.value}${testCaseValue.customInput || testCaseValue.value}-1`;
+
 
       Object.entries(values).forEach(([key, value]) => {
 
@@ -191,12 +210,12 @@ export default function TestDetailsAddModal (props) {
         formData.append('units', value?.units || '');
         formData.append('test', props.testId);
         formData.append('sample', sampleValue);
-        formData.append('brush_type', brushTypeValue);
+        formData.append('brush_type', brushTypeValue.customInput || brushTypeValue.value);
         formData.append('tester', 1);
         formData.append('owner', 1);
         formData.append('test_target', 'Bare');
         formData.append('test_group', 'Select Test Group');
-        formData.append('test_case', testCaseValue);
+        formData.append('test_case', testCaseValue.customInput || testCaseValue.value);
         formData.append('slug', slug);
         formData.append('run', 1);
         formData.append('remarks', '');
@@ -205,6 +224,7 @@ export default function TestDetailsAddModal (props) {
         formDataArray.push(formData);
       });
 
+      console.log('formDataArray1234:', formDataArray);
       try {
         // Submit each formData instance separately
         await Promise.all(formDataArray.map(formData => {
@@ -233,20 +253,36 @@ export default function TestDetailsAddModal (props) {
 	return (
 		<React.Fragment>
           <Box>
-            <form onSubmit={handleSubmit}>
+           <form onSubmit={handleSubmit}>
           <TableContainer component={Paper}>
             <Table aria-label="fixed table">
               <TableHead>
-                <TableRow>
-                  <TableCell>Test Sample</TableCell>
-                  <TableCell align="left">Inventory Number</TableCell>
-                  <TableCell align="left">Brush Type</TableCell>
-                  <TableCell align="left">Test Case</TableCell>
+                <TableRow style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <TableCell style={{ width: '34%', height: '50px', textAlign: 'center' }}>
+                    <Typography variant="subtitle1" fontWeight="bold">
+                              Test Sample
+                    </Typography>
+                  </TableCell>
+                  <TableCell style={{ width: '22%', height: '50px', textAlign: 'center' }}>
+                     <Typography variant="subtitle1" fontWeight="bold">
+                              Inventory Number
+                    </Typography>
+                  </TableCell>
+                  <TableCell style={{ width: '22%', height: '50px', textAlign: 'center' }}>
+                     <Typography variant="subtitle1" fontWeight="bold">
+                              Brush Type
+                    </Typography>
+                  </TableCell>
+                  <TableCell style={{ width: '22%', height: '50px', textAlign: 'center' }}>
+                     <Typography variant="subtitle1" fontWeight="bold">
+                              Test Case
+                    </Typography>
+                  </TableCell>
                 </TableRow>
               </TableHead>
                 <TableBody>
-                  <TableRow>
-                    <TableCell style={{ width: '25%' }}>
+                  <TableRow style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <TableCell align="center" style={{ width: '34%' }}>
                       <Autocomplete
                         // options={searchResults.flatMap((option) => (option.model_name || option.brand ? option : []))}
                         options={searchResults.filter((option) => option.model_name || option.brand)}
@@ -258,16 +294,18 @@ export default function TestDetailsAddModal (props) {
                           handleSearch(newInputValue); // Call handleSearch while typing
                           // console.log('Search Results:', searchResults)
                         }}
+
                         onChange={(event, newValue) => {
                           // console.log('Option selected:', newValue);
                           setSelectedSearchResult(newValue);
                         }}
+
                         renderInput={(params) => (
                           <TextField
                             {...params}
                             variant="outlined"
-                            size="small"
-                            label="Search"
+                            size="big"
+                            label="Search"// Adjust the height according to your preference
                           />
                         )}
                         renderOption={(props, option) => (
@@ -275,15 +313,14 @@ export default function TestDetailsAddModal (props) {
                             {option.model_name}
                           </li>
                       )}
-
                       />
                     </TableCell>
-                    <TableCell style={{ width: '25%' }}>
+                     <TableCell align="center" style={{ width: '22%', }}>
                       <FormControl
                         variant="outlined"
                         fullWidth
                         required
-                        style={{ height: 'fit-content' }} // Adjust the height as needed
+
                       >
                         <InputLabel id="product-label">Samples</InputLabel>
                         <Select
@@ -293,6 +330,7 @@ export default function TestDetailsAddModal (props) {
                           id="sample"
                           name="sample"
                           label="Sample"
+                          // style={{ height: '40px' }}
                         >
                           {samples.map((option) => (
                             <MenuItem key={option.id} value={option.inv_no}>
@@ -303,21 +341,69 @@ export default function TestDetailsAddModal (props) {
                       </FormControl>
                     </TableCell>
 
-                    <TableCell style={{ width: '25%' }}>
-                     <TextField
+                    <TableCell align="center" style={{ width: '22%' }}>
+                     <FormControl
                         variant="outlined"
-                        size="small"
-                        value={brushTypeValue}
-                        onChange={(e) => setBrushTypeValue(e.target.value)}
-                      />
+                        fullWidth
+                        required
+                      >
+                        <InputLabel id="brush-type-label">Brush Type</InputLabel>
+                        <Select
+                          value={brushTypeValue.value}
+                          onChange={(event) => handleSelectionChange(event, 'brushType')}
+                          labelId="brush-type-label"
+                          id="brush-type"
+                          name="brushType"
+                          label="Brush Type"
+                        >
+                          {brushTypeOptions.map((option) => (
+                            <MenuItem key={option} value={option}>
+                              {option}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                        {brushTypeValue.value === 'Other' && (
+                          <TextField
+                            variant="outlined"
+                            size="small"
+                            placeholder="Type your brush type"
+                            value={brushTypeValue.customInput}
+                            onChange={(e) => setBrushTypeValue((prev) => ({ ...prev, customInput: e.target.value }))}
+                          />
+                        )}
+                      </FormControl>
                     </TableCell>
-                    <TableCell style={{ width: '25%' }}>
-                      <TextField
-                        variant="outlined"
-                        size="small"
-                        value={testCaseValue}
-                        onChange={(e) => setTestCaseValue(e.target.value)}
-                      />
+                    <TableCell align="center" style={{ width: '22%' }}>
+                      <FormControl
+                          variant="outlined"
+                          fullWidth
+                          required
+                        >
+                          <InputLabel id="test-case-label">Test Case</InputLabel>
+                          <Select
+                            value={testCaseValue.value}
+                            onChange={(event) => handleSelectionChange(event, 'testCase')}
+                            labelId="test-case-label"
+                            id="test-case"
+                            name="testCase"
+                            label="Test Case"
+                          >
+                            {testCaseOptions.map((option) => (
+                              <MenuItem key={option} value={option}>
+                                {option}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                          {testCaseValue.value === 'Other' && (
+                            <TextField
+                              variant="outlined"
+                              size="small"
+                              placeholder="Type your test case"
+                              value={testCaseValue.customInput}
+                              onChange={(e) => setTestCaseValue((prev) => ({ ...prev, customInput: e.target.value }))}
+                            />
+                          )}
+                        </FormControl>
                     </TableCell>
                   </TableRow>
                 </TableBody>
