@@ -106,17 +106,17 @@ export default function TestDetailsBody(props) {
     detailsArray.forEach((details) => {
       // Exclude cases where details.test_group is not "Select Test Group"
       if (details.test_group !== "Select Test Group") {
-        const testGroup = `${details.test_group}`;
-          return testGroup;
-        // const key = `${details.slug}`;
-        // const key = `${details.test_group}${details.model}${details.sample}${details.brush_type}${details.test_case}`;
-        // const uniqueSlug = key.replace(/\s+/g, '-').toLowerCase();
-        // uniqueSlugsSet.add(uniqueSlug);
+
+        const key = `${details.test_group}-${details.slug}`;
+        // const key = `${details.test_group}'
+        // const key = `${details.test_target}${details.test_group}-${details.model}${details.sample}${details.brush_type}${details.test_case}`;
+        const uniqueSlug = key.replace(/\s+/g, '-').toLowerCase();
+        uniqueSlugsSet.add(uniqueSlug);
         // uniqueSlugsSet.add(uniqueSlug);
       }
     });
 
-    // return Array.from(uniqueSlugsSet);
+    return Array.from(uniqueSlugsSet);
   };
   const calculateCounts = () => {
     // Initialize counters for each key
@@ -128,21 +128,21 @@ export default function TestDetailsBody(props) {
       let carpetCount = 0;
       let edgeCount = 0;
 
-       detailsArray.forEach((details) => {
-         if (details.test_group !== "Select Test Group") {
-        bareCount += (details.test_group.match(/Bare/gi) || []).length;
-        carpetCount += (details.test_group.match(/Carpet/gi) || []).length;
-        edgeCount += (details.test_group.match(/Edge/gi) || []).length;
-        }
+
+      const uniqueSlugs = generateUniqueSlugs(detailsArray);
+
+      uniqueSlugs.forEach((uniqueSlug) => {
+        const thirdHyphenIndex = uniqueSlug.indexOf('-', uniqueSlug.indexOf('-', uniqueSlug.indexOf('-') + 1) + 1);
+
+    // Check if the second hyphen exists before removing
+        const modifiedSlug = thirdHyphenIndex !== -1 ? uniqueSlug.substring(0, thirdHyphenIndex) : uniqueSlug;
+
+
+        bareCount += (modifiedSlug.match(/bare/gi) || []).length;
+        carpetCount += (modifiedSlug.match(/carpet/gi) || []).length;
+        edgeCount += (modifiedSlug.match(/edge/gi) || []).length;
+        console.log('uniqueSlugs:', modifiedSlug);
       });
-
-      // const uniqueSlugs = generateUniqueSlugs(detailsArray);
-
-      // uniqueSlugs.forEach((uniqueSlug) => {
-      //   bareCount += (uniqueSlug.match(/bare/gi) || []).length;
-      //   carpetCount += (uniqueSlug.match(/carpet/gi) || []).length;
-      //   edgeCount += (uniqueSlug.match(/edge/gi) || []).length;
-      // });
 
       // Store counts for the current key
       keyCounts[key] = {
@@ -150,8 +150,10 @@ export default function TestDetailsBody(props) {
         carpetCount,
         edgeCount,
       };
+       // 'bare', 'carpet', 'edges
     });
 
+    console.log('keyCounts:', keyCounts);
     // Update state with the counts for each key
     setKeyCounts(keyCounts);
   };
@@ -160,6 +162,46 @@ export default function TestDetailsBody(props) {
   useEffect(() => {
     calculateCounts();
   }, [groupedDetails]);
+
+//   const calculateCounts = () => {
+//   // Initialize counters for each key
+//   const keyCounts = {};
+//
+//   Object.keys(groupedDetails).forEach((key) => {
+//     const detailsArray = groupedDetails[key];
+//     let bareCount = 0;
+//     let carpetCount = 0;
+//     let edgeCount = 0;
+//
+//     detailsArray.forEach((details) => {
+//       if (details.test_group !== "Select Test Group") {
+//         // Increment counts based on the test_group value
+//         bareCount += details.test_group.toLowerCase() === 'bare' ? 1 : 0;
+//         carpetCount += details.test_group.toLowerCase() === 'carpet' ? 1 : 0;
+//         edgeCount += details.test_group.toLowerCase() === 'edge' ? 1 : 0;
+//       }
+//     });
+//
+//     // Store counts for the current key
+//     keyCounts[key] = {
+//       bareCount,
+//       carpetCount,
+//       edgeCount,
+//     };
+//   });
+//
+//   // Update state with the counts for each key
+//   setKeyCounts(keyCounts);
+// };
+//
+// // Calculate counts when component mounts and whenever groupedDetails changes
+// useEffect(() => {
+//   calculateCounts();
+// }, [groupedDetails]);
+
+
+
+
 
 
 
