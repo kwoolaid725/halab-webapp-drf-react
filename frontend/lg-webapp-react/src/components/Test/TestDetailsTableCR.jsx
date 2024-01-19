@@ -34,8 +34,8 @@ const TestDetailsTableCR = (props) => {
           <table style={{ borderCollapse: 'collapse', width: '100%' }}>
             <thead>
               <tr>
-                <th style={{ borderBottom: '2px solid #ddd', padding: '2px', textAlign: 'left', backgroundColor: '#F08080' }}>
-                  <h3 style={{ margin: '0', fontSize: '1.5rem',  marginLeft: '5px' }}>Bare Floor</h3>
+                <th style={{ borderBottom: '3px solid #fed0bb', padding: '2px', textAlign: 'center', backgroundColor: '#db5375' }}>
+                  <h3 style={{ margin: '0', fontSize: '1.5rem',  color: 'white' }}>Bare Floor</h3>
                 </th>
               </tr>
             </thead>
@@ -58,8 +58,8 @@ const TestDetailsTableCR = (props) => {
 
            <thead>
               <tr>
-                <th style={{ borderBottom: '2px solid #ddd', padding: '2px', textAlign: 'left', backgroundColor: '#a3cef1' }}>
-                  <h3 style={{ margin: '0', fontSize: '1.5rem', marginLeft: '5px' }}>Carpet</h3>
+                <th style={{ borderBottom: '2px solid #fed0bb', padding: '2px', textAlign: 'center', backgroundColor: '#73bfb8' }}>
+                  <h3 style={{ margin: '0', fontSize: '1.5rem', color: 'white' }}>Carpet</h3>
                 </th>
               </tr>
             </thead>
@@ -81,8 +81,8 @@ const TestDetailsTableCR = (props) => {
 
             <thead>
               <tr>
-                <th style={{ borderBottom: '2px solid #ddd', padding: '2px', textAlign: 'left', backgroundColor: '#f1f8a2' }}>
-                  <h3 style={{ margin: '0', fontSize: '1.5rem', marginLeft: '5px' }}>Edge</h3>
+                <th style={{ borderBottom: '2px solid #fed0bb', padding: '2px', textAlign: 'center', backgroundColor: '#ff6b35' }}>
+                  <h3 style={{ margin: '0', fontSize: '1.5rem',  color: 'white'  }}>Edge</h3>
                 </th>
               </tr>
             </thead>

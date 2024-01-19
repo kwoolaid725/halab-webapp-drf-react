@@ -14,6 +14,7 @@ import Checkbox from '@mui/material/Checkbox';
 import { ThemeProvider } from '@mui/material/styles';
 
 
+
 import DoneAllRoundedIcon from '@mui/icons-material/DoneAllRounded';
 import RotateLeftTwoToneIcon from '@mui/icons-material/RotateLeftTwoTone';
 import PendingOutlinedIcon from '@mui/icons-material/PendingOutlined';
@@ -65,13 +66,30 @@ import { styled } from '@mui/system';
     const LeftPanel = styled(Grid)(({ theme }) => ({
       marginBottom: { xs: '10px', md: 0 },
       marginLeft: '10px', // Adjust the left margin as needed
+      marginRight: '-20px',
     }));
 
     const RightPanel = styled(Grid)(({ theme }) => ({
-      marginBottom: '10px',
-      marginLeft: '-15px', // Adjust the negative margin to minimize the gap
-      marginRight: '10px', // Adjust the negative margin to minimize the gap
-    }));
+          marginBottom: '10px',
+          marginRight: '10px',
+        [theme.breakpoints.up('xs')]: {
+            marginLeft: '10px'
+
+        },
+
+
+
+          // [theme.breakpoints.up('md')]: {
+          //   width: '100%', // Adjust the width for medium screens
+          // },
+          // [theme.breakpoints.up('lg')]: {
+          //   width: '100%', // Adjust the width for large screens
+          // },
+          // [theme.breakpoints.up('xl')]: {
+          //   width: '100%', // Adjust the width for extra-large screens
+          // },
+        }));
+
 
     function TestDetailsHeader(props) {
       const navigate = useNavigate();
@@ -152,6 +170,7 @@ import { styled } from '@mui/system';
             // Handle error, show a notification, etc.
           });
       };
+
 
 
       return (
@@ -322,80 +341,140 @@ import { styled } from '@mui/system';
             </LeftPanel>
 
             {/* Right Panel */}
-              <RightPanel item xs={12} md={6} lg={6} xl={6}>
+              <RightPanel item xs={12} sm md >
                 {/* Remarks header */}
                 <TableRow>
                   <StyledTableCell
                     sx={{
-                      width: '75%',
+                      width: '25%',
                       fontWeight: 'bold',
                       textAlign: 'center',
                       borderBottom: 'None',
                       fontSize: '18px',
-
+                        marginTop: '0px', // Explicitly set marginTop
+                      // marginBottom: '5px', // Adjust the marginBottom to reduce the space
                     }}
-                    colSpan={4}
+                    colSpan={4} // Adjust the colspan to match the number of columns
                   >
-                    <NotesTwoToneIcon /> Remarks :
+                    <NotesTwoToneIcon /> Test Summary :
                   </StyledTableCell>
-
-                  <StyledTableCell
-                    sx={{
-                      width: '50%',
-                      fontWeight: 'bold',
-                      textAlign: 'center',
-                      borderBottom: 'None',
-                      fontSize: '18px',
-                      whiteSpace: 'revert',
-                    }}
-                    colSpan={2}
-                  >
-                    Mark as Completed :
-                    <Checkbox
-                      checked={isCompletedChecked}
-                      onChange={handleCheckboxClick}
-                      color="primary"
-                      size="large"
-                    />
-                  </StyledTableCell>
-
                 </TableRow>
 
                 {/* Fourth row: Remarks */}
                 <TableRow>
                   <StyledTableCell
-                    sx={{
-                      width: '75%',
-                      // borderBottom: 'solid steelblue',
-                    }}
-                    colSpan={4}
+                   sx={{
+                        borderTop: 'None',
+                        borderBottom: 'solid steelblue',
+                        }}
+                    colSpan={4} // Adjust the colspan to match the number of columns
                   >
-                   <TextField
+                    <TextField
                       variant="outlined"
                       multiline
                       fullWidth
-                      rows={1.8} // Adjust the number of rows based on your preference
+                      rows={2.7} // Adjust the number of rows based on your preference
                       value={remarksValue}
                       onChange={handleRemarksChange}
                     />
                   </StyledTableCell>
-                  <StyledTableCell
+                </TableRow>
+                  {/* Checkbox and Button row */}
+
+                <TableRow
+                  sx={{
+                    // height: '40px', // Adjust the height based on your preference
+                  }}
+                >
+                  <TableCell
                     sx={{
-                      width: '50%',
-                      borderBottom: 'solid steelblue',
+                      width: '45%',
+                      fontWeight: 'bold',
+                      textAlign: 'left',
+                      borderBottom: 'None',
+                      fontSize: '18px',
+                      whiteSpace: 'revert',
+                      verticalAlign: 'top', // Adjust the vertical alignment
+                      color: '#023047',
                     }}
-                    colSpan={2}
+                    colSpan={1}
                   >
-                  <Button
-                    onClick={handleButtonSubmit}
-                    startIcon={<UpdateIcon style={{ fontSize: '24px', color: 'steelblue' }} />}
-                    variant="contained"
-                    color="primary"
-                    style={{ backgroundColor: 'white', color: 'steelblue', marginLeft: 'auto', marginRight: 'auto', display: 'block' }}
+                    <Button
+                      // disabled
+                      variant="contained"
+                      color="primary"
+                      style={{
+                          fontWeight: 'bold',
+                          fontSize: '16px',
+                          backgroundColor: '#ffff',
+                          color: 'black',
+                          marginRight:'0px',
+                          // paddingRight: '0px', // Adjust the right padding to reduce space
+                          // textAlign: 'right', // Align the text to the right
+                          // padding: '8px 16px', // Adjust padding for better aesthetics
+                          cursor: 'not-allowed', // Set cursor to 'not-allowed' when disabled
+                          // opacity: 0.7, // Reduce opacity for a visually disabled look
+                          pointerEvents: 'none', }}
+                    >
+                      Mark as Complete:
+                    </Button>
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      width: '5%',
+                      textAlign: 'left',
+                      borderBottom: 'None',
+                      verticalAlign: 'top',
+                      // marginTop: '0px',
+                      padding: '10px 0px 0px 0px',
+                    }}
+
+                  colSpan={1}
                   >
-                    Submit Changes
-                  </Button>
-                  </StyledTableCell>
+
+                    <Checkbox
+                      checked={isCompletedChecked}
+                      onChange={handleCheckboxClick}
+                      color="primary"
+                      size="large"
+                      sx={{
+                            marginLeft: '-25px', // Adjust the marginLeft for the Checkbox
+                        }}
+                    />
+                  </TableCell>
+                    <TableCell
+                     sx={{
+                        width: '5%',
+                      borderBottom: 'None',
+
+                      // marginTop: '0px',
+                      padding: '0px 0px 0px 0px',
+                    }}
+                    colSpan={1}
+                    >
+
+                    </TableCell>
+
+                  <TableCell
+                    sx={{
+                      width: '100%',
+                      borderBottom: 'None',
+                      verticalAlign: 'top',
+                      marginTop: '0px', // Explicitly set marginTop
+                        // marginLeft: '50px', // Adjust the marginLeft to reduce the space
+                    }}
+                    colSpan={1}
+                  >
+                    <Button
+                      onClick={handleButtonSubmit}
+                      startIcon={<UpdateIcon style={{ fontWeight: 'bold', fontSize: '24px', color: '#38a3a5',  }} />}
+                      variant="contained"
+                      color="primary"
+                      style={{ fontWeight: 'bold', fontSize: '16px', backgroundColor: '#f9f9f9', color: '#38a3a5', border: '1px solid #38a3a5', marginRight: '0px' }}
+                    >
+                      Submit Changes
+                    </Button>
+                  </TableCell>
                 </TableRow>
               </RightPanel>
           </Grid>

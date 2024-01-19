@@ -108,13 +108,16 @@ export default function TestDetails(props) {
       />
 
 
-   <Box >
+   <Box style={{
+       marginTop: -40,
+       marginBottom: -20,
+       }}>
      <Button
          variant="contained"
          onClick={openModal}
          size="large"
          endIcon={<PlaylistAddIcon />}
-         style={{ backgroundColor: 'white', color: 'steelblue', fontWeight: 'bold', margin: '15px' }}
+         style={{ backgroundColor: 'white', color: 'steelblue', fontWeight: 'bold', margin: '15px', border: '1px solid steelblue' }}
      >
         {isModalOpen ? '' : 'Add Sample'}
      </Button>
