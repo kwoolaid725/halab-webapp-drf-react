@@ -81,6 +81,7 @@ import { styled } from '@mui/system';
       const testStatusLabel = TEST_STATUS.find(status => status.value === props.testStatus)?.label;
       // Set the default value of remarksValue to props.remarks
       const [remarksValue, setRemarksValue] = useState();
+      const [completionDate, setCompletionDate] = useState(props.completionDate || '');
 
       useEffect(() => {
         setIsCompletedChecked(props.testStatus === 'COMPLETED');
@@ -89,6 +90,20 @@ import { styled } from '@mui/system';
       useEffect(() => {
         setRemarksValue(props.remarks || '');
       }, [props.remarks]);
+
+       useEffect(() => {
+        setCompletionDate(props.completionDate || '');
+      }, [props.completionDate]);
+
+       useEffect(() => {
+          if (isCompletedChecked) {
+            // Set completion date to current date when status is COMPLETED
+            setCompletionDate(new Date().toLocaleDateString());
+          } else {
+            setCompletionDate(props.completionDate || '');
+          }
+          console.log('completionDate:', completionDate);
+        }, [isCompletedChecked, props.completionDate]);
 
       let statusIcon;
 
@@ -121,8 +136,11 @@ import { styled } from '@mui/system';
         // Make sure to update this endpoint and payload structure according to your API
         const newTestStatus = isCompletedChecked ? 'COMPLETED' : 'IN_PROGRESS';
         const remarks = remarksValue;
+        const currentDate = new Date();
+        const formattedDate = currentDate.toISOString().split('T')[0];
+        const newCompletionDate = isCompletedChecked ? formattedDate : props.completionDate;
 
-        axiosInstance.patch(`admin/tests/edit/${props.testId}/`, { test_status: newTestStatus, remarks })
+        axiosInstance.patch(`admin/tests/edit/${props.testId}/`, { test_status: newTestStatus, remarks, completion_date: newCompletionDate })
           .then((res) => {
             console.log('Test status updated to', newTestStatus);
             navigate('/admin/tests/');
@@ -369,7 +387,7 @@ import { styled } from '@mui/system';
                   >
                   <Button
                     onClick={handleButtonSubmit}
-                    startIcon={<UpdateIcon style={{ color: 'steelblue' }} />}
+                    startIcon={<UpdateIcon style={{ fontSize: '24px', color: 'steelblue' }} />}
                     variant="contained"
                     color="primary"
                     style={{ backgroundColor: 'white', color: 'steelblue', marginLeft: 'auto', marginRight: 'auto', display: 'block' }}
