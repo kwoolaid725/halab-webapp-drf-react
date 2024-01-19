@@ -409,8 +409,13 @@ export default function TestDetailsAddSample (props) {
                 </TableBody>
               </Table>
             </TableContainer>
-            <Button type="submit" onClick={handleSubmit}>
-                Submit
+            <Button
+                type="submit"
+                variant="contained"
+                onClick={handleSubmit}
+                style={{ margin: '16px auto', display: 'block' }}
+              >
+              Submit
             </Button>
             </form>
           </Box>

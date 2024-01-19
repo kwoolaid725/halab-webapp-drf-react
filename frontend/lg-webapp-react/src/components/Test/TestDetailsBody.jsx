@@ -18,6 +18,7 @@ import TextField from '@mui/material/TextField';
 import {useParams} from "react-router-dom";
 import axiosInstance from "../../axios";
 import TestDetailsTableCR from "./TestDetailsTableCR";
+import ColoredCircularProgress from "../UI/CircularProgress";
 
 import classes from './TestDetailsBody.module.css';
 
@@ -40,6 +41,7 @@ export default function TestDetailsBody(props) {
       try {
         // Fetch test details
         const response = await axiosInstance(`/admin/tests/vacuum/testdetail/${test?.id}/`);
+
         setTestDetails(response.data);
 
 
@@ -65,12 +67,26 @@ export default function TestDetailsBody(props) {
         grouped[key].push(detail);
         return grouped;
       }, {});
-      setGroupedDetails(grouped);
-    }
-  }, [testDetails]);
+       // Sort groups by their keys
+    const sortedGroups = Object.keys(grouped).sort();
+
+    // Sort samples within each group based on created_date
+    sortedGroups.forEach((key) => {
+      grouped[key].sort((a, b) => new Date(a.created_date) - new Date(b.created_date));
+    });
+
+    // Create a new object with sorted groups
+    const sortedGroupedDetails = {};
+      sortedGroups.forEach((key) => {
+        sortedGroupedDetails[key] = grouped[key];
+      });
+
+      setGroupedDetails(sortedGroupedDetails);
+      }
+    }, [testDetails]);
 
 
-   console.log('groupedDetails:', groupedDetails)
+     console.log('groupedDetails:', groupedDetails)
 
 
 
@@ -90,13 +106,17 @@ export default function TestDetailsBody(props) {
     detailsArray.forEach((details) => {
       // Exclude cases where details.test_group is not "Select Test Group"
       if (details.test_group !== "Select Test Group") {
-        const key = `${details.slug}`;
-        const uniqueSlug = key.replace(/\s+/g, '-').toLowerCase();
-        uniqueSlugsSet.add(uniqueSlug);
+        const testGroup = `${details.test_group}`;
+          return testGroup;
+        // const key = `${details.slug}`;
+        // const key = `${details.test_group}${details.model}${details.sample}${details.brush_type}${details.test_case}`;
+        // const uniqueSlug = key.replace(/\s+/g, '-').toLowerCase();
+        // uniqueSlugsSet.add(uniqueSlug);
+        // uniqueSlugsSet.add(uniqueSlug);
       }
     });
 
-    return Array.from(uniqueSlugsSet);
+    // return Array.from(uniqueSlugsSet);
   };
   const calculateCounts = () => {
     // Initialize counters for each key
@@ -108,13 +128,21 @@ export default function TestDetailsBody(props) {
       let carpetCount = 0;
       let edgeCount = 0;
 
-      const uniqueSlugs = generateUniqueSlugs(detailsArray);
-
-      uniqueSlugs.forEach((uniqueSlug) => {
-        bareCount += (uniqueSlug.match(/bare/gi) || []).length;
-        carpetCount += (uniqueSlug.match(/carpet/gi) || []).length;
-        edgeCount += (uniqueSlug.match(/edge/gi) || []).length;
+       detailsArray.forEach((details) => {
+         if (details.test_group !== "Select Test Group") {
+        bareCount += (details.test_group.match(/Bare/gi) || []).length;
+        carpetCount += (details.test_group.match(/Carpet/gi) || []).length;
+        edgeCount += (details.test_group.match(/Edge/gi) || []).length;
+        }
       });
+
+      // const uniqueSlugs = generateUniqueSlugs(detailsArray);
+
+      // uniqueSlugs.forEach((uniqueSlug) => {
+      //   bareCount += (uniqueSlug.match(/bare/gi) || []).length;
+      //   carpetCount += (uniqueSlug.match(/carpet/gi) || []).length;
+      //   edgeCount += (uniqueSlug.match(/edge/gi) || []).length;
+      // });
 
       // Store counts for the current key
       keyCounts[key] = {
@@ -148,7 +176,12 @@ export default function TestDetailsBody(props) {
 
         return (
           <div key={index}>
-            <Box>
+            <Box
+              sx={{
+                marginTop: '-20px',
+                marginLeft: '10px'
+              }}
+            >
               <TableRow
                   sx={{ '& > *': { borderBottom: 'unset' }}}
                   style={{ width: '90%' }}>
@@ -161,19 +194,38 @@ export default function TestDetailsBody(props) {
                   >
                     {isDetailsOpen ? (
                       <React.Fragment>
-                          Sample {index + 1}
+                         <span style={{ color: '#3a606e', fontWeight: 'bold' }}>Sample {index + 1}</span>
                         <KeyboardArrowUpIcon />
                       </React.Fragment>
                     ) : (
                       <React.Fragment>
-                        Sample {index + 1}
-                        <KeyboardArrowDownIcon />
+                        <span style={{ color: '#3a606e' }}>Sample {index + 1}</span>
+                      <KeyboardArrowDownIcon />
 
                       </React.Fragment>
                     )}
                   </IconButton>
                 </TableCell>
-                <Box sx={{ border: '1px solid #ccc', borderRadius: '8px', overflow: 'hidden', mt: 2 }}>
+                <Box
+                  sx={{
+                    border: () => {
+                      // Get the counts for the current key
+                      const counts = keyCounts[key] || {};
+
+                      // Check conditions for changing the border color
+                      if (counts.bareCount >= 3 && counts.carpetCount >= 3 && counts.edgeCount >= 3) {
+                        return '3px solid #03cea4'; // Green border if all counts are 3 or greater
+                      // } else if (counts.bareCount > 0 || counts.carpetCount > 0 || counts.edgeCount > 0) {
+                      //   return '3px solid #ffc600'; // Yellow border if any count is greater than 0
+                      } else {
+                        return '2px solid #ff0a54'; // Red border if neither condition is met
+                      }
+                    },
+                    borderRadius: '8px',
+                    overflow: 'hidden',
+                    mt: 2,
+                  }}
+                >
                   <TableContainer component={Paper}>
                     <Table aria-label="fixed table">
                       <TableHead>
@@ -209,22 +261,22 @@ export default function TestDetailsBody(props) {
                       <TableBody>
                         <TableRow key={index}>
                           <TableCell align="center">
-                            <Typography variant="body1" fontSize="16px">
+                            <Typography variant="subtitle2" fontSize="18px" color="#345995">
                               {firstDetail.model}
                             </Typography>
                           </TableCell>
                           <TableCell align="center">
-                            <Typography variant="body1" fontSize="16px">
+                            <Typography variant="subtitle2" fontSize="18px" color="#345995">
                               {firstDetail.sample}
                             </Typography>
                           </TableCell>
                           <TableCell align="center">
-                            <Typography variant="body1" fontSize="16px">
+                            <Typography variant="subtitle2" fontSize="18px" color="#345995">
                               {firstDetail.brush_type}
                             </Typography>
                           </TableCell>
                           <TableCell align="center">
-                            <Typography variant="body1" fontSize="16px">
+                             <Typography variant="subtitle2" fontSize="18px" color="#345995">
                               {firstDetail.test_case}
                             </Typography>
                           </TableCell>
@@ -232,9 +284,26 @@ export default function TestDetailsBody(props) {
                             align="center"
                             colSpan={4} // Adjust the colspan based on the number of columns
                           >
-                            <Typography variant="body1" fontSize="16px">
-                              {`Bare: ${keyCounts[key]?.bareCount || 0}, Carpet: ${keyCounts[key]?.carpetCount || 0}, Edge: ${keyCounts[key]?.edgeCount || 0}`}
-                            </Typography>
+                            <ColoredCircularProgress
+                              count={keyCounts[key]?.bareCount || 0}
+                              threshold={3}
+                              label="Bare"
+                              style={{ fontWeight: 'bold' }} // Adjust the margin as needed
+                            />
+                            <ColoredCircularProgress
+                              count={keyCounts[key]?.carpetCount || 0}
+                              threshold={3}
+                              label="Carpet"
+                              style={{ marginRight: '10px' }} // Adjust the margin as needed
+                            />
+                            <ColoredCircularProgress
+                              count={keyCounts[key]?.edgeCount || 0}
+                              threshold={3}
+                              label="Edge"
+                            />
+                            {/*<Typography variant="body1" fontSize="16px">*/}
+                            {/*  {`Bare: ${keyCounts[key]?.bareCount || 0}, Carpet: ${keyCounts[key]?.carpetCount || 0}, Edge: ${keyCounts[key]?.edgeCount || 0}`}*/}
+                            {/*</Typography>*/}
                           </TableCell>
                         </TableRow>
                       </TableBody>

@@ -67,7 +67,7 @@ function TestDetailsTableRowCarpet(props){
         console.error('Error fetching rows', error);
       });
 
-  }, []); // Fetch only once on component mount
+  }, []);
 
  useEffect(() => {
     if (testMeasures && Object.keys(testMeasures).length > 0) {
