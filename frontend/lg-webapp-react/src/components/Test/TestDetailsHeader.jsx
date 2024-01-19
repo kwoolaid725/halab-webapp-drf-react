@@ -1,18 +1,26 @@
-import React from 'react';
+import React, { useState,useEffect } from 'react';
+import axiosInstance from '../../axios';
+import { useNavigate } from 'react-router-dom';
+
 import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
 import TextField from '@mui/material/TextField';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import Grid from '@mui/material/Grid';
+import Button from '@mui/material/Button';
 import theme from '../UI/Theme';
+import Checkbox from '@mui/material/Checkbox';
 import { ThemeProvider } from '@mui/material/styles';
 
-import DoneOutlineIcon from '@mui/icons-material/DoneOutline';
+
+import DoneAllRoundedIcon from '@mui/icons-material/DoneAllRounded';
 import RotateLeftTwoToneIcon from '@mui/icons-material/RotateLeftTwoTone';
-import PendingIcon from '@mui/icons-material/Pending';
+import PendingOutlinedIcon from '@mui/icons-material/PendingOutlined';
 
 import NotesTwoToneIcon from '@mui/icons-material/NotesTwoTone';
+import UpdateIcon from '@mui/icons-material/Update';
+
 
 // Import styled from '@mui/system'
 import { styled } from '@mui/system';
@@ -65,24 +73,68 @@ import { styled } from '@mui/system';
     }));
 
     function TestDetailsHeader(props) {
+      const navigate = useNavigate();
 
-    const testStatusLabel = TEST_STATUS.find(status => status.value === props.testStatus)?.label;
+      const [testStatus, setTestStatus] = useState(props.testStatus);
+      const [isCompletedChecked, setIsCompletedChecked] = useState(props.testStatus === 'COMPLETED');
+      const testStatusLabel = TEST_STATUS.find(status => status.value === props.testStatus)?.label;
+      const [remarksValue, setRemarksValue] = useState(''); // Add remarksValue state
 
-    let statusIcon;
+      useEffect(() => {
+        setIsCompletedChecked(testStatus === 'COMPLETED');
+      }, [testStatus]);
 
-    switch (props.testStatus) {
+      let statusIcon;
+
+      switch (props.testStatus) {
         case 'PENDING':
-          statusIcon = <PendingIcon color="red" />;
-          break;
+            statusIcon = <PendingOutlinedIcon style={{ color: '#e71d36' }} />;
+            break;
         case 'IN_PROGRESS':
-          statusIcon = <RotateLeftTwoToneIcon color="blue" />;
-          break;
+            statusIcon = <RotateLeftTwoToneIcon style={{ color: 'yellow' }} />;
+            break;
         case 'COMPLETED':
-          statusIcon = <DoneOutlineIcon color="green" />;
-          break;
+            statusIcon = <DoneAllRoundedIcon style={{ color: '#9ef01a' }} />;
+            break;
         default:
-          statusIcon = null;
-    }
+            statusIcon = null;
+
+      }
+
+
+       const handleCheckboxClick = () => {
+          let newStatus;
+          if (isCompletedChecked) {
+            newStatus = 'IN_PROGRESS';
+          } else {
+            newStatus = testStatus === 'COMPLETED' ? 'IN_PROGRESS' : 'COMPLETED';
+          }
+          setTestStatus(newStatus);
+          console.log('newStatus:', newStatus);
+          setIsCompletedChecked(!isCompletedChecked);
+        };
+
+      const handleRemarksChange = (event) => {
+        // Update remarksValue state when TextField value changes
+        setRemarksValue(event.target.value);
+      };
+
+      const handleButtonSubmit = () => {
+        // Make sure to update this endpoint and payload structure according to your API
+        const newTestStatus = isCompletedChecked ? 'COMPLETED' : 'IN_PROGRESS';
+        const remarks = remarksValue;
+
+        axiosInstance.patch(`admin/tests/edit/${props.testId}/`, { test_status: newTestStatus, remarks })
+          .then((res) => {
+            console.log('Test status updated to', newTestStatus);
+            navigate('/admin/tests/');
+            // You may want to update your local state or perform other actions upon success
+          })
+          .catch((error) => {
+            console.error("Error updating test status: ", error);
+            // Handle error, show a notification, etc.
+          });
+      };
 
       return (
          <ThemeProvider theme={theme}>
@@ -181,6 +233,7 @@ import { styled } from '@mui/system';
                     }}
                     colSpan={1}>
 
+
                  {statusIcon} {testStatusLabel}
 
                 </StyledTableCell>
@@ -245,6 +298,9 @@ import { styled } from '@mui/system';
                     borderBottom: 'solid steelblue',
                   }} colSpan={1}></StyledTableCell>
               </TableRow>
+
+
+
             </LeftPanel>
 
             {/* Right Panel */}
@@ -261,8 +317,21 @@ import { styled } from '@mui/system';
                   }}
                   colSpan={2}
                 >
-                  Remarks :
+                  <NotesTwoToneIcon /> Remarks :
                 </StyledTableCell>
+
+                <StyledTableCell colSpan={1}>
+                   Mark as Completed :
+                  <Checkbox
+                    checked={isCompletedChecked}
+                    onChange={handleCheckboxClick}
+                    color="primary"
+                  />
+
+
+                </StyledTableCell>
+
+
               </TableRow>
 
               {/* Fourth row: Remarks */}
@@ -273,9 +342,31 @@ import { styled } from '@mui/system';
                   }}
                     colSpan={2}
                      >
-                  <TextField variant="outlined" multiline fullWidth rows={2.95} />
+                  <TextField
+                    variant="outlined"
+                    multiline
+                    fullWidth
+                    rows={2.2}
+                    value={remarksValue} // Controlled component using state
+                    onChange={handleRemarksChange} // Handle TextField value change
+                  />
                 </StyledTableCell>
+                <StyledTableCell
+                    sx={{
+                    borderBottom: 'solid steelblue',
+                  }}
+                    colSpan={2}
+                     >
+                   <Button onClick={handleButtonSubmit} startIcon={<UpdateIcon />} variant="contained" color="primary">
+                    Submit
+                  </Button>
+                </StyledTableCell>
+
+
+
               </TableRow>
+
+
             </RightPanel>
           </Grid>
         </ThemeProvider>
