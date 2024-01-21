@@ -161,7 +161,7 @@ function TestDetailsTableRowBare(props){
         remarks: '',
         created_at: '',
         last_updated: '',
-        isEditing: false,
+        isEditing: true,
         values: {},
         units: {},
         // model: `${props.model}`,
@@ -320,7 +320,8 @@ function TestDetailsTableRowBare(props){
         slug: newSlug,
         run: previousRun + 1, // Set the new row's run as the maximum index + 1
         units: { ...(rows[maxIndex - 1]?.units || {}) }, // Set the new row's units based on the previous row or an empty object
-        keys: Object.keys(values)
+        keys: Object.keys(values),
+        isEditing: true, // Set isEditing to true
     };
 
       setNewRow(updatedNewRow); // Update the newRow state

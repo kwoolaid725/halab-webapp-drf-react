@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef  } from 'react';
 import Box from '@mui/material/Box';
 import Collapse from '@mui/material/Collapse';
 import Table from '@mui/material/Table';
@@ -31,9 +31,32 @@ export default function TestDetailsBody(props) {
   const [totalCarpetCount, setTotalCarpetCount] = useState(0);
   const [totalEdgeCount, setTotalEdgeCount] = useState(0);
   const [keyCounts, setKeyCounts] = useState({});
+  const [testMeasures, setTestMeasures] = useState(null);
 
-  //
+  const [bareSlugs, setBareSlugs] = useState([]);
+  const [carpetSlugs, setCarpetSlugs] = useState([]);
+  const [edgeSlugs, setEdgeSlugs] = useState([]);
 
+  const [allCountDict, setAllCountDict] = useState({});
+
+
+   // Use useRef for countDict
+  const countDictRef = useRef({});
+
+
+
+  useEffect(() => {
+      const fetchData = async () => {
+        try {
+          const response = await fetch('/test-measures.json');
+          const jsonData = await response.json();
+          setTestMeasures(jsonData);
+        } catch (error) {
+          console.error('Error fetching data', error);
+        }
+      };
+      fetchData();
+    }, []);
 
   useEffect(() => {
     // Fetch data and update state
@@ -60,15 +83,19 @@ export default function TestDetailsBody(props) {
    useEffect(() => {
     if (Array.isArray(testDetails)) {
       const grouped = testDetails.reduce((grouped, detail) => {
-        const key = `${detail.test}${detail.model}${detail.sample}${detail.brush_type}${detail.test_case}`;
+        // const key = `${detail.test}${detail.model}${detail.sample}${detail.brush_type}${detail.test_case}`;
+        const key = `${detail.sample}${detail.brush_type}${detail.test_case}`.toLowerCase();
+
         if (!grouped[key]) {
           grouped[key] = [];
         }
         grouped[key].push(detail);
+        console.log('key:', key)
         return grouped;
       }, {});
        // Sort groups by their keys
     const sortedGroups = Object.keys(grouped).sort();
+
 
     // Sort samples within each group based on created_date
     sortedGroups.forEach((key) => {
@@ -87,6 +114,7 @@ export default function TestDetailsBody(props) {
 
 
      console.log('groupedDetails:', groupedDetails)
+     console.log('testMeasures:', testMeasures  )
 
 
 
@@ -106,100 +134,84 @@ export default function TestDetailsBody(props) {
     detailsArray.forEach((details) => {
       // Exclude cases where details.test_group is not "Select Test Group"
       if (details.test_group !== "Select Test Group") {
-
-        const key = `${details.test_group}-${details.slug}`;
-        // const key = `${details.test_group}'
-        // const key = `${details.test_target}${details.test_group}-${details.model}${details.sample}${details.brush_type}${details.test_case}`;
-        const uniqueSlug = key.replace(/\s+/g, '-').toLowerCase();
-        uniqueSlugsSet.add(uniqueSlug);
-        // uniqueSlugsSet.add(uniqueSlug);
+        // Split details.slug by the first '-' and keep the second part
+        const slugParts = details.slug.split('-');
+        if (slugParts.length > 1) {
+          const key = `${details.test_group}-${slugParts.slice(1).join('-')}`;
+          const uniqueSlug = key.replace(/\s+/g, '-').toLowerCase();
+          uniqueSlugsSet.add(uniqueSlug);
+        }
       }
     });
 
     return Array.from(uniqueSlugsSet);
   };
+
+
   const calculateCounts = () => {
-    // Initialize counters for each key
-    const keyCounts = {};
+  // Initialize counters for each category
+    const countDict = {};
 
     Object.keys(groupedDetails).forEach((key) => {
       const detailsArray = groupedDetails[key];
-      let bareCount = 0;
-      let carpetCount = 0;
-      let edgeCount = 0;
-
-
       const uniqueSlugs = generateUniqueSlugs(detailsArray);
 
       uniqueSlugs.forEach((uniqueSlug) => {
-        const thirdHyphenIndex = uniqueSlug.indexOf('-', uniqueSlug.indexOf('-', uniqueSlug.indexOf('-') + 1) + 1);
 
-    // Check if the second hyphen exists before removing
-        const modifiedSlug = thirdHyphenIndex !== -1 ? uniqueSlug.substring(0, thirdHyphenIndex) : uniqueSlug;
+        const firstHyphenIndex = uniqueSlug.indexOf('-');
+        const testGroup = uniqueSlug.substring(0, firstHyphenIndex);
+        const testTarget = uniqueSlug.split('-')[1];
+        const lastHyphenIndex = uniqueSlug.lastIndexOf('-');
+        const secondLastHyphenIndex = uniqueSlug.lastIndexOf('-', lastHyphenIndex - 1);
+        const commonSuffix = uniqueSlug.substring(secondLastHyphenIndex + 1, lastHyphenIndex);
 
+        console.log('uniqueSlug:', uniqueSlug);
 
-        bareCount += (modifiedSlug.match(/bare/gi) || []).length;
-        carpetCount += (modifiedSlug.match(/carpet/gi) || []).length;
-        edgeCount += (modifiedSlug.match(/edge/gi) || []).length;
-        console.log('uniqueSlugs:', modifiedSlug);
+        if (!countDict[commonSuffix]) {
+          countDict[commonSuffix] = {};
+        }
+
+        if (!countDict[commonSuffix][testTarget]) {
+          countDict[commonSuffix][testTarget] = {};
+        }
+
+        if (!countDict[commonSuffix][testTarget][testGroup]) {
+          countDict[commonSuffix][testTarget][testGroup] = 0;
+        }
+
+        countDict[commonSuffix][testTarget][testGroup]++;
       });
-
-      // Store counts for the current key
-      keyCounts[key] = {
-        bareCount,
-        carpetCount,
-        edgeCount,
-      };
-       // 'bare', 'carpet', 'edges
     });
 
-    console.log('keyCounts:', keyCounts);
-    // Update state with the counts for each key
-    setKeyCounts(keyCounts);
+     // Use useRef for countDict
+     countDictRef.current = countDict;
+    // Log or use the count dictionary as needed
+    console.log('Count Dictionary:', countDictRef.current);
   };
+
+// Invoke the calculateCounts function where needed
+calculateCounts();
+
 
   // Calculate counts when component mounts
   useEffect(() => {
     calculateCounts();
   }, [groupedDetails]);
 
-//   const calculateCounts = () => {
-//   // Initialize counters for each key
-//   const keyCounts = {};
-//
-//   Object.keys(groupedDetails).forEach((key) => {
-//     const detailsArray = groupedDetails[key];
-//     let bareCount = 0;
-//     let carpetCount = 0;
-//     let edgeCount = 0;
-//
-//     detailsArray.forEach((details) => {
-//       if (details.test_group !== "Select Test Group") {
-//         // Increment counts based on the test_group value
-//         bareCount += details.test_group.toLowerCase() === 'bare' ? 1 : 0;
-//         carpetCount += details.test_group.toLowerCase() === 'carpet' ? 1 : 0;
-//         edgeCount += details.test_group.toLowerCase() === 'edge' ? 1 : 0;
-//       }
-//     });
-//
-//     // Store counts for the current key
-//     keyCounts[key] = {
-//       bareCount,
-//       carpetCount,
-//       edgeCount,
-//     };
-//   });
-//
-//   // Update state with the counts for each key
-//   setKeyCounts(keyCounts);
-// };
-//
-// // Calculate counts when component mounts and whenever groupedDetails changes
-// useEffect(() => {
-//   calculateCounts();
-// }, [groupedDetails]);
+  // useEffect allCountDict
+  // useEffect(() => {
+  //   setAllCountDict(allCountDict);
+  // }, [allCountDict]);
 
 
+  const LabeledCircularProgress = ({ count, threshold, label, style }) => (
+    <div style={{ display: 'flex', alignItems: 'center', marginRight: '10px' }}>
+      <Typography variant="body1" fontSize="16px" style={{ fontWeight: 'bold', marginRight: '5px' }}>
+        {label}:
+      </Typography>
+      <ColoredCircularProgress count={count} threshold={threshold} style={style} />
+    </div>
+  );
 
 
 
@@ -214,6 +226,14 @@ export default function TestDetailsBody(props) {
         const details = groupedDetails[key];
         const firstDetail = details[0];
         const isDetailsOpen = openDetails[key];
+
+
+         // Add console.log statements here
+          console.log('groupedDetails:', groupedDetails);
+          console.log('Current key:', key);
+          console.log('allCountDict:', countDictRef.current);
+          console.log('Bare object:', countDictRef.current[key]?.bare);
+          console.log('Sand property:', countDictRef.current[key]?.bare?.sand);
 
 
         return (
@@ -326,23 +346,73 @@ export default function TestDetailsBody(props) {
                             align="center"
                             colSpan={4} // Adjust the colspan based on the number of columns
                           >
-                            <ColoredCircularProgress
-                              count={keyCounts[key]?.bareCount || 0}
-                              threshold={3}
-                              label="Bare"
-                              style={{ fontWeight: 'bold' }} // Adjust the margin as needed
-                            />
-                            <ColoredCircularProgress
-                              count={keyCounts[key]?.carpetCount || 0}
-                              threshold={3}
-                              label="Carpet"
-                              style={{ marginRight: '10px' }} // Adjust the margin as needed
-                            />
-                            <ColoredCircularProgress
-                              count={keyCounts[key]?.edgeCount || 0}
-                              threshold={3}
-                              label="Edge"
-                            />
+                            {/* Bare Row */}
+                        <div style={{ display: 'flex', flexDirection: 'row',  }}>
+                          {/* Bare Row */}
+                          <div style={{ marginBottom: '10px' }}>
+                            <Typography variant="subtitle2" fontSize="14px" textAlign='center' style={{  color: "#345995" }}>
+                              Bare
+                            </Typography>
+                            <div style={{ display: 'flex', marginLeft:'10px'}}>
+                              <ColoredCircularProgress
+                                count={countDictRef.current[key]?.bare?.sand || 0}
+                                threshold={3}
+                                label="Sand"
+                                style={{ fontWeight: 'bold' }}
+                                color={'#db5375'}
+                              />
+
+                              <ColoredCircularProgress
+                                count={countDictRef.current[key]?.bare?.rice || 0}
+                                threshold={3}
+                                label="Rice"
+                                style={{ fontWeight: 'bold' }}
+                                color={'#db5375'}
+                              />
+
+                              <ColoredCircularProgress
+                                count={countDictRef.current[key]?.bare?.cheerios || 0}
+                                threshold={3}
+                                label="Cheerios"
+                                style={{ fontWeight: 'bold' }}
+                                color={'#db5375'}
+                              />
+
+                            </div>
+                          </div>
+
+                          {/* Carpet Row */}
+                          <div style={{ marginBottom: '10px' }}>
+                            <Typography variant="subtitle2" fontSize="14px" textAlign='center' style={{  color: "#345995" }}>
+                              Carpet
+                            </Typography>
+                            <div style={{ display: 'flex' }}>
+                              <ColoredCircularProgress
+                                count={countDictRef.current[key]?.carpet?.sand || 0}
+                                threshold={3}
+                                label="Sand"
+                                style={{ fontWeight: 'bold', marginRight: '10px' }}
+                                color={'#73bfb8'}
+                              />
+                            </div>
+                          </div>
+
+                          {/* Edge Row */}
+                          <div>
+                            <Typography variant="subtitle2" fontSize="14px" textAlign='center' style={{  color: "#345995" }}>
+                              Edge
+                            </Typography>
+                            <div style={{ display: 'flex' }}>
+                              <ColoredCircularProgress
+                                count={countDictRef.current[key]?.edge?.sand || 0}
+                                threshold={3}
+                                label="Sand"
+                                style={{ fontWeight: 'bold', marginRight: '10px' }}
+                                color={'#ff6b35'}
+                              />
+                            </div>
+                          </div>
+                        </div>
                             {/*<Typography variant="body1" fontSize="16px">*/}
                             {/*  {`Bare: ${keyCounts[key]?.bareCount || 0}, Carpet: ${keyCounts[key]?.carpetCount || 0}, Edge: ${keyCounts[key]?.edgeCount || 0}`}*/}
                             {/*</Typography>*/}
