@@ -6,20 +6,28 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 
 function CircularProgressWithLabel(props) {
-  const calculatePercentage = (value) => {
-    return value >= 3 ? 100 : Math.round((value / 3) * 100);// Calculate percentage based on the range [0, 3]
+  const calculatePercentage = (value, threshold) => {
+    return value >= threshold ? 100 : Math.round((value / threshold) * 100);
   };
 
   return (
-    // <Box sx={{ position: 'relative', display: 'inline-flex', flexDirection: 'column', alignItems: 'center' }}>
-   <Box sx={{ position:'relative', display: 'inline-flex', flexDirection: 'column', alignItems: 'center', marginRight: '10px' }}>
-      <Typography variant="caption" component="div" color="text.secondary" marginBottom="4px" fontWeight="bold">
+    <Box
+      sx={{
+        position: 'relative',
+        display: 'inline-flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        marginRight: '10px',
+        left: 5
+      }}
+    >
+      <Typography variant="caption" component="div" color="text.secondary" marginBottom="1px" fontWeight="bold" fontSize="12px">
         {props.label}
       </Typography>
-      <CircularProgress variant="determinate" value={calculatePercentage(props.value)} />
+      <CircularProgress variant="determinate" value={calculatePercentage(props.count, props.threshold)} sx={{ color: props.color }} />
       <Box
         sx={{
-          top: 20,
+          top: 25,
           left: 0,
           bottom: 0,
           right: 0,
@@ -30,7 +38,7 @@ function CircularProgressWithLabel(props) {
         }}
       >
         <Typography variant="caption" component="div" color="text.secondary" fontWeight="bold">
-          {props.value}
+          {props.count}
         </Typography>
       </Box>
     </Box>
@@ -38,15 +46,12 @@ function CircularProgressWithLabel(props) {
 }
 
 CircularProgressWithLabel.propTypes = {
-  value: PropTypes.number.isRequired,
+  count: PropTypes.number.isRequired,
   label: PropTypes.string.isRequired,
+  color: PropTypes.string.isRequired,
+  threshold: PropTypes.number.isRequired,
 };
 
-export default function ColoredCircularProgress({ count, threshold, color, label }) {
-  return (
-    <CircularProgressWithLabel value={count} label={label} />
-  );
+export default function ColoredCircularProgress({ count, label, color, threshold }) {
+  return <CircularProgressWithLabel count={count} label={label} color={color} threshold={threshold} />;
 }
-
-
-
