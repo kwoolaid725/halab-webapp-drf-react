@@ -17,7 +17,8 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import TextField from '@mui/material/TextField';
 import {useParams} from "react-router-dom";
 import axiosInstance from "../../axios";
-import TestDetailsTableCR from "./TestDetailsTableCR";
+import TestDetailsTableCrCordless from "./TestDetailsTableCR_Cordless";
+import TestDetailsTableCrRobot from "./TestDetailsTableCR_Robot";
 import ColoredCircularProgress from "../UI/CircularProgress";
 
 import classes from './TestDetailsBody.module.css';
@@ -213,11 +214,6 @@ calculateCounts();
     </div>
   );
 
-
-
-
-
-
   return (
 
     <React.Fragment>
@@ -272,15 +268,22 @@ calculateCounts();
                   sx={{
                     border: () => {
                       // Get the counts for the current key
-                      const counts = keyCounts[key] || {};
+                      const bareCount = countDictRef.current[key]?.bare;
+                      const bareTotalCount = (bareCount?.sand || 0) + (bareCount?.rice || 0) + (bareCount?.cheerios || 0);
+
+                      console.log('bareTotalCount:', bareTotalCount);
+
+                      const carpetCount = countDictRef.current[key]?.carpet?.sand || 0;
+                      const edgeCount = countDictRef.current[key]?.edge?.sand || 0;
+
 
                       // Check conditions for changing the border color
-                      if (counts.bareCount >= 3 && counts.carpetCount >= 3 && counts.edgeCount >= 3) {
-                        return '3px solid #03cea4'; // Green border if all counts are 3 or greater
-                      // } else if (counts.bareCount > 0 || counts.carpetCount > 0 || counts.edgeCount > 0) {
-                      //   return '3px solid #ffc600'; // Yellow border if any count is greater than 0
+                      if (bareTotalCount >= 3 && carpetCount  >= 3 && edgeCount  >= 3) {
+                        return '4px solid #03cea4'; // Green border if all counts are 3 or greater
+                      } else if (bareTotalCount > 0 || carpetCount > 0 || edgeCount > 0) {
+                        return '3px solid #efaac4'; // Yellow border if any count is greater than 0
                       } else {
-                        return '2px solid #ff0a54'; // Red border if neither condition is met
+                        return '1px dotted #ff6978'; // Red border if neither condition is met
                       }
                     },
                     borderRadius: '8px',
@@ -426,11 +429,28 @@ calculateCounts();
 
               {/* Conditionally render TestDetailsTable or TestDetailsTableCR based on testCategory */}
 
-              {test?.test_category === 'CR' && (test?.product_category.startsWith('Stick') || test?.product_category.startsWith('STICK')) ? (
+              {test?.test_category === 'CR' &&
+               (test?.product_category.toLowerCase().includes('stick') && test?.product_category.toLowerCase().includes('cordless')) ? (
                 <TableRow>
                   <TableCell colSpan={4}>
                      <Collapse in={isDetailsOpen} timeout="auto" unmountOnExit>
-                      <TestDetailsTableCR
+                      <TestDetailsTableCrCordless
+                        testId={test?.id}
+                        model={firstDetail.model}
+                        sample={firstDetail.sample}
+                        brushType={firstDetail.brush_type}
+                        tester={props.tester}
+                        testCase={firstDetail.test_case}
+                      />
+                    </Collapse>
+                  </TableCell>
+                </TableRow>
+              ) : (
+                 (test?.product_category.toLowerCase().includes('robot')) ? (
+                <TableRow>
+                  <TableCell colSpan={4}>
+                    <Collapse in={openDetails[key]} timeout="auto" unmountOnExit>
+                      <TestDetailsTableCrRobot
                         testId={test?.id}
                         model={firstDetail.model}
                         sample={firstDetail.sample}
@@ -455,7 +475,9 @@ calculateCounts();
                     </Collapse>
                   </TableCell>
                 </TableRow>
+              )
               )}
+
             </Box>
           </div>
         );

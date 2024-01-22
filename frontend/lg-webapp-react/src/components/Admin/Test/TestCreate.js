@@ -115,25 +115,25 @@ export default function TestCreate() {
     // Add more categories as needed
 	];
 
-	const TEST_STATUS = [
-		{
-			value: 'Open',
-			label: 'Open'
-		},
-		{
-			value: 'In Progress',
-			label: 'In Progress'
-		},
-		 {
-			value: 'Closed',
-			label: 'Closed'
-		},
-		{
-			value: 'Cancelled',
-			label: 'Cancelled'
-		}
-	// Add more categories as needed
-	];
+	// const TEST_STATUS = [
+	// 	{
+	// 		value: 'Open',
+	// 		label: 'Open'
+	// 	},
+	// 	{
+	// 		value: 'In Progress',
+	// 		label: 'In Progress'
+	// 	},
+	// 	 {
+	// 		value: 'Closed',
+	// 		label: 'Closed'
+	// 	},
+	// 	{
+	// 		value: 'Cancelled',
+	// 		label: 'Cancelled'
+	// 	}
+	// // Add more categories as needed
+	// ];
 
 
 	return (

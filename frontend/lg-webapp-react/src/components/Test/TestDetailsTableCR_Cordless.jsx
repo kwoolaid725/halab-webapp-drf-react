@@ -1,15 +1,14 @@
-import React from 'react';
-import TestDetailsTableRowBare from "./TestDetailsTableRowBare";
-import TestDetailsTableRowCarpet from "./TestDetailsTableRowCarpet";
-import TestDetailsTableRowEdge from "./TestDetailsTableRowEdge";
-import CustomTabPanel from "../UI/TabPanel";
+import React from 'react'
+import TestDetailsTableRowBare from './TestDetailsTableRowBare'
+import TestDetailsTableRowCarpet from './TestDetailsTableRowCarpet'
+import TestDetailsTableRowEdge from './TestDetailsTableRowEdge'
+import CustomTabPanel from '../UI/TabPanel'
 
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
-import Box from '@mui/material/Box';
+import Tabs from '@mui/material/Tabs'
+import Tab from '@mui/material/Tab'
+import Box from '@mui/material/Box'
 
-
-const TestDetailsTableCR = (props) => {
+const TestDetailsTableCrCordless = (props) => {
 
   const [value, setValue] = React.useState(0);
 
@@ -104,4 +103,4 @@ const TestDetailsTableCR = (props) => {
   );
 };
 
-export default TestDetailsTableCR;
+export default TestDetailsTableCrCordless;
