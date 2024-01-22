@@ -23,8 +23,18 @@ class PostUserWritePermission(BasePermission):
 
 class CategoryList(generics.ListCreateAPIView):
 
-    queryset = Category.objects.all()
+    # queryset = Category.objects.all()
     serializer_class = CategorySerializer
+
+    def get_queryset(self):
+        queryset = Category.objects.all()
+        name = self.request.query_params.get('name')
+
+        if name:
+            queryset = queryset.filter(name=name)
+
+
+        return queryset
 
 
 # Display Posts

@@ -17,7 +17,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import GroupHeader from '@mui/material/ListItem';
 import GroupItems from '@mui/material/ListItem';
 
-import TestDetailsTableCR from "./TestDetailsTableCR";
+import TestDetailsTableCR from "./TestDetailsTableCR_Cordless";
 import TestDetailsTable from "./TestDetailsTable";
 import axiosInstance from "../../axios";
 import InputLabel from "@mui/material/InputLabel";
@@ -25,6 +25,7 @@ import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Typography from "@mui/material/Typography";
+import ListSubheader from "@mui/material/ListSubheader";
 
 
 export default function TestDetailsAddSample (props) {
@@ -60,7 +61,22 @@ export default function TestDetailsAddSample (props) {
       customInput: '',
     });
 
-  const brushTypeOptions = ['Carpet', 'Fluffy', 'Dual', 'DMS', 'Other'];
+  useEffect(() => {
+    console.log('Initial props.productCategory:', props.productCategory);
+
+    // ... rest of your component
+  }, [props.productCategory]);
+
+
+  // Define brushTypeOptions based on props.productCategory
+  const brushTypeOptions =
+    props.productCategory.toLowerCase().includes('stick') && props.productCategory.toLowerCase().includes('cordless')
+      ? ['Carpet', 'Fluffy', 'Dual', 'DMS', 'Other']
+      : props.productCategory.toLowerCase().includes('robot')
+      ? ['DRY/ 1 Side Brush', 'DRY/ 2 Side Brushes', 'DRY/ D-Shaped 1 Side', 'DRY/ D-Shaped 2 Side', 'WET/DRY Combo', 'Other']
+      : [];
+
+
   const testCaseOptions = ['REG', 'HARD', 'SOFT', 'Other'];
 
 
@@ -106,6 +122,7 @@ export default function TestDetailsAddSample (props) {
 
 
   useEffect(() => {
+    console.log('props.productCategory:', props.productCategory);
     axiosInstance(`/categories/?name=${props.productCategory}`)
       .then(response => {
         const fetchedCategoryId = response.data[0]?.id; // Assuming the API returns an array
@@ -131,7 +148,6 @@ export default function TestDetailsAddSample (props) {
   }, [categoryId]);
 
     const handleSearch = (inputValue) => {
-
     // Make an API call based on the searchValue
       axiosInstance(`/products/search/custom/${categoryId}/?search=${inputValue}`)
         .then(response => {
@@ -355,12 +371,13 @@ export default function TestDetailsAddSample (props) {
                           id="brush-type"
                           name="brushType"
                           label="Brush Type"
+                          MenuComponent="div" // Use a div for the menu to allow custom styling
                         >
-                          {brushTypeOptions.map((option) => (
-                            <MenuItem key={option} value={option}>
-                              {option}
-                            </MenuItem>
-                          ))}
+                          {brushTypeOptions.map((option, index) => (
+                          <MenuItem key={option} value={option} style={option === 'Other' ? { borderTop: '2px solid #ccc', margin: '5px 0' } : {}}>
+                            {option}
+                          </MenuItem>
+                        ))}
                         </Select>
                         {brushTypeValue.value === 'Other' && (
                           <TextField
@@ -389,7 +406,7 @@ export default function TestDetailsAddSample (props) {
                             label="Test Case"
                           >
                             {testCaseOptions.map((option) => (
-                              <MenuItem key={option} value={option}>
+                              <MenuItem key={option} value={option} style={option === 'Other' ? { borderTop: '2px solid #ccc', margin: '5px 0' } : {}}>
                                 {option}
                               </MenuItem>
                             ))}

@@ -16,7 +16,7 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import TextField from '@mui/material/TextField';
 import {useParams} from "react-router-dom";
 import axiosInstance from "../../axios";
-import TestDetailsTableCR from "./TestDetailsTableCR";
+import TestDetailsTableCRVacuum from "./TestDetailsTableCR_Cordless";
 import TestDetailsBody from "./TestDetailsBody";
 import Button from "@mui/material/Button";
 import TestDetailsAddSample from "./TestDetailsAddSample";
@@ -60,11 +60,11 @@ export default function TestDetails(props) {
     axiosInstance(`/admin/tests/vacuum/testdetail/${data?.id}/`)
       .then((res) => {
         const testDataDetails = res.data;
-        setDataDetails(testDataDetails);
-        console.log('testDataDetails1111:', testDataDetails);
+        // setDataDetails(testDataDetails);
+        // console.log('testDataDetails1111:', testDataDetails);
 
         // Check if there are test details
-        const hasTestDetails = testDataDetails.length > 0;
+        const hasTestDetails = testDataDetails.some(detail => detail.test_group !== 'Select Test Group');
 
         // If there are test details, set the test_status to 'IN_PROGRESS'
         // If there are no test details and the test_status is not 'COMPLETED', set the test_status to 'PENDING'

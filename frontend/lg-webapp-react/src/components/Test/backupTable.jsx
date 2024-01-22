@@ -16,7 +16,7 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import TextField from '@mui/material/TextField';
 import {useParams} from "react-router-dom";
 import axiosInstance from "../../axios";
-import TestDetailsTableCR from "./TestDetailsTableCR";
+import TestDetailsTableCR from "./TestDetailsTableCR_Cordless";
 
 export default function TestDetailsBody(props) {
   const [openFirst, setOpenFirst] = useState(true);
