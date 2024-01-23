@@ -43,6 +43,7 @@ import TestDetailsTableRow from './components/Test/TestDetailsTableRow'
 import TestDetailsTableRowCarpet from './components/Test/TestDetailsTableRowCarpet'
 import TestDetailsTable from './components/Test/TestDetailsTable'
 import TestDetails from './components/Test/TestDetails'
+import TestDetailsTableRowRobotBare from './components/Test/CR/Vacuum_Robot/TestDetailsTableRow_RobotBare'
 
 
 function Routes() {
@@ -82,7 +83,7 @@ function Routes() {
 		{ path: '/admin/tests/test', element: <TestDetails /> },
 		{ path: '/admin/tests/testtable', element: <TestDetailsTable /> },
 		{ path: '/admin/tests/testrow', element: <TestDetailsTableRow /> },
-		{ path: '/admin/tests/testrowcarpet', element: <TestDetailsTableRowCarpet /> },
+		{ path: '/admin/tests/testrowrobot', element: <TestDetailsTableRowRobotBare /> },
 
 
 		{ path: '/register', element: <Register /> },

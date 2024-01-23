@@ -1,0 +1,161 @@
+{
+  "CR": {
+    "Bare": [
+      {
+        "Silica/Rice": [
+          {
+            "Soil_Wt": {
+              "value": "50",
+              "units": "g"
+            },
+            "Unpicked Amt.": {
+              "value": "",
+              "units": "g"
+            },
+            "Pickup": {
+              "value": "",
+              "units": "%"
+            }
+          }
+        ]
+      },
+      {
+        "Cheerios": [
+          {
+            "Initial Ct.": {
+              "value": "12",
+              "units": "ct."
+            },
+            "Unpicked Ct.": {
+              "value": "",
+              "units": "ct"
+            },
+            "Pickup": {
+              "value": "",
+              "units": "%"
+            }
+          }
+        ]
+      },
+      {
+        "Paper-Squares": [
+          {
+            "Initial Ct.": {
+              "value": "46",
+              "units": "ct."
+            },
+            "Unpicked Ct.": {
+              "value": "",
+              "units": "ct."
+            },
+            "Pickup": {
+              "value": "",
+              "units": "%"
+            },
+            "Numbers": {
+              "value": "",
+              "units": ""
+            }
+          }
+        ]
+      },
+      {
+        "Time": [
+          {
+            "Runtime": {
+              "value": "",
+              "units": "min"
+            }
+          }
+        ]
+      }
+    ],
+
+    "Carpet": [
+      {
+        "Sand": [
+          {
+            "Soil_Wt": {
+              "value": "50",
+              "units": "g"
+            },
+            "Unpicked": {
+              "value": "",
+              "units": "g"
+            },
+            "Pickup": {
+              "value": "",
+              "units": "%"
+            }
+          }
+        ]
+      },
+      {
+        "Rice": [
+          {
+            "Soil_Wt": {
+              "value": "50",
+              "units": "g"
+            },
+            "Unpicked": {
+              "value": "",
+              "units": "g"
+            },
+            "Pickup": {
+              "value": "",
+              "units": "%"
+            }
+          }
+        ]
+      },
+      {
+        "Cheerios": [
+          {
+            "Initial Ct.": {
+              "value": "12",
+              "units": "Ct"
+            },
+            "Unpicked": {
+              "value": "",
+              "units": "ct"
+            },
+            "Pickup": {
+              "value": "",
+              "units": "%"
+            }
+          }
+        ]
+      },
+      {
+        "Cat_Hair": [
+          {
+            "Soil_Wt": {
+              "value": "50",
+              "units": "g"
+            },
+            "Unpicked": {
+              "value": "",
+              "units": "g"
+            },
+            "Pickup": {
+              "value": "",
+              "units": "%"
+            }
+          }
+        ]
+      },
+      {
+        "Time": [
+          {
+            "Runtime": {
+              "value": "",
+              "units": "min"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+
+

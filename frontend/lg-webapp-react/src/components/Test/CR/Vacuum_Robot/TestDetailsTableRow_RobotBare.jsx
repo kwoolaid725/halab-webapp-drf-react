@@ -3,9 +3,10 @@ import React, {
   useState
 } from 'react'
 import { BsFillTrashFill, BsFillPencilFill } from 'react-icons/bs';
-import axiosInstance from '../../axios'
-import EditableRow  from './EditableRow'
-import StaticRow  from './StaticRow'
+import axiosInstance from '../../../../axios';
+import EditableRowRobotBare from './EditableRowRobotBare';
+import StaticRowRobotBare from './StaticRowRobotBare';
+import EditableRow from '../../EditableRow'
 
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -14,15 +15,16 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import Button from '@mui/material/Button';
 import AddIcon from '@mui/icons-material/Add';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
 
 
-function TestDetailsTableRowBare(props){
+function TestDetailsTableRowRobotBare(props){
 
   const [testMeasures, setTestMeasures] = useState(null);
+  const [categoriesData, setCategoriesData] = useState([]);
   const [rows, setRows] = useState([]);
   const [keys, setKeys] = useState([]);
   const [values, setValues] = useState({});
@@ -37,10 +39,10 @@ function TestDetailsTableRowBare(props){
   useEffect(() => {
       const fetchData = async () => {
         try {
-          const response = await fetch('/test-measures.json');
+          const response = await fetch('/test-measures-robot.json');
           const jsonData = await response.json();
-          const bareData = jsonData["Bare"];
-          console.log('Bare Data:', bareData)
+          const bareData = jsonData["CR"]["Bare"];
+          console.log('robot measures:', bareData)
           setTestMeasures(bareData);
         } catch (error) {
           console.error('Error fetching data', error);
@@ -62,36 +64,54 @@ function TestDetailsTableRowBare(props){
 
   }, []); // Fetch only once on component mount
 
+
+
+useEffect(() => {
+  if (testMeasures) {
+    const formattedData = testMeasures.map(category => {
+      const categoryName = Object.keys(category)[0];
+      const measures = category[categoryName][0];
+      const keys = Object.keys(measures);
+
+      return {
+        categoryName: categoryName,
+        keys: keys,
+        values: measures
+      };
+    });
+
+    // Update the state with the formatted data
+    setCategoriesData(formattedData);
+
+    // Update the rows state
+    setRows(() => {
+      const newRow = {
+        id: '',  // You may need to generate a unique ID here
+        slug: `${props.testId}-Bare-${props.sample}${props.brushType}${props.testCase}-1`,
+        tester: props.tester,
+        testTarget: 'Bare',
+        run: 1,
+        remarks: '',
+        created_at: '',
+        last_updated: '',
+        isEditing: false,
+        values: formattedData.reduce((acc, category) => {
+          acc[category.categoryName] = { ...category.values };
+          return acc;
+        }, {})
+      };
+
+      return [newRow];
+    });
+  }
+}, [testMeasures]);
+
   useEffect(() => {
-    // console.log('Test Measures:', testMeasures);
+       console.log('Rows-TDTR_RB:', rows);
+  }
+  , [rows]);
 
-    if (testMeasures) {
-      let selectedMeasures = Array.isArray(testMeasures) ? testMeasures : [testMeasures];
-
-      // Find the object that contains "Sand"
-      const sandMeasure = selectedMeasures.find(measure => Object.keys(measure)[0] === "Sand");
-
-      if (sandMeasure) {
-        const values = sandMeasure["Sand"][0]; // Accessing the values for "Sand"
-        const keys = Object.keys(values);
-
-        // console.log('measureValues:', values);
-        // console.log('measureKeys:', keys);
-
-        // Update the rows state with "Sand" values and keys
-        setRows(prevRows =>
-          prevRows.map(row => ({
-            ...row,
-            values: { ...values },
-            keys: keys
-          }))
-        );
-
-        setValues(values);
-        setKeys(keys);
-      }
-    }
-  }, [testMeasures]);
+  // console.log('Rows-TDTR_RB-Keys:', rows);
 
   useEffect(() => {
     // Your logic to fetch and generate soilWtMap from the provided TestMeasures data
@@ -114,39 +134,15 @@ function TestDetailsTableRowBare(props){
 
 
    const handleInputChange = (rows, setRows, slug, key, value) => {
-    const updatedRows = rows.map((row) => {
-      if (row.slug === slug) {
-        let updatedValues = { ...row.values, [key]: { value, units: row.values[key]?.units || '' } };
-
-        // Calculate Weight Diff. when Pre-Wt. or Post-Wt. changes
-        if (key === 'Pre-Wt.' || key === 'Post-Wt.') {
-          const preWt = parseFloat(updatedValues['Pre-Wt.'].value) || 0;
-          const postWt = parseFloat(updatedValues['Post-Wt.'].value) || 0;
-          const weightDiff = (postWt - preWt).toFixed(2).replace(/\.?0+$/, '');
-          const soilWt = parseFloat(updatedValues['Soil_Wt'].value) || 0;
-
-          const pickup = soilWt !== 0 ? ((weightDiff / soilWt) * 100).toFixed(2).replace(/\.?0+$/, '') : 0;
-
-          updatedValues = {
-            ...updatedValues,
-            'Wt.-Diff.': { value: weightDiff, units: 'g' },
-            'Pickup': { value: pickup, units: '%' }
-          };
+      const updatedRows = rows.map((row) => {
+        if (row.slug === slug) {
+          row.values[key].value = value;
         }
+        return row;
+      });
 
-        const updatedRow = {
-          ...row,
-          values: updatedValues
-        };
-
-        return updatedRow;
-      }
-      return row;
-    });
-
-    setRows([...updatedRows]);
-  };
-
+      setRows([...updatedRows]);
+    };
 
 
   useEffect(() => {
@@ -156,14 +152,14 @@ function TestDetailsTableRowBare(props){
         slug: `${props.testId}-Bare-${props.sample}${props.brushType}${props.testCase}-1`,
         tester: props.tester,
         testTarget: 'Bare',
-        testGroup: '',
+        // testGroup: '',
         run: 1,
         remarks: '',
         created_at: '',
         last_updated: '',
         isEditing: true,
-        values: {},
-        units: {},
+        values: {}, // Initialize as an empty object
+        // units: {},
         // model: `${props.model}`,
       };
       setRows([initialRowState]);
@@ -237,7 +233,7 @@ function TestDetailsTableRowBare(props){
       slug: row.slug,
       tester: row.tester, // Assuming 'tester' exists in fetchedRows
       testTarget: row.test_target, // Assuming 'testTarget' exists in fetchedRows
-      testGroup: row.test_group, // Assuming 'testGroup' exists in fetchedRows
+      // testGroup: row.test_group, // Assuming 'testGroup' exists in fetchedRows
       run: row.run, // Adjust as needed
       remarks: row.remarks, // Adjust as needed
       created_at: convertToAMPM(row.created_at.split('.')[0]), // Adjust as needed
@@ -263,7 +259,7 @@ function TestDetailsTableRowBare(props){
     slug: '',
     tester: props.tester,
     testTarget: 'Bare',
-    testGroup: '',
+    // testGroup: '',
     run: 1,
     remarks: '',
     created_at: '',
@@ -525,15 +521,15 @@ function TestDetailsTableRowBare(props){
   };
 
 
- const sortedData = rows.sort((a, b) => {
-    // Assuming testGroup is a string, modify accordingly if it's a different type
-    const testGroupComparison = b.testGroup.localeCompare(a.testGroup); // Reverse the order
-    if (testGroupComparison !== 0) {
-      return testGroupComparison;
-    }
-    // If testGroup is the same, compare by run
-    return a.run - b.run; // Assuming run is a number, adjust accordingly if it's a string
-  });
+ // const sortedData = rows.sort((a, b) => {
+ //    // Assuming testGroup is a string, modify accordingly if it's a different type
+ //    const testGroupComparison = b.testGroup.localeCompare(a.testGroup); // Reverse the order
+ //    if (testGroupComparison !== 0) {
+ //      return testGroupComparison;
+ //    }
+ //    // If testGroup is the same, compare by run
+ //    return a.run - b.run; // Assuming run is a number, adjust accordingly if it's a string
+ //  });
 
 
 
@@ -552,14 +548,26 @@ function TestDetailsTableRowBare(props){
             <TableCell align="center">
               <Typography variant="subtitle1" fontWeight="bold">Tester</Typography>
             </TableCell>
-            <TableCell align="center">
-              <Typography variant="subtitle1" fontWeight="bold">Test Group</Typography>
-            </TableCell>
-            {keys && keys.map((key, index) => (
-              <TableCell align="center" key={index}>
-                <Typography variant="subtitle1" fontWeight="bold">{key}</Typography>
+            {categoriesData && categoriesData.map(category => (
+            <React.Fragment key={category.categoryName}>
+               <TableCell key={category.categoryName} style={{ padding: 0, border: 'none', boxSizing: 'border-box' }}>
+                {/* First row with category name */}
+                <TableRow>
+                  <TableCell colSpan={category.keys.length + 1} align="center" style={{ padding: 0, border: 'none', boxSizing: 'border-box' }}>
+                    <Typography variant="subtitle1" fontWeight="bold">{category.categoryName}</Typography>
+                  </TableCell>
+                </TableRow>
+                {/* Second row with keys */}
+                <TableRow>
+                  {category.keys.map((key, index) => (
+                    <TableCell key={`${category.categoryName}-${key}`} align="center">
+                      <Typography variant="subtitle1" fontWeight="bold">{key}</Typography>
+                    </TableCell>
+                  ))}
+                </TableRow>
               </TableCell>
-            ))}
+            </React.Fragment>
+          ))}
             <TableCell align="center">
               <Typography variant="subtitle1" fontWeight="bold">Run</Typography>
             </TableCell>
@@ -579,9 +587,9 @@ function TestDetailsTableRowBare(props){
         </TableHead>
 
         <TableBody>
-          {sortedData.map((row, idx) => (
+          {rows.map((row, idx) => (
               row.isEditing ? (
-                <EditableRow
+                <EditableRowRobotBare
                   key={idx}
                   row={row}
                   idx={idx}
@@ -604,7 +612,7 @@ function TestDetailsTableRowBare(props){
                   }}
               />
               ) : (
-                <StaticRow
+                <StaticRowRobotBare
                   key={idx}
                   row={row}
                   idx={idx}
@@ -629,74 +637,9 @@ function TestDetailsTableRowBare(props){
       </Table>
     </TableContainer>
 
-    // <div>
-    //   <table>
-    //     <thead>
-    //       <tr>
-    //         <th>ID</th>
-    //         <th>Tester</th>
-    //         <th>Test Group</th>
-    //         {keys && keys.map((key, index) => (
-    //           <th key={index}>{key}</th>
-    //         ))}
-    //         <th>Run</th>
-    //         <th>Remarks</th>
-    //         <th>Created</th>
-    //         <th>Updated</th>
-    //         <th>Actions</th>
-    //       </tr>
-    //     </thead>
-    //     <tbody>
-    //       {rows.map((row, idx) => (
-    //           row.isEditing ? (
-    //             <EditableRow
-    //               key={idx}
-    //               row={row}
-    //               idx={idx}
-    //               // testGroup='Sand'
-    //               testId={props.testId}
-    //               keys={keys}
-    //               values={values}
-    //               handleInputChange={(slug, key, value) => handleInputChange(rows, setRows, slug, key, value)}
-    //               submitRow={submitRow}
-    //               setRows={setRows}
-    //               rows={rows}
-    //               testGroupOptions={testGroupOptions}
-    //               soilWtMap={soilWtMap}
-    //               onCancelEdit={(cancelIdx) => {
-    //                 setRows((prevRows) =>
-    //                   prevRows.map((r, index) =>
-    //                     index === cancelIdx ? { ...r, isEditing: false } : r
-    //                   )
-    //                 );
-    //               }}
-    //           />
-    //           ) : (
-    //             <StaticRow
-    //               key={idx}
-    //               row={row}
-    //               idx={idx}
-    //               // testGroup='Sand'
-    //               keys={keys}
-    //               handleEdit={handleEdit}
-    //               handleDelete={handleDelete}
-    //               testGroupOptions={testGroupOptions}
-    //             />
-    //           )
-    //         ))}
-    //
-    //       <tr>
-    //         <td colSpan={keys.length + 7}>
-    //           <Button variant="contained" onClick={handleAddRow}>
-    //             Add Row
-    //           </Button>
-    //         </td>
-    //       </tr>
-    //     </tbody>
-    //   </table>
-    // </div>
+
   );
 };
 
-export default TestDetailsTableRowBare;
+export default TestDetailsTableRowRobotBare;
 
