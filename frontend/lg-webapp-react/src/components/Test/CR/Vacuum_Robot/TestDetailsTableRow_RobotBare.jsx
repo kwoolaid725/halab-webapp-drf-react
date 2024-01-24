@@ -66,45 +66,45 @@ function TestDetailsTableRowRobotBare(props){
 
 
 
-useEffect(() => {
-  if (testMeasures) {
-    const formattedData = testMeasures.map(category => {
-      const categoryName = Object.keys(category)[0];
-      const measures = category[categoryName][0];
-      const keys = Object.keys(measures);
+  useEffect(() => {
+    if (testMeasures) {
+      const formattedData = testMeasures.map(category => {
+        const categoryName = Object.keys(category)[0];
+        const measures = category[categoryName][0];
+        const keys = Object.keys(measures);
 
-      return {
-        categoryName: categoryName,
-        keys: keys,
-        values: measures
-      };
-    });
+        return {
+          categoryName: categoryName,
+          keys: keys,
+          values: measures
+        };
+      });
 
-    // Update the state with the formatted data
-    setCategoriesData(formattedData);
+      // Update the state with the formatted data
+      setCategoriesData(formattedData);
 
-    // Update the rows state
-    setRows(() => {
-      const newRow = {
-        id: '',  // You may need to generate a unique ID here
-        slug: `${props.testId}-Bare-${props.sample}${props.brushType}${props.testCase}-1`,
-        tester: props.tester,
-        testTarget: 'Bare',
-        run: 1,
-        remarks: '',
-        created_at: '',
-        last_updated: '',
-        isEditing: false,
-        values: formattedData.reduce((acc, category) => {
-          acc[category.categoryName] = { ...category.values };
-          return acc;
-        }, {})
-      };
+      // Update the rows state
+      setRows(() => {
+        const newRow = {
+          id: '',  // You may need to generate a unique ID here
+          slug: `${props.testId}-Bare-${props.sample}${props.brushType}${props.testCase}-1`,
+          tester: props.tester,
+          testTarget: 'Bare',
+          run: 1,
+          remarks: '',
+          created_at: '',
+          last_updated: '',
+          isEditing: false,
+          values: formattedData.reduce((acc, category) => {
+            acc[category.categoryName] = { ...category.values };
+            return acc;
+          }, {})
+        };
 
-      return [newRow];
-    });
-  }
-}, [testMeasures]);
+        return [newRow];
+      });
+    }
+  }, [testMeasures]);
 
   useEffect(() => {
        console.log('Rows-TDTR_RB:', rows);
@@ -133,16 +133,78 @@ useEffect(() => {
 
 
 
-   const handleInputChange = (rows, setRows, slug, key, value) => {
-      const updatedRows = rows.map((row) => {
-        if (row.slug === slug) {
-          row.values[key].value = value;
-        }
-        return row;
-      });
+   const handleInputChange = (rows, setRows, slug, category, key, value) => {
+    const updatedRows = rows.map((row) => {
+      if (row.slug === slug) {
+        const updatedValues = { ...row.values };
 
-      setRows([...updatedRows]);
-    };
+        // Update the value for the specified category and key
+        updatedValues[category][key] = {
+          value: value,
+          units: row.values[category][key]?.units || '', // Preserve existing units if available
+        };
+
+        console.log("updatedValues123", updatedValues)
+
+        // Check if 'Soil_Wt' and 'Unpicked_Amt.' are defined before accessing their 'value' property
+        if (category === 'Silica/Rice' && key === 'Unpicked_Amt.'){
+          const soilWt = parseFloat(updatedValues[category]['Soil_Wt']['value']);
+          const unpickedAmt = parseFloat(updatedValues[category]['Unpicked_Amt.']['value']);
+
+          // Check if 'unpicked_amt' is defined before accessing its 'value' property
+          if (!isNaN(soilWt) && !isNaN(unpickedAmt)) {
+            const pickupValue = ((soilWt - unpickedAmt) / soilWt * 100).toFixed(2).replace(/\.?0+$/, '');
+            // OR use the alternative formula: (soilWt - unpickedAmt) / soilWt * 100
+
+            updatedValues[category]['Pickup'] = {
+              value: isNaN(pickupValue) ? '' : pickupValue, // Ensure it's a number and round to 2 decimal places
+              units: '%', // Assuming the unit is percentage
+            };
+          }
+        }
+
+        if (category === 'Cheerios' && key === 'Unpicked_Ct.'){
+          const initialCt = parseFloat(updatedValues[category]['Initial_Ct.']['value']);
+          const unpickedCt = parseFloat(updatedValues[category]['Unpicked_Ct.']['value']);
+
+          // Check if 'unpicked_amt' is defined before accessing its 'value' property
+          if (!isNaN(initialCt) && !isNaN(unpickedCt)) {
+            const pickupValue = ((initialCt - unpickedCt) / initialCt * 100).toFixed(2).replace(/\.?0+$/, '');
+            // OR use the alternative formula: (soilWt - unpickedAmt) / soilWt * 100
+
+            updatedValues[category]['Pickup'] = {
+              value: isNaN(pickupValue) ? '' : pickupValue,// Ensure it's a number and round to 2 decimal places
+              units: '%', // Assuming the unit is percentage
+            };
+          }
+        }
+
+        if (category === 'Paper-Squares' && key === 'Unpicked_Ct.'){
+          const initialCt = parseFloat(updatedValues[category]['Initial_Ct.']['value']);
+          const unpickedCt = parseFloat(updatedValues[category]['Unpicked_Ct.']['value']);
+
+          // Check if 'unpicked_amt' is defined before accessing its 'value' property
+          if (!isNaN(initialCt) && !isNaN(unpickedCt)) {
+            const pickupValue = ((initialCt - unpickedCt) / initialCt * 100).toFixed(2).replace(/\.?0+$/, '');
+            // OR use the alternative formula: (soilWt - unpickedAmt) / soilWt * 100
+
+            updatedValues[category]['Pickup'] = {
+              value: isNaN(pickupValue) ? '' : pickupValue,// Ensure it's a number and round to 2 decimal places
+              units: '%', // Assuming the unit is percentage
+            };
+          }
+        }
+
+        return {
+          ...row,
+          values: updatedValues,
+        };
+      }
+      return row;
+    });
+
+    setRows([...updatedRows]);
+  };
 
 
   useEffect(() => {
@@ -177,6 +239,7 @@ useEffect(() => {
               .then((res) => {
                 const fetchedRows = res.data || [];
                 setFetchedRows(fetchedRows);
+                // console.log('fetchedRows-robotBare', fetchedRows)
               })
               .catch((error) => {
                 console.error('Error fetching detailed data: ', error);
@@ -186,28 +249,32 @@ useEffect(() => {
   }, [props.testId]);
 
   useEffect(() => {
-  if (fetchedRows.length > 0) {
-    const combinedRows = fetchedRows.reduce((acc, row) => {
-      const { slug, test_measure, value, units, ...otherValues } = row;
+    if (fetchedRows.length > 0) {
+      const combinedRows = fetchedRows.reduce((acc, row) => {
+        const { slug, test_group, test_measure, value, units, ...otherValues } = row;
 
-      if (!acc[slug]) {
-        acc[slug] = {
-          ...otherValues,
-          slug,
-          test_measure: test_measure ? [test_measure] : [],
-          values: {},
-          units: units ? [units] : {},
-        };
-      }
-
-      if (test_measure) {
-        if (!acc[slug].values[test_measure]) {
-          acc[slug].values[test_measure] = { value: value || '', units: units || '' };
+        if (!acc[slug]) {
+          acc[slug] = {
+            ...otherValues,
+            slug,
+            values: {
+              [test_group]: {
+                [test_measure]: { value: value || '', units: units || '' }
+              }
+            }
+          };
+        } else {
+          if (!acc[slug].values[test_group]) {
+            acc[slug].values[test_group] = {
+              [test_measure]: { value: value || '', units: units || '' }
+            };
+          } else {
+            acc[slug].values[test_group][test_measure] = { value: value || '', units: units || '' };
+          }
         }
-      }
 
-      return acc;
-    }, {});
+        return acc;
+      }, {});
 
     const convertToAMPM = (timestamp) => {
       const date = new Date(timestamp);
@@ -222,9 +289,13 @@ useEffect(() => {
       };
 
       // const formattedTime = date.toLocaleTimeString('en-US', options).replace(/:\d{2}\s/, ' ').replace(/^0/, '');
-
       return date.toLocaleDateString('en-US', options)
     };
+
+
+      // console.log("combinedRows", combinedRows);
+
+
 
     // Transform combinedRows to match the initialState structure
     const transformedRows = Object.values(combinedRows).map(row => ({
@@ -240,92 +311,56 @@ useEffect(() => {
       last_updated: convertToAMPM(row.last_updated.split('.')[0]), // Adjust as needed
       isEditing: false, // Assuming default isEditing as false
       values: row.values || {}, // Setting the values from combinedRows
-      units: row.units || {}, // Setting the units from combinedRows
+      // units: row.units || {}, // Setting the units from combinedRows
     }));
 
-    // console.log('transformedRows', transformedRows);
+    // console.log('transformedRows-RobotBare', transformedRows);
 
     setRows(transformedRows);
   }
 }, [fetchedRows]);
 
   useEffect(() => {
-    // console.log('rows', rows);
+    console.log('rows-robotBare', rows);
   }, [rows]);
 
 
-  const [newRow, setNewRow] = useState({
-    id: '',
-    slug: '',
-    tester: props.tester,
-    testTarget: 'Bare',
-    // testGroup: '',
-    run: 1,
-    remarks: '',
-    created_at: '',
-    last_updated: '',
-    isEditing: false,
-    values: {}, // Initialize as an empty object
-    units: {}   ,// Initialize as an empty object
-    // model: props.model,
-  });
+ const handleAddRow = () => {
+    const maxIndex = rows.length > 0 ? Math.max(...rows.map(row => parseInt(row.slug.split('-').pop()))) + 1 : 1;
+    const newSlug = `${props.testId}-Bare-${props.sample}${props.brushType}${props.testCase}-${maxIndex}`;
 
-  useEffect(() => {
-    if (rows.length > 0) {
-      // const firstRow = rows[0]; // Access the first row
-      const previousRow = rows[rows.length - 1];
-      const rowKeys = Object.keys(previousRow.values);
-      const rowUnits = {};
+    const previousRow = rows[rows.length - 1];
+    const previousRun = previousRow ? previousRow.run : 0;
 
-      rowKeys.forEach((key) => {
-        if (key !== 'Soil_Wt') {
-          rowUnits[key] = previousRow.values[key]?.units || '';
-        }
+    // Define keys to keep from the previous row
+
+    const keysToKeep = ["Initial_Ct.", "Soil_Wt"];
+
+    // Loop through each category
+   const valuesToKeep = {};
+    Object.keys(previousRow.values).forEach(category => {
+      valuesToKeep[category] = {};
+      Object.keys(previousRow.values[category]).forEach(key => {
+        const valueObj = previousRow.values[category][key];
+        valuesToKeep[category][key] = {
+          value: keysToKeep.includes(key) ? valueObj.value : '',
+          units: valueObj.units || '',
+        };
       });
-
-      /// Create a copy of the first row with units for all values except soil_weight
-      const updatedNewRow = {
-        ...previousRow,
-        values: {
-          Soil_Wt: previousRow.values.Soil_Wt || { value: '', units: '' },
-          // Set other values as empty strings
-          ...(Object.fromEntries(
-            Object.keys(previousRow.values)
-              .filter((key) => key !== 'Soil_Wt')
-              .map((key) => [key, { value: '', units: rowUnits[key] || '' }])
-          )),
-        },
-        units: { ...rowUnits }, // Copy units
-      };
-
-      setNewRow(updatedNewRow); // Update the newRow state immediately
-    }
-  }, [rows]);
-
-
-  const handleAddRow = () => {
-    const maxIndex = rows.length > 0 ? Math.max(...rows.map(row => parseInt(row.slug.split('-').pop()))) + 1 : 1; // Get the maximum index of existing rows and increment by 1
-    const newSlug = `${props.testId}-Bare-${props.sample}${props.brushType}${props.testCase}-${maxIndex}`; // Create a new slug for the row
-
-    const previousRow = rows[rows.length - 1]; // Get the previous row
-    const previousRun = previousRow ? previousRow.run : 0; // Get the previous row's run
+    });
 
     const updatedNewRow = {
-        ...newRow,
-        remarks: '',
-        slug: newSlug,
-        run: previousRun + 1, // Set the new row's run as the maximum index + 1
-        units: { ...(rows[maxIndex - 1]?.units || {}) }, // Set the new row's units based on the previous row or an empty object
-        keys: Object.keys(values),
-        isEditing: true, // Set isEditing to true
+      ...previousRow,
+      slug: newSlug,
+      testTarget: "Bare",
+      run: previousRun + 1,
+      remarks: '',
+      values: valuesToKeep,
+      isEditing: true,
     };
 
-      setNewRow(updatedNewRow); // Update the newRow state
-      setRows([...rows, updatedNewRow]); // Update rows state
-
-      // Other state updates or triggers for related effects
-
-      // console.log('Rows:', rows);
+    // setNewRow(updatedNewRow);
+    setRows([...rows, updatedNewRow]);
   };
 
 
@@ -333,10 +368,6 @@ useEffect(() => {
     const updatedRows = [...rows];
     updatedRows[slug].isEditing = true;
     setRows(updatedRows);
-    // console.log('slug', slug);
-    // console.log('rowsssss', rows);
-    // console.log('updatedRowsssss', updatedRows);
-    // editRow(testTarget, testGroup);
   };
 
   const handleDelete = (slug) => {
@@ -379,99 +410,105 @@ useEffect(() => {
 
   const submitRow = (index) => {
     const editedRow = rows[index];
-    // Filter rows to find all rows with the same slug
-    const rowsWithSameSlug = allRows.filter(row => row.slug === editedRow.slug);
+    const rowsWithSameSlug = allRows.filter((row) => row.slug === editedRow.slug);
 
-    if (rowsWithSameSlug.length > 0) {
-      const putRequests = rowsWithSameSlug.map(row => {
-        return Object.keys(editedRow.values).map(key => {
-          const value = editedRow.values[key]?.value || '';
-          const units = editedRow.values[key]?.units || '';
-          const rowToUpdate = rowsWithSameSlug.find(r => r.id === row.id && r.test_measure === key);
+      if (rowsWithSameSlug.length > 0) {
+      const putRequests = rowsWithSameSlug.map((row) => {
+        const categoryRequests = Object.entries(editedRow.values).map(([category, categoryData]) => {
+          const keyRequests = Object.entries(categoryData).map(([key, valueObj]) => {
+            const value = valueObj.value || '';
+            const units = valueObj.units || '';
+            const rowToUpdate = rowsWithSameSlug.find((r) => r.id === row.id && r.test_measure === key && r.test_group === category);
 
-          if (rowToUpdate) {
+            if (rowToUpdate) {
+              const formData = new FormData();
+              formData.append('test_measure', key);
+              formData.append('value', value);
+              formData.append('units', units);
+              formData.append('test', props.testId);
+              formData.append('sample', props.sample);
+              formData.append('brush_type', props.brushType);
+              formData.append('tester', 1);
+              formData.append('owner', 1);
+              formData.append('test_target', editedRow.testTarget);
+              formData.append('test_group', category);
+              formData.append('test_case', props.testCase);
+              formData.append('slug', editedRow.slug);
+              formData.append('run', editedRow.run);
+              formData.append('remarks', editedRow.remarks);
+              formData.append('model', props.model);
+
+              const url = `admin/tests/vacuum/testdetail/${rowToUpdate.test}/${rowToUpdate.slug}/${rowToUpdate.id}/`;
+              const requestType = 'PUT';
+
+              return axiosInstance({
+                method: requestType,
+                url: url,
+                data: formData,
+                headers: {
+                  'Content-Type': 'multipart/form-data',
+                },
+              });
+            }
+          });
+
+          return keyRequests;
+        });
+
+        return categoryRequests
+      });
+
+      let successfulRequests = 0;
+
+          Promise.all(putRequests.flat())
+            .then(responses => {
+              // Handle responses if needed
+
+              successfulRequests = responses.length;
+
+              if (successfulRequests === rowsWithSameSlug.length * Object.keys(editedRow.values).length) {
+                // All PUT requests were successful, toggleEditing
+                toggleEditing(index);
+              }
+            })
+            .catch((error) => {
+              console.error('Error updating row:', error);
+            });
+      } else {
+        // New entry, perform a POST request
+        const formDataArray = [];
+
+        // console.log('editedRow', editedRow)
+
+        Object.entries(editedRow.values).forEach(([category, categoryData]) => {
+          Object.entries(categoryData).forEach(([key, valueObj]) => {
             const formData = new FormData();
 
+            const value = valueObj.value || '';
+            const units = valueObj.units || '';
+
+            // Populate formData with appropriate values for the current key
             formData.append('test_measure', key);
             formData.append('value', value);
             formData.append('units', units);
-            formData.append('test', 1);
+            formData.append('test', props.testId);
             formData.append('sample', props.sample);
             formData.append('brush_type', props.brushType);
             formData.append('tester', 1);
             formData.append('owner', 1);
             formData.append('test_target', editedRow.testTarget);
-            formData.append('test_group', editedRow.testGroup);
+            formData.append('test_group', category);
             formData.append('test_case', props.testCase);
             formData.append('slug', editedRow.slug);
             formData.append('run', editedRow.run);
             formData.append('remarks', editedRow.remarks);
             formData.append('model', props.model);
 
-            const url = `admin/tests/vacuum/testdetail/${rowToUpdate.test}/${rowToUpdate.slug}/${rowToUpdate.id}/`;
-            const requestType = 'PUT';
+            formDataArray.push(formData);
 
-            return axiosInstance({
-              method: requestType,
-              url: url,
-              data: formData,
-              headers: {
-                'Content-Type': 'multipart/form-data'
-              }
-            });
-          }
+
         });
       });
-
-      let successfulRequests = 0;
-
-      Promise.all(putRequests.flat())
-        .then(responses => {
-          // Handle responses if needed
-
-          successfulRequests = responses.length;
-
-          if (successfulRequests === rowsWithSameSlug.length * Object.keys(editedRow.values).length) {
-            // All PUT requests were successful, toggleEditing
-            toggleEditing(index);
-          }
-        })
-        .catch((error) => {
-          console.error('Error updating row:', error);
-        });
-    } else {
-        // New entry, perform a POST request
-        const formDataArray = [];
-
-        // console.log('editedRow', editedRow)
-
-        editedRow.keys.forEach((key) => {
-          const formData = new FormData();
-
-          const value = editedRow.values[key]?.value || '';
-          const units = editedRow.values[key]?.units || '';
-
-          // Populate formData with appropriate values for the current key
-          formData.append('test_measure', key);
-          formData.append('value', value);
-          formData.append('units', units);
-          formData.append('test', props.testId);
-          formData.append('sample', props.sample);
-          formData.append('brush_type', props.brushType);
-          formData.append('tester', 1);
-          formData.append('owner', 1);
-          formData.append('test_target', editedRow.testTarget);
-          formData.append('test_group', editedRow.testGroup);
-          formData.append('test_case', props.testCase);
-          formData.append('slug', editedRow.slug);
-          formData.append('run', editedRow.run);
-          formData.append('remarks', editedRow.remarks);
-          formData.append('model', props.model);
-
-          formDataArray.push(formData);
-
-
-        });
 
        // Submit each formData instance separately
       const postRequests = formDataArray.map(formData => {
@@ -517,21 +554,8 @@ useEffect(() => {
           console.error('Error posting data', errors);
           // Handle errors
         });
-    };
+    }
   };
-
-
- // const sortedData = rows.sort((a, b) => {
- //    // Assuming testGroup is a string, modify accordingly if it's a different type
- //    const testGroupComparison = b.testGroup.localeCompare(a.testGroup); // Reverse the order
- //    if (testGroupComparison !== 0) {
- //      return testGroupComparison;
- //    }
- //    // If testGroup is the same, compare by run
- //    return a.run - b.run; // Assuming run is a number, adjust accordingly if it's a string
- //  });
-
-
 
 
 
@@ -597,7 +621,8 @@ useEffect(() => {
                   testId={props.testId}
                   keys={keys}
                   values={values}
-                  handleInputChange={(slug, key, value) => handleInputChange(rows, setRows, slug, key, value)}
+                  categoriesData={categoriesData}
+                  handleInputChange={(slug, category, key, value) => handleInputChange(rows, setRows, slug, category, key, value)}
                   submitRow={submitRow}
                   setRows={setRows}
                   rows={rows}
@@ -618,6 +643,7 @@ useEffect(() => {
                   idx={idx}
                   // testGroup='Sand'
                   keys={keys}
+                  categoriesData={categoriesData}
                   handleEdit={handleEdit}
                   handleDelete={handleDelete}
                   testGroupOptions={testGroupOptions}

@@ -182,9 +182,6 @@ function TestDetailsTableRowEdge(props){
   };
 
 
-
-
-
   useEffect(() => {
       // Set 'initialRowState' as the default 'rows' state
       const initialRowState = {

@@ -2,6 +2,8 @@ import React from 'react'
 import TestDetailsTableRowBare from './TestDetailsTableRowBare'
 import TestDetailsTableRowCarpet from './TestDetailsTableRowCarpet'
 import TestDetailsTableRowEdge from './TestDetailsTableRowEdge'
+
+import TestDetailsTableRowBareRobotBare from './CR/Vacuum_Robot/TestDetailsTableRow_RobotBare'
 import CustomTabPanel from '../UI/TabPanel'
 
 import Tabs from '@mui/material/Tabs'
@@ -23,7 +25,6 @@ const TestDetailsTableCrRobot = (props) => {
         <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
           <Tab label="Bare" />
           <Tab label="Carpet" />
-          <Tab label="Edge" />
           {/* Add more tabs as needed */}
         </Tabs>
       </Box>
@@ -39,7 +40,7 @@ const TestDetailsTableCrRobot = (props) => {
               </tr>
             </thead>
             <tbody style={{ border: '1px solid #ddd' }}>
-              <TestDetailsTableRowBare
+              <TestDetailsTableRowBareRobotBare
                 testId={props.testId}
                 sample={props.sample}
                 brushType={props.brushType}
