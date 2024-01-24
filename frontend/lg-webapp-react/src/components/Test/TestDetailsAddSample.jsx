@@ -41,11 +41,11 @@ export default function TestDetailsAddSample (props) {
   const [values, setValues] = useState([]);
   const [keys, setKeys] = useState([]);
 
+  const [testMeasuresRobot, setTestMeasuresRobot] = useState(null);
+  const [categoriesDataRobot, setCategoriesDataRobot] = useState([]);
+
   const [brandModel, setBrandModel] = useState([]);
-// const [selectedCategory, setSelectedCategory] = useState('');
-  const [selectedBrand, setSelectedBrand] = useState('');
-  const [brands, setBrands] = useState([]);
-  const [selectedProduct, setSelectedProduct] = useState('');
+
 
   const [searchValue, setSearchValue] = useState('');
   const [searchResults, setSearchResults] = useState([]);
@@ -67,13 +67,22 @@ export default function TestDetailsAddSample (props) {
     // ... rest of your component
   }, [props.productCategory]);
 
+  const cordlessBrushOptions = ['Carpet', 'Fluffy', 'Dual', 'DMS', 'Other'];
+
+  const robotBrushOptions =
+      {'DRY/ 1 Side Brush': 'Dry-1SB',
+      'DRY/ 2 Side Brushes': 'Dry-2SB',
+      'DRY/ D-Shaped 1 Side': 'Dry-D1SB',
+      'DRY/ D-Shaped 2 Side': 'Dry-D2SB',
+      'WET/DRY Combo': 'WetDry',
+      'Other': 'Other'};
 
   // Define brushTypeOptions based on props.productCategory
   const brushTypeOptions =
     props.productCategory.toLowerCase().includes('stick') && props.productCategory.toLowerCase().includes('cordless')
-      ? ['Carpet', 'Fluffy', 'Dual', 'DMS', 'Other']
+      ? cordlessBrushOptions.map(option => ({ label: option, value: option }))
       : props.productCategory.toLowerCase().includes('robot')
-      ? ['DRY/ 1 Side Brush', 'DRY/ 2 Side Brushes', 'DRY/ D-Shaped 1 Side', 'DRY/ D-Shaped 2 Side', 'WET/DRY Combo', 'Other']
+      ? Object.entries(robotBrushOptions).map(([label, value]) => ({ label, value }))
       : [];
 
 
@@ -108,17 +117,45 @@ export default function TestDetailsAddSample (props) {
         const values = sandMeasure["Sand"][0];
         const keys = Object.keys(values);
 
-        // console.log('measureValues:', values);
-        // console.log('measureKeys:', keys);
-
-
-
         setValues(values);
         setKeys(keys);
       }
     }
   }, [testMeasures]);
 
+   useEffect(() => {
+      const fetchData = async () => {
+        try {
+          const response = await fetch('/test-measures-robot.json');
+          const jsonData = await response.json();
+          const bareData = jsonData["CR"]["Bare"];
+          console.log('robot measures:', bareData)
+          setTestMeasuresRobot(bareData);
+        } catch (error) {
+          console.error('Error fetching data', error);
+        }
+      };
+      fetchData();
+    }, []);
+
+  useEffect(() => {
+    if (testMeasuresRobot) {
+      const formattedData = testMeasuresRobot.map(category => {
+        const categoryName = Object.keys(category)[0];
+        const measures = category[categoryName][0];
+        const keys = Object.keys(measures);
+
+        return {
+          categoryName: categoryName,
+          keys: keys,
+          values: measures
+        };
+      });
+
+      // Update the state with the formatted data
+      setCategoriesDataRobot(formattedData);
+    }
+ }, [testMeasuresRobot]);
 
 
   useEffect(() => {
@@ -164,23 +201,23 @@ export default function TestDetailsAddSample (props) {
 
 
 	const handleSelectionChange = (event, type) => {
-    let selectedValue = event.target.value;
+      let selectedValue = event.target.value;
 
-    if (type === 'sample') {
-      setSampleValue(selectedValue);
-    } else if (type === 'brushType') {
-      setBrushTypeValue((prev) => ({
-        value: selectedValue,
-        customInput: prev.customInput,
-      }));
-    } else if (type === 'testCase') {
-      setTestCaseValue((prev) => ({
-        value: selectedValue,
-        customInput: prev.customInput,
-      }));
-    }
+      if (type === 'sample') {
+        setSampleValue(selectedValue);
+      } else if (type === 'brushType') {
+        setBrushTypeValue((prev) => ({
+          value: selectedValue,
+          customInput: prev.customInput,
+        }));
+      } else if (type === 'testCase') {
+        setTestCaseValue((prev) => ({
+          value: selectedValue,
+          customInput: prev.customInput,
+        }));
+      }
 
-  };
+    };
 		 // Make API call here to get the id of the product category
   useEffect(() => {
       if (selectedSearchResult) {
@@ -211,36 +248,96 @@ export default function TestDetailsAddSample (props) {
           });
       }
     }, [selectedSearchResult]);
+
+
+
     const handleSubmit = async (e) => {
       e.preventDefault();
       const formDataArray = [];
       const slug = `${props.testId}-Bare-${sampleValue}${brushTypeValue.customInput || brushTypeValue.value}${testCaseValue.customInput || testCaseValue.value}-1`;
 
+      if (props.productCategory && props.productCategory.toLowerCase().includes('stick') && props.productCategory.toLowerCase().includes('cordless')) {
+        // Handle submission for category 1
+        console.log('product category 4444:', props.productCategory);
+        Object.entries(values).forEach(([key, value]) => {
+          const formData = new FormData();
+          formData.append('test_measure', key);
+          formData.append('value', value?.value || '');
+          formData.append('units', value?.units || '');
+          formData.append('test', props.testId);
+          formData.append('sample', sampleValue);
+          formData.append('brush_type', brushTypeValue.customInput || brushTypeValue.value);
+          formData.append('tester', 1);
+          formData.append('owner', 1);
+          formData.append('test_target', 'Bare');
+          formData.append('test_group', 'Select Test Group');
+          formData.append('test_case', testCaseValue.customInput || testCaseValue.value);
+          formData.append('slug', slug);
+          formData.append('run', 1);
+          formData.append('remarks', '');
+          formData.append('model', brandModel);
 
-      Object.entries(values).forEach(([key, value]) => {
+          formDataArray.push(formData);
+        });
+      } else if (props.productCategory && props.productCategory.toLowerCase().includes('robot') && props.productCategory.toLowerCase().includes('vacuum')) {
+        console.log('categoriesDataRobot:', categoriesDataRobot);
+         categoriesDataRobot.forEach(category => {
+          const categoryName = category.categoryName;
+          const keys = category.keys;
+          const values = category.values;
 
+          console.log("robot Slug:", slug);
 
-        const formData = new FormData();
-        formData.append('test_measure', key);
-        formData.append('value', value?.value || '');
-        formData.append('units', value?.units || '');
-        formData.append('test', props.testId);
-        formData.append('sample', sampleValue);
-        formData.append('brush_type', brushTypeValue.customInput || brushTypeValue.value);
-        formData.append('tester', 1);
-        formData.append('owner', 1);
-        formData.append('test_target', 'Bare');
-        formData.append('test_group', 'Select Test Group');
-        formData.append('test_case', testCaseValue.customInput || testCaseValue.value);
-        formData.append('slug', slug);
-        formData.append('run', 1);
-        formData.append('remarks', '');
-        formData.append('model', brandModel);
+          // console.log('robotcategoryName:', categoryName);
+          // console.log('robotkeys:', keys);
 
-        formDataArray.push(formData);
-      });
+          keys.forEach(key => {
+              const valueObj = values[key];
+              const value = valueObj.value || '';
+              const units = valueObj.units || '';
+              // console.log('robotvalue:', value);
+              // console.log('robotunits:', units);
 
-      console.log('formDataArray1234:', formDataArray);
+            // Populate formData with appropriate values for the current key
+              const formData = new FormData();
+              formData.append('test_measure', key);
+              formData.append('value', value);
+              formData.append('units', units);
+              formData.append('test', props.testId);
+              formData.append('sample', sampleValue);
+              formData.append('brush_type', brushTypeValue.customInput || brushTypeValue.value);
+              formData.append('tester', 1);
+              formData.append('owner', 1);
+              formData.append('test_target', 'Bare');
+              formData.append('test_group', categoryName);
+              formData.append('test_case', testCaseValue.customInput || testCaseValue.value);
+              formData.append('slug', slug);
+              formData.append('run', 1);
+              formData.append('remarks', '');
+              formData.append('model', brandModel);
+
+              formDataArray.push(formData);
+              console.log('test_measure', key);
+                console.log('value', value);
+                console.log('units', units);
+                console.log('test', props.testId);
+                console.log('sample', sampleValue);
+                console.log('brush_type', brushTypeValue.customInput || brushTypeValue.value);
+                console.log('tester', 1);
+                console.log('owner', 1);
+                console.log('test_target', 'Bare');
+                console.log('test_group', categoryName);
+                console.log('test_case', 'REG');
+                console.log('slug', slug);
+                console.log('run', 1);
+                console.log('remarks', '');
+                console.log('model', brandModel);
+
+          });
+          // console.log('formDataArray1234:', formDataArray);
+        });
+      }
+
       try {
         // Submit each formData instance separately
         await Promise.all(formDataArray.map(formData => {
@@ -264,6 +361,65 @@ export default function TestDetailsAddSample (props) {
     };
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //   Object.entries(values).forEach(([key, value]) => {
+    //
+    //
+    //     const formData = new FormData();
+    //     formData.append('test_measure', key);
+    //     formData.append('value', value?.value || '');
+    //     formData.append('units', value?.units || '');
+    //     formData.append('test', props.testId);
+    //     formData.append('sample', sampleValue);
+    //     formData.append('brush_type', brushTypeValue.customInput || brushTypeValue.value);
+    //     formData.append('tester', 1);
+    //     formData.append('owner', 1);
+    //     formData.append('test_target', 'Bare');
+    //     formData.append('test_group', 'Select Test Group');
+    //     formData.append('test_case', testCaseValue.customInput || testCaseValue.value);
+    //     formData.append('slug', slug);
+    //     formData.append('run', 1);
+    //     formData.append('remarks', '');
+    //     formData.append('model', brandModel);
+    //
+    //     formDataArray.push(formData);
+    //   });
+    //
+    //   console.log('formDataArray1234:', formDataArray);
+    //   try {
+    //     // Submit each formData instance separately
+    //     await Promise.all(formDataArray.map(formData => {
+    //       const url = `admin/tests/vacuum/testdetail/`;
+    //       const requestType = 'POST';
+    //
+    //       return axiosInstance({
+    //         method: requestType,
+    //         url: url,
+    //         data: formData,
+    //         headers: {
+    //           'Content-Type': 'multipart/form-data'
+    //         }
+    //       });
+    //     }));
+    //
+    //     window.location.reload();
+    //   } catch (error) {
+    //     console.error('Error submitting data:', error);
+    //   }
+    // };
 
 
 	return (
@@ -374,8 +530,8 @@ export default function TestDetailsAddSample (props) {
                           MenuComponent="div" // Use a div for the menu to allow custom styling
                         >
                           {brushTypeOptions.map((option, index) => (
-                          <MenuItem key={option} value={option} style={option === 'Other' ? { borderTop: '2px solid #ccc', margin: '5px 0' } : {}}>
-                            {option}
+                          <MenuItem key={option.value} value={option.value} style={option.value === 'Other' ? { borderTop: '2px solid #ccc', margin: '5px 0' } : {}}>
+                            {option.label}
                           </MenuItem>
                         ))}
                         </Select>

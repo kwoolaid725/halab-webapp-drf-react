@@ -8,7 +8,7 @@
               "value": "50",
               "units": "g"
             },
-            "Unpicked Amt.": {
+            "Unpicked_Amt.": {
               "value": "",
               "units": "g"
             },
@@ -22,11 +22,11 @@
       {
         "Cheerios": [
           {
-            "Initial Ct.": {
+            "Initial_Ct.": {
               "value": "12",
               "units": "ct."
             },
-            "Unpicked Ct.": {
+            "Unpicked_Ct.": {
               "value": "",
               "units": "ct"
             },
@@ -40,21 +40,17 @@
       {
         "Paper-Squares": [
           {
-            "Initial Ct.": {
+            "Initial_Ct.": {
               "value": "46",
               "units": "ct."
             },
-            "Unpicked Ct.": {
+            "Unpicked_Ct.": {
               "value": "",
               "units": "ct."
             },
             "Pickup": {
               "value": "",
               "units": "%"
-            },
-            "Numbers": {
-              "value": "",
-              "units": ""
             }
           }
         ]

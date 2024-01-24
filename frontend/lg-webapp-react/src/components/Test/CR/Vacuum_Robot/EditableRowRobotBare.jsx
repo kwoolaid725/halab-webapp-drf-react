@@ -33,6 +33,17 @@ const EditableRowRobotBare = ({
 }) => {
     const initialRow = useRef({ ...row }); // Preserve the initial row prop
 
+    const categoryOrder = categoriesData.map((categoryData) => categoryData.categoryName);
+      const keyOrderMap = {};
+
+      // Iterate through categoriesData to store the order of keys for each category
+      categoriesData.forEach((categoryData) => {
+        const categoryName = categoryData.categoryName;
+        const categoryKeys = categoryData.keys;
+        keyOrderMap[categoryName] = categoryKeys;
+      });
+
+
 
     const handleFieldChange = (fieldName, value) => {
       const updatedRow = { ...row, [fieldName]: value };
@@ -43,37 +54,6 @@ const EditableRowRobotBare = ({
       });
     };
 
-
-  // Function to handle changes in testGroup selection
-  const handleTestGroupChange = (selectedTestGroup) => {
-
-     if (selectedTestGroup === '') {
-        return;
-    }
-    const soilWt = soilWtMap[selectedTestGroup].Soil_Wt.value || 0;
-    const updatedValues = {
-      ...row.values,
-      Soil_Wt: { value: soilWt, units: 'g' }
-    };
-
-    const sameGroupRows = rows.filter((r) => r.testGroup === selectedTestGroup);
-    const maxRunInGroup = sameGroupRows.reduce((maxRun, r) => {
-      return r.run > maxRun ? r.run : maxRun;
-    }, 0);
-
-    const updatedRow = {
-      ...row,
-      testGroup: selectedTestGroup,
-      run: maxRunInGroup + 1,
-      values: updatedValues
-    };
-
-    setRows((prevRows) => {
-      const updatedRows = [...prevRows];
-      updatedRows[idx] = updatedRow;
-      return updatedRows;
-    });
-  };
 
 
    const handleCancel = async () => {
@@ -102,22 +82,40 @@ const EditableRowRobotBare = ({
           style={{ width: '30px', fontSize: '14px', textAlign: 'center', backgroundColor: row.tester === '' ? 'lightpink' : ''}}
         />
       </TableCell>
-     {Object.entries(row.values).map(([categoryName, categoryData]) => (
-        <TableCell key={categoryName} align="center">
-          <div style={{ display: 'flex', flexDirection: 'row', gap: '60px' }}>
-            {Object.entries(categoryData).map(([key, value]) => (
-              <TableCell key={`${categoryName}-${key}`} style={{ marginBottom: '5px' }}>
-                {value.value}
-                {value.units && (
-                  <Box sx={{ display: 'inline-block', marginLeft: '2px' }}>
-                    {value.units}
-                  </Box>
-                )}
-              </TableCell>
-            ))}
-          </div>
-        </TableCell>
-      ))}
+     {categoryOrder.map((categoryName) => (
+      <TableCell key={categoryName} align="center">
+        <div style={{ display: 'flex', flexDirection: 'row', gap: '0px' }}>
+          {keyOrderMap[categoryName].map((key) => (
+            <TableCell key={`${categoryName}-${key}`} style={{ marginBottom: '5px' }}>
+              {/* Use the keyOrderMap to determine the order of keys for the current category */}
+              {["Unpicked_Amt.", "Unpicked_Ct.", "Runtime"].includes(key) ? (
+                <input
+                  type="text"
+                  value={row.values[categoryName][key]?.value || ''}
+                  onChange={(e) => handleInputChange(row.slug, categoryName, key, e.target.value)}
+                  style={{
+                    width: '75px',
+                    fontSize: '16px',
+                    marginRight: '5px',
+                    textAlign: 'right',
+                    backgroundColor: (row.values[categoryName][key]?.value || '') === '' ? 'lightpink' : ''
+                  }}
+                />
+              ) : (
+                <span style={{ width: '75px', fontSize: '16px', marginRight: '5px', textAlign: 'right' }}>
+                  {row.values[categoryName][key]?.value || ''}
+                </span>
+              )}
+              {row.values[categoryName][key]?.units && (
+                <Box sx={{ display: 'inline-block', marginLeft: '2px' }}>
+                  {row.values[categoryName][key]?.units}
+                </Box>
+              )}
+            </TableCell>
+          ))}
+        </div>
+      </TableCell>
+    ))}
 
       <TableCell>
         <input

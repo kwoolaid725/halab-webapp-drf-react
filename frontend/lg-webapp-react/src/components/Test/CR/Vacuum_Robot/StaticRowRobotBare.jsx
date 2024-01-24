@@ -15,7 +15,19 @@ import MenuItem from '@mui/material/MenuItem';
 import Box from '@mui/material/Box';
 import IconButton from "@mui/material/IconButton";
 
-const StaticRowRobotBare = ({ row, idx, keys, handleEdit, handleDelete }) => {
+const StaticRowRobotBare = ({ row, idx, categoriesData, handleEdit, handleDelete }) => {
+
+  const categoryOrder = categoriesData.map((categoryData) => categoryData.categoryName);
+  const keyOrderMap = {};
+
+  // Iterate through categoriesData to store the order of keys for each category
+  categoriesData.forEach((categoryData) => {
+    const categoryName = categoryData.categoryName;
+    const categoryKeys = categoryData.keys;
+    keyOrderMap[categoryName] = categoryKeys;
+  });
+
+  console.log('keyOrderMap:', keyOrderMap)
 
   console.log('row-staticrowrobotbare:', row)
 
@@ -27,23 +39,24 @@ const StaticRowRobotBare = ({ row, idx, keys, handleEdit, handleDelete }) => {
       <TableCell component="th" scope="row" align={"center"}>
         {row.tester}
       </TableCell>
-      {/* Map through row.values to create TableCell for each categoryName */}
-      {Object.entries(row.values).map(([categoryName, categoryData]) => (
-        <TableCell key={categoryName} align="center">
-          <div style={{ display: 'flex', flexDirection: 'row', gap: '60px' }}>
-            {Object.entries(categoryData).map(([key, value]) => (
-              <TableCell key={`${categoryName}-${key}`} style={{ marginBottom: '5px' }}>
-                {value.value}
-                {value.units && (
-                  <Box sx={{ display: 'inline-block', marginLeft: '2px' }}>
-                    {value.units}
-                  </Box>
-                )}
-              </TableCell>
-            ))}
-          </div>
-        </TableCell>
-      ))}
+      {/* Map through categoriesData to create TableCell for each categoryName */}
+     {categoryOrder.map((categoryName) => (
+      <TableCell key={categoryName} align="center">
+        <div style={{ display: 'flex', flexDirection: 'row', gap: '60px' }}>
+          {/* Use the keyOrderMap to determine the order of keys for the current category */}
+          {keyOrderMap[categoryName].map((key) => (
+            <TableCell key={`${categoryName}-${key}`} style={{ marginBottom: '5px' }}>
+              {row.values[categoryName][key]?.value}
+              {row.values[categoryName][key]?.units && (
+                <Box sx={{ display: 'inline-block', marginLeft: '2px' }}>
+                  {row.values[categoryName][key]?.units}
+                </Box>
+              )}
+            </TableCell>
+          ))}
+        </div>
+      </TableCell>
+    ))}
       <TableCell component="th" scope="row" align={"center"}>
         {row.run}
       </TableCell>
