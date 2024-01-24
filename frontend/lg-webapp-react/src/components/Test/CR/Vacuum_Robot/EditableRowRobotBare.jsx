@@ -54,19 +54,29 @@ const EditableRowRobotBare = ({
       });
     };
 
-
-
-   const handleCancel = async () => {
+    const handleCancel = async () => {
       await setRows((prevRows) => {
         const updatedRows = [...prevRows];
-        updatedRows[idx] = initialRow.current; // Reset to the initial row state
+        const updatedRow = {
+          ...updatedRows[idx],
+          values: { ...initialRow.current.values }, // Reset to the initial values state
+        };
+
+        updatedRows[idx] = updatedRow;
         return updatedRows;
       });
-       onCancelEdit(idx); // Call onCancelEdit after the state has been updated
 
+      onCancelEdit(idx); // Call onCancelEdit after the state has been updated
     };
 
-
+    // const handleCancel = async () => {
+    //   await setRows((prevRows) => {
+    //     const updatedRows = prevRows.map((row, i) => (i === idx ? { ...initialRow.current, isEditing: false } : row));
+    //     return updatedRows;
+    //   });
+    //
+    //   onCancelEdit(idx); // Call onCancelEdit after the state has been updated
+    // };
 
   return (
 
