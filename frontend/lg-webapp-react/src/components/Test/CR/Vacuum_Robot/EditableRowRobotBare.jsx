@@ -31,7 +31,8 @@ const EditableRowRobotBare = ({
   onCancelEdit
 
 }) => {
-    const initialRow = useRef({ ...row }); // Preserve the initial row prop
+   const [originalRow, setOriginalRow] = useState({ ...row });
+
 
     const categoryOrder = categoriesData.map((categoryData) => categoryData.categoryName);
       const keyOrderMap = {};
@@ -56,15 +57,39 @@ const EditableRowRobotBare = ({
 
 
 
-   const handleCancel = async () => {
-      await setRows((prevRows) => {
-        const updatedRows = [...prevRows];
-        updatedRows[idx] = initialRow.current; // Reset to the initial row state
-        return updatedRows;
-      });
-       onCancelEdit(idx); // Call onCancelEdit after the state has been updated
+ const handleCancel = () => {
+  console.log('Cancel button clicked');
+  setRows((prevRows) =>
+    prevRows.map((r, index) => {
+      if (index === idx) {
+        // Set isEditing flag to false and use original values
+        return {
+          ...r,
+          isEditing: false,
+          values: {
+            ...categoryOrder.reduce((acc, categoryName) => {
+              acc[categoryName] = keyOrderMap[categoryName].reduce((innerAcc, key) => {
+                innerAcc[key] = {
+                  ...r.values[categoryName][key],
+                  value: originalRow.values[categoryName][key].value
+                };
+                return innerAcc;
+              }, {});
+              return acc;
+            }, {})
+          }
+        };
+      }
+      return r;
+    })
+  );
+  onCancelEdit(idx);
+};
 
-    };
+
+
+
+
 
 
 
@@ -92,7 +117,10 @@ const EditableRowRobotBare = ({
                 <input
                   type="text"
                   value={row.values[categoryName][key]?.value || ''}
-                  onChange={(e) => handleInputChange(row.slug, categoryName, key, e.target.value)}
+                  onChange={(e) => {
+                    console.log('Input change event:', e.target.value);
+                    handleInputChange(row.slug, categoryName, key, e.target.value)
+                  }}
                   style={{
                     width: '75px',
                     fontSize: '16px',
