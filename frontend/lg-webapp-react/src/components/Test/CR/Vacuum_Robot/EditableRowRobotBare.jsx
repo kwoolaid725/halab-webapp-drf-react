@@ -31,7 +31,8 @@ const EditableRowRobotBare = ({
   onCancelEdit
 
 }) => {
-    const initialRow = useRef({ ...row }); // Preserve the initial row prop
+   const [originalRow, setOriginalRow] = useState({ ...row });
+
 
     const categoryOrder = categoriesData.map((categoryData) => categoryData.categoryName);
       const keyOrderMap = {};
@@ -53,6 +54,7 @@ const EditableRowRobotBare = ({
         return updatedRows;
       });
     };
+
 
     const handleCancel = async () => {
       await setRows((prevRows) => {
@@ -102,7 +104,10 @@ const EditableRowRobotBare = ({
                 <input
                   type="text"
                   value={row.values[categoryName][key]?.value || ''}
-                  onChange={(e) => handleInputChange(row.slug, categoryName, key, e.target.value)}
+                  onChange={(e) => {
+                    console.log('Input change event:', e.target.value);
+                    handleInputChange(row.slug, categoryName, key, e.target.value)
+                  }}
                   style={{
                     width: '75px',
                     fontSize: '16px',

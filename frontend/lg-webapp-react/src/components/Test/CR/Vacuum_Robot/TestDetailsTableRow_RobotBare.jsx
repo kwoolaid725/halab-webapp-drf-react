@@ -115,7 +115,35 @@ function TestDetailsTableRowRobotBare(props){
 
 
 
-   const handleInputChange = (rows, setRows, slug, category, key, value) => {
+   const calculatePickupValue = (values, category, key) => {
+    if (category === 'Silica/Rice' && key === 'Unpicked_Amt.') {
+      const soilWt = parseFloat(values[category]['Soil_Wt']['value']);
+      const unpickedAmt = parseFloat(values[category]['Unpicked_Amt.']['value']);
+      if (!isNaN(soilWt) && !isNaN(unpickedAmt)) {
+        const pickupValue = ((soilWt - unpickedAmt) / soilWt * 100).toFixed(2).replace(/\.?0+$/, '');
+        return {
+          value: isNaN(pickupValue) ? '' : pickupValue,
+          units: '%',
+        };
+      }
+    }
+
+    if ((category === 'Cheerios' || category === 'Paper-Squares') && key === 'Unpicked_Ct.') {
+      const initialCt = parseFloat(values[category]['Initial_Ct.']['value']);
+      const unpickedCt = parseFloat(values[category]['Unpicked_Ct.']['value']);
+      if (!isNaN(initialCt) && !isNaN(unpickedCt)) {
+        const pickupValue = ((initialCt - unpickedCt) / initialCt * 100).toFixed(2).replace(/\.?0+$/, '');
+        return {
+          value: isNaN(pickupValue) ? '' : pickupValue,
+          units: '%',
+        };
+      }
+    }
+
+    return null; // Return null for cases where Pickup value shouldn't be updated
+  };
+
+  const handleInputChange = (rows, setRows, slug, category, key, value) => {
     const updatedRows = rows.map((row) => {
       if (row.slug === slug) {
         // const updatedValues = { ...row.values };
@@ -127,61 +155,18 @@ function TestDetailsTableRowRobotBare(props){
           units: row.values[category][key]?.units || '', // Preserve existing units if available
         };
 
-        console.log("updatedValues123", updatedValues)
-
-        // Check if 'Soil_Wt' and 'Unpicked_Amt.' are defined before accessing their 'value' property
-        if (category === 'Silica/Rice' && key === 'Unpicked_Amt.'){
-          const soilWt = parseFloat(updatedValues[category]['Soil_Wt']['value']);
-          const unpickedAmt = parseFloat(updatedValues[category]['Unpicked_Amt.']['value']);
-
-          // Check if 'unpicked_amt' is defined before accessing its 'value' property
-          if (!isNaN(soilWt) && !isNaN(unpickedAmt)) {
-            const pickupValue = ((soilWt - unpickedAmt) / soilWt * 100).toFixed(2).replace(/\.?0+$/, '');
-            // OR use the alternative formula: (soilWt - unpickedAmt) / soilWt * 100
-
-            updatedValues[category]['Pickup'] = {
-              value: isNaN(pickupValue) ? '' : pickupValue, // Ensure it's a number and round to 2 decimal places
-              units: '%', // Assuming the unit is percentage
-            };
-          }
+        // Calculate Pickup value based on category and key
+        const pickupUpdate = calculatePickupValue(updatedValues, category, key);
+        if (pickupUpdate !== null) {
+          updatedValues[category]['Pickup'] = pickupUpdate;
         }
 
-        if (category === 'Cheerios' && key === 'Unpicked_Ct.'){
-          const initialCt = parseFloat(updatedValues[category]['Initial_Ct.']['value']);
-          const unpickedCt = parseFloat(updatedValues[category]['Unpicked_Ct.']['value']);
-
-          // Check if 'unpicked_amt' is defined before accessing its 'value' property
-          if (!isNaN(initialCt) && !isNaN(unpickedCt)) {
-            const pickupValue = ((initialCt - unpickedCt) / initialCt * 100).toFixed(2).replace(/\.?0+$/, '');
-            // OR use the alternative formula: (soilWt - unpickedAmt) / soilWt * 100
-
-            updatedValues[category]['Pickup'] = {
-              value: isNaN(pickupValue) ? '' : pickupValue,// Ensure it's a number and round to 2 decimal places
-              units: '%', // Assuming the unit is percentage
-            };
-          }
-        }
-
-        if (category === 'Paper-Squares' && key === 'Unpicked_Ct.'){
-          const initialCt = parseFloat(updatedValues[category]['Initial_Ct.']['value']);
-          const unpickedCt = parseFloat(updatedValues[category]['Unpicked_Ct.']['value']);
-
-          // Check if 'unpicked_amt' is defined before accessing its 'value' property
-          if (!isNaN(initialCt) && !isNaN(unpickedCt)) {
-            const pickupValue = ((initialCt - unpickedCt) / initialCt * 100).toFixed(2).replace(/\.?0+$/, '');
-            // OR use the alternative formula: (soilWt - unpickedAmt) / soilWt * 100
-
-            updatedValues[category]['Pickup'] = {
-              value: isNaN(pickupValue) ? '' : pickupValue,// Ensure it's a number and round to 2 decimal places
-              units: '%', // Assuming the unit is percentage
-            };
-          }
-        }
-
-        return {
+        const updatedRow = {
           ...row,
           values: updatedValues,
         };
+
+        return updatedRow;
       }
       return row;
     });
@@ -611,8 +596,8 @@ function TestDetailsTableRowRobotBare(props){
                   setRows={setRows}
                   rows={rows}
                   testGroupOptions={testGroupOptions}
-                  soilWtMap={soilWtMap}
                   onCancelEdit={(cancelIdx) => {
+                    console.log('onCancelEdit called with index:', cancelIdx);
                     setRows((prevRows) =>
                       prevRows.map((r, index) =>
                         index === cancelIdx ? { ...r, isEditing: false } : r
