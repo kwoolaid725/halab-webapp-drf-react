@@ -45,7 +45,7 @@ const StaticRowRobotBare = ({ row, idx, categoriesData, handleEdit, handleDelete
         <div style={{ display: 'flex', flexDirection: 'row', gap: '60px' }}>
           {/* Use the keyOrderMap to determine the order of keys for the current category */}
           {keyOrderMap[categoryName].map((key) => (
-            <TableCell key={`${categoryName}-${key}`} style={{ marginBottom: '5px' }}>
+            <TableCell key={`${categoryName}-${key}`} style={{ marginBottom: '0px' }}>
               {row.values[categoryName][key]?.value}
               {row.values[categoryName][key]?.units && (
                 <Box sx={{ display: 'inline-block', marginLeft: '2px' }}>
