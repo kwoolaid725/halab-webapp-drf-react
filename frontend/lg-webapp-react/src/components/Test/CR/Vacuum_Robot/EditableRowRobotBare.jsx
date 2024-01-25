@@ -56,42 +56,29 @@ const EditableRowRobotBare = ({
     };
 
 
-
- const handleCancel = () => {
-  console.log('Cancel button clicked');
-  setRows((prevRows) =>
-    prevRows.map((r, index) => {
-      if (index === idx) {
-        // Set isEditing flag to false and use original values
-        return {
-          ...r,
-          isEditing: false,
-          values: {
-            ...categoryOrder.reduce((acc, categoryName) => {
-              acc[categoryName] = keyOrderMap[categoryName].reduce((innerAcc, key) => {
-                innerAcc[key] = {
-                  ...r.values[categoryName][key],
-                  value: originalRow.values[categoryName][key].value
-                };
-                return innerAcc;
-              }, {});
-              return acc;
-            }, {})
-          }
+    const handleCancel = async () => {
+      await setRows((prevRows) => {
+        const updatedRows = [...prevRows];
+        const updatedRow = {
+          ...updatedRows[idx],
+          values: { ...initialRow.current.values }, // Reset to the initial values state
         };
-      }
-      return r;
-    })
-  );
-  onCancelEdit(idx);
-};
 
+        updatedRows[idx] = updatedRow;
+        return updatedRows;
+      });
 
+      onCancelEdit(idx); // Call onCancelEdit after the state has been updated
+    };
 
-
-
-
-
+    // const handleCancel = async () => {
+    //   await setRows((prevRows) => {
+    //     const updatedRows = prevRows.map((row, i) => (i === idx ? { ...initialRow.current, isEditing: false } : row));
+    //     return updatedRows;
+    //   });
+    //
+    //   onCancelEdit(idx); // Call onCancelEdit after the state has been updated
+    // };
 
   return (
 

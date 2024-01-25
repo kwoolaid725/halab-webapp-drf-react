@@ -106,30 +106,12 @@ function TestDetailsTableRowRobotBare(props){
     }
   }, [testMeasures]);
 
-  useEffect(() => {
-       console.log('Rows-TDTR_RB:', rows);
-  }
-  , [rows]);
+  // useEffect(() => {
+  //      console.log('Rows-TDTR_RB:', rows);
+  // }
+  // , [rows]);
 
   // console.log('Rows-TDTR_RB-Keys:', rows);
-
-  useEffect(() => {
-    // Your logic to fetch and generate soilWtMap from the provided TestMeasures data
-    if (testMeasures) {
-      const soilWtMapData = {}; // Object to store Soil_Wt values for different keys
-
-      testMeasures.forEach((measure) => {
-        const key = Object.keys(measure)[0]; // Extracting the key, e.g., 'Sand', 'Rice', etc.
-        const values = measure[key][0]; // Assuming there's only one set of values for each key
-        soilWtMapData[key] = { ...values };
-      //   if (values.Soil_Wt && values.Soil_Wt.value) {
-      //     soilWtMapData[key] = parseFloat(values.Soil_Wt.value); // Storing Soil_Wt value as a number
-      //   }
-      });
-      // console.log('soilWtMapData', soilWtMapData)
-      setSoilWtMap(soilWtMapData); // Set the soilWtMap state
-    }
-  }, [testMeasures]);
 
 
 
@@ -164,7 +146,8 @@ function TestDetailsTableRowRobotBare(props){
   const handleInputChange = (rows, setRows, slug, category, key, value) => {
     const updatedRows = rows.map((row) => {
       if (row.slug === slug) {
-        const updatedValues = { ...row.values };
+        // const updatedValues = { ...row.values };
+        const updatedValues = { ...row.values, [category]: { ...row.values[category], [key]: { value } } };
 
         // Update the value for the specified category and key
         updatedValues[category][key] = {
@@ -409,6 +392,7 @@ function TestDetailsTableRowRobotBare(props){
               const formData = new FormData();
               formData.append('test_measure', key);
               formData.append('value', value);
+              formData.append('units', units);
               formData.append('units', units);
               formData.append('test', props.testId);
               formData.append('sample', props.sample);
