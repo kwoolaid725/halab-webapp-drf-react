@@ -31,7 +31,7 @@ const EditableRowRobotBare = ({
   onCancelEdit
 
 }) => {
-   const [originalRow, setOriginalRow] = useState({ ...row });
+     const initialRow = useRef({ ...row } ); // Preserve the initial row prop
 
 
     const categoryOrder = categoriesData.map((categoryData) => categoryData.categoryName);
