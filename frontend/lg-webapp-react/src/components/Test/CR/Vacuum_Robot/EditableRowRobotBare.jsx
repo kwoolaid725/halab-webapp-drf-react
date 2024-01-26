@@ -83,7 +83,7 @@ const EditableRowRobotBare = ({
   return (
 
     <TableRow key={idx} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-      <TableCell component="th" scope="row">
+      <TableCell component="th" scope="row" align="center" sx={{ fontSize: '13px', padding: '3px', whiteSpace: 'nowrap' }}>
         {row.slug}
       </TableCell>
       <TableCell>
@@ -96,9 +96,17 @@ const EditableRowRobotBare = ({
       </TableCell>
      {categoryOrder.map((categoryName) => (
       <TableCell key={categoryName} align="center">
-        <div style={{ display: 'flex', flexDirection: 'row', gap: '0px' }}>
+       <div style={{ display: 'flex', flexDirection: 'row', gap: '20px' }}>
           {keyOrderMap[categoryName].map((key) => (
-            <TableCell key={`${categoryName}-${key}`} style={{ marginBottom: '5px' }}>
+            <TableCell key={`${categoryName}-${key}`} sx={{
+                      fontSize: '14px',
+                      padding: '1px',
+                      // border: '1px solid #ddd',
+                      width: '50px',
+                      textAlign: 'left',
+                      border: 'none'
+            }}
+            >
               {/* Use the keyOrderMap to determine the order of keys for the current category */}
               {["Unpicked_Amt.", "Unpicked_Ct.", "Runtime"].includes(key) ? (
                 <input
@@ -109,20 +117,21 @@ const EditableRowRobotBare = ({
                     handleInputChange(row.slug, categoryName, key, e.target.value)
                   }}
                   style={{
-                    width: '75px',
-                    fontSize: '16px',
-                    marginRight: '5px',
-                    textAlign: 'right',
+                    width: '50px',
+                    fontSize: '14px',
+                    padding: '0px 0', // Adjusted padding to shift content to the left
+                    // marginBottom: '0px', // Adjusted marginBottom to shift content to the left
+                    textAlign: 'right', // Adjusted textAlign to left
                     backgroundColor: (row.values[categoryName][key]?.value || '') === '' ? 'lightpink' : ''
                   }}
                 />
               ) : (
-                <span style={{ width: '75px', fontSize: '16px', marginRight: '5px', textAlign: 'right' }}>
+                <span style={{ width: '50px', fontSize: '14px',textAlign: 'right' }}>
                   {row.values[categoryName][key]?.value || ''}
                 </span>
               )}
               {row.values[categoryName][key]?.units && (
-                <Box sx={{ display: 'inline-block', marginLeft: '2px' }}>
+                <Box sx={{ display: 'inline-block', marginLeft: '1px' }}>
                   {row.values[categoryName][key]?.units}
                 </Box>
               )}

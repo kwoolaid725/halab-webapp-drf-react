@@ -33,7 +33,7 @@ const StaticRowRobotBare = ({ row, idx, categoriesData, handleEdit, handleDelete
 
   return (
   <TableRow key={`static-row-${idx}`} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-      <TableCell component="th" scope="row" align={"center"}>
+      <TableCell component="th" scope="row" align="center" sx={{ fontSize: '13px', padding: '3px', whiteSpace: 'nowrap' }}>
         {row.slug}
       </TableCell>
       <TableCell component="th" scope="row" align={"center"}>
@@ -42,13 +42,26 @@ const StaticRowRobotBare = ({ row, idx, categoriesData, handleEdit, handleDelete
       {/* Map through categoriesData to create TableCell for each categoryName */}
      {categoryOrder.map((categoryName) => (
       <TableCell key={categoryName} align="center">
-        <div style={{ display: 'flex', flexDirection: 'row', gap: '60px' }}>
+        <div style={{ display: 'flex', flexDirection: 'row', gap: '26px',  }}>
           {/* Use the keyOrderMap to determine the order of keys for the current category */}
           {keyOrderMap[categoryName].map((key) => (
-            <TableCell key={`${categoryName}-${key}`} style={{ marginBottom: '5px' }}>
+            <TableCell key={`${categoryName}-${key}`}
+                       sx={{
+                      fontSize: '14px',
+                      padding: '1px 0',
+                      fontWeight: ['Pickup', 'Runtime'].includes(key) ? 'bold' : 'normal',
+                      color: ['Pickup', 'Runtime'].includes(key) ? 'blue' : 'inherit',
+                      // border: '1px solid #ddd',
+
+                      width: '50px',
+                      textAlign: 'left',
+                      border: 'none',
+
+            }}>
+                       {/*style={{ padding: '0px', border: 'none', textAlign: 'center', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100px' }}>*/}
               {row.values[categoryName][key]?.value}
               {row.values[categoryName][key]?.units && (
-                <Box sx={{ display: 'inline-block', marginLeft: '2px' }}>
+                <Box sx={{ display: 'inline-block', marginLeft: '1px', }}>
                   {row.values[categoryName][key]?.units}
                 </Box>
               )}
