@@ -70,12 +70,13 @@ import { styled } from '@mui/system';
     }));
 
     const RightPanel = styled(Grid)(({ theme }) => ({
-          marginBottom: '10px',
-          marginRight: '10px',
-        [theme.breakpoints.up('xs')]: {
-            marginLeft: '10px'
+      marginBottom: '10px',
+      marginRight: '10px',
+      [theme.breakpoints.up('xs')]: {
 
-        },
+        marginLeft: '10px',
+
+    },
 
 
 

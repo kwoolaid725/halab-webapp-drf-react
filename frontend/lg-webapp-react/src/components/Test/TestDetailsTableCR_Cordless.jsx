@@ -18,8 +18,8 @@ const TestDetailsTableCrCordless = (props) => {
 
 
    return (
-    <Box sx={{ width: '100%', marginLeft: '100px' }}>
-      <Box sx={{ borderBottom: 1, borderColor: 'divider',  marginLeft: '20px' }}>
+    <Box sx={{ width: '100%', marginLeft: '40px' }}>
+      <Box sx={{ borderBottom: 1, borderColor: 'divider',  marginLeft: '25px' }}>
         <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
           <Tab label="Bare" />
           <Tab label="Carpet" />

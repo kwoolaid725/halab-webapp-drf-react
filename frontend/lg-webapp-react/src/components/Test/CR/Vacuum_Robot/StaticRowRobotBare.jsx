@@ -33,7 +33,7 @@ const StaticRowRobotBare = ({ row, idx, categoriesData, handleEdit, handleDelete
 
   return (
   <TableRow key={`static-row-${idx}`} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-      <TableCell component="th" scope="row" align="center" sx={{ fontSize: '13px', padding: '3px', whiteSpace: 'nowrap' }}>
+      <TableCell component="th" scope="row" align="center" sx={{ fontSize: '8px'}}>
         {row.slug}
       </TableCell>
       <TableCell component="th" scope="row" align={"center"}>
