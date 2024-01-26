@@ -531,30 +531,38 @@ function TestDetailsTableRowRobotBare(props){
   return (
 
 
-   <TableContainer component={Paper}>
+    <TableContainer component={Paper} sx={{ overflowX: 'auto' }} >
       <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
         <TableHead>
           <TableRow>
-            <TableCell align="center">
-              <Typography variant="subtitle1" fontWeight="bold">Row ID</Typography>
+            <TableCell align="center" sx={{ margin: '0.1px', padding: '0.5px' }}>
+              <Typography variant="subtitle2" fontWeight="bold">Row ID</Typography>
             </TableCell>
-            <TableCell align="center">
-              <Typography variant="subtitle1" fontWeight="bold">Tester</Typography>
+            <TableCell align="center" >
+              <Typography variant="subtitle2" fontWeight="bold">Tester</Typography>
             </TableCell>
             {categoriesData && categoriesData.map(category => (
             <React.Fragment key={category.categoryName}>
-               <TableCell key={category.categoryName} style={{ padding: 0, border: 'none', boxSizing: 'border-box' }}>
+               <TableCell align="center" sx={{ margin: '0.1px', padding: '0.5px' }}>
                 {/* First row with category name */}
                 <TableRow>
-                  <TableCell colSpan={category.keys.length + 1} align="center" style={{ padding: 0, border: 'none', boxSizing: 'border-box' }}>
-                    <Typography variant="subtitle1" fontWeight="bold">{category.categoryName}</Typography>
+                  <TableCell
+                    colSpan={category.keys.length + 1}
+                    align="center"
+                    sx={{
+                      border: 'none',
+                      boxSizing: 'border-box',
+                      margin: '0.1px', padding: '0.5px'
+                    }}
+                  >
+                    <Typography variant="subtitle2" fontWeight="bold">{category.categoryName}</Typography>
                   </TableCell>
                 </TableRow>
                 {/* Second row with keys */}
                 <TableRow>
                   {category.keys.map((key, index) => (
-                    <TableCell key={`${category.categoryName}-${key}`} align="center">
-                      <Typography variant="subtitle1" fontWeight="bold">{key}</Typography>
+                    <TableCell key={`${category.categoryName}-${key}`} align="center"  sx={{ margin: '0px', padding: '5px', border: 'none' }}>
+                      <Typography variant="subtitle2">{key}</Typography>
                     </TableCell>
                   ))}
                 </TableRow>
@@ -562,19 +570,19 @@ function TestDetailsTableRowRobotBare(props){
             </React.Fragment>
           ))}
             <TableCell align="center">
-              <Typography variant="subtitle1" fontWeight="bold">Run</Typography>
+              <Typography variant="subtitle2" fontWeight="bold">Run</Typography>
             </TableCell>
             <TableCell align="center">
-              <Typography variant="subtitle1" fontWeight="bold">Remarks</Typography>
+              <Typography variant="subtitle2" fontWeight="bold">Remarks</Typography>
             </TableCell>
             <TableCell align="center">
-              <Typography variant="subtitle1" fontWeight="bold">Created</Typography>
+              <Typography variant="subtitle2" fontWeight="bold">Created</Typography>
             </TableCell>
             <TableCell align="center">
-              <Typography variant="subtitle1" fontWeight="bold">Updated</Typography>
+              <Typography variant="subtitle2" fontWeight="bold">Updated</Typography>
             </TableCell>
             <TableCell align="center">
-              <Typography variant="subtitle1" fontWeight="bold">Actions</Typography>
+              <Typography variant="subtitle2" fontWeight="bold">Actions</Typography>
             </TableCell>
           </TableRow>
         </TableHead>
@@ -620,7 +628,7 @@ function TestDetailsTableRowRobotBare(props){
               )
             ))}
            <tr>
-            <td colSpan={keys.length + 7} align={"center"}>
+            <td colSpan={keys.length + 12} align={"center"}>
 
               <IconButton variant="outlined" onClick={handleAddRow} style={{ color: 'steelblue' }} >
                 <AddIcon />

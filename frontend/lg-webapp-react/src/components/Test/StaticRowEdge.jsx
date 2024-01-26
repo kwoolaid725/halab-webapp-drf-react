@@ -20,9 +20,9 @@ const StaticRowEdge = ({ row, idx, keys, handleEdit, handleDelete }) => {
 
   return (
   <TableRow key={idx} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-      <TableCell component="th" scope="row" align={"center"}>
-        {row.slug}
-      </TableCell>
+      <TableCell component="th" scope="row" align="center" sx={{ fontSize: '12px', padding: '8px', whiteSpace: 'nowrap' }}>
+      {row.slug}
+    </TableCell>
       <TableCell component="th" scope="row" align={"center"}>
         {row.tester}
       </TableCell>
@@ -32,12 +32,16 @@ const StaticRowEdge = ({ row, idx, keys, handleEdit, handleDelete }) => {
        {keys.map((key, idx) => (
           <TableCell align={"center"} key={idx} sx={{
               fontSize: '14px',
-              padding: '6px',
+              padding: '0 0',
               fontWeight: ['F_AVG', 'R_AVG', 'L_Pickup', 'R_Pickup'].includes(key) ? 'bold' : 'normal',
-              color: ['F_AVG', 'R_AVG', 'L_Pickup', 'R_Pickup'].includes(key) ? 'blue' : 'inherit' }}>
+              color: ['F_AVG', 'R_AVG', 'L_Pickup', 'R_Pickup'].includes(key) ? 'blue' : 'inherit',
+              // border: '1px solid #ddd',
+              width: '50px',
+              textAlign: 'center',
+          }}>
 
             {row.values[key]?.value}
-              <Box sx={{ display: 'inline-block', marginLeft: '2px' }}>
+              <Box sx={{ display: 'inline-block', marginLeft: '1px' }}>
                 {row.values[key]?.units}
               </Box>
       </TableCell>

@@ -128,7 +128,8 @@ const EditableRowEdge = ({
                 style={{
                   width: '30px', // Adjust the width as needed
                   fontSize: '14px',
-                  marginRight: '1px',
+                  // marginRight: '1px',
+                   padding: '0.5px 0',
                   textAlign: 'right',
                   backgroundColor: (row.values[key]?.value || '') === '' ? 'lightpink' : ''
                 }}
