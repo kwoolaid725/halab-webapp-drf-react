@@ -29,17 +29,7 @@ export default function TestDetailsBody(props) {
   const [testDetails, setTestDetails] = useState();
   const [openDetails, setOpenDetails] = useState({});
   const [groupedDetails, setGroupedDetails] = useState({});
-  const [totalBareCount, setTotalBareCount] = useState(0);
-  const [totalCarpetCount, setTotalCarpetCount] = useState(0);
-  const [totalEdgeCount, setTotalEdgeCount] = useState(0);
-  const [keyCounts, setKeyCounts] = useState({});
 
-
-  const [bareSlugs, setBareSlugs] = useState([]);
-  const [carpetSlugs, setCarpetSlugs] = useState([]);
-  const [edgeSlugs, setEdgeSlugs] = useState([]);
-
-  const [allCountDict, setAllCountDict] = useState({});
 
 
    // Use useRef for countDict
@@ -140,81 +130,119 @@ export default function TestDetailsBody(props) {
 
   const calculateCounts = () => {
   // Initialize counters for each category
-    const countDict = {};
-    // let bareCount = 0;
-    // let carpetCount = 0;
+  const countDict = {};
 
-    Object.keys(groupedDetails).forEach((key) => {
-      const detailsArray = groupedDetails[key];
-      const uniqueSlugs = generateUniqueSlugs(detailsArray);
-      let bareCount = 0; // Initialize bareCount for each uniqueSlug set
-      let carpetCount = 0; // Initialize carpetCount for each uniqueSlug set
+  Object.keys(groupedDetails).forEach((key) => {
+    const detailsArray = groupedDetails[key];
+    const uniqueSlugs = generateUniqueSlugs(detailsArray);
+    let bareCount = 0; // Initialize bareCount for each uniqueSlug set
+    let carpetCount = 0; // Initialize carpetCount for each uniqueSlug set
 
-       uniqueSlugs.forEach((uniqueSlug) => {
+    uniqueSlugs.forEach((uniqueSlug) => {
+      if (props.productCategory.toLowerCase().includes('stick') && props.productCategory.toLowerCase().includes('cordless')) {
+        // Your existing logic for parsing unique slugs
 
-        if (props.productCategory.toLowerCase().includes('stick') && props.productCategory.toLowerCase().includes('cordless')) {
-          // Your existing logic for parsing unique slugs
+        const firstHyphenIndex = uniqueSlug.indexOf('-');
+        const testGroup = uniqueSlug.substring(0, firstHyphenIndex);
+        const testTarget = uniqueSlug.split('-')[1];
 
-          const firstHyphenIndex = uniqueSlug.indexOf('-');
-          const testGroup = uniqueSlug.substring(0, firstHyphenIndex);
-          const testTarget = uniqueSlug.split('-')[1];
-          const lastHyphenIndex = uniqueSlug.lastIndexOf('-');
-          const secondLastHyphenIndex = uniqueSlug.lastIndexOf('-', lastHyphenIndex - 1);
-          const commonSuffix = uniqueSlug.substring(secondLastHyphenIndex + 1, lastHyphenIndex);
+        console.log('uniqueSlug:', uniqueSlug);
 
-          console.log('uniqueSlug:', uniqueSlug);
-
-          if (!countDict[commonSuffix]) {
-            countDict[commonSuffix] = {};
-          }
-
-          if (!countDict[commonSuffix][testTarget]) {
-            countDict[commonSuffix][testTarget] = {};
-          }
-
-          if (!countDict[commonSuffix][testTarget][testGroup]) {
-            countDict[commonSuffix][testTarget][testGroup] = 0;
-          }
-
-          countDict[commonSuffix][testTarget][testGroup]++;
+        if (!countDict[key]) {
+          countDict[key] = {};
         }
+
+        if (!countDict[key][testTarget]) {
+          countDict[key][testTarget] = {};
+        }
+
+        if (!countDict[key][testTarget][testGroup]) {
+          countDict[key][testTarget][testGroup] = 0;
+        }
+
+        countDict[key][testTarget][testGroup]++;
+      }
       if (props.productCategory.toLowerCase().includes('robot')) {
         // Your existing logic for parsing unique slugs
         const testTarget = uniqueSlug.split('-')[1];
+        console.log('uniqueSlug:', uniqueSlug);
 
-        if (testTarget.includes('bare')) {
-          // Increment countDict['bare'] if bareCount is greater than 2
-          bareCount++;
-        } else if (testTarget.includes('carpet')) {
-          carpetCount++;
+        if (!countDict[key]) {
+          countDict[key] = {}; // Create the outer key if it doesn't exist
         }
 
-
+        if (testTarget.includes('bare')) {
+          // Increment countDict['bare'] for every 3 occurrences of 'bare'
+          console.log('detailsArray:', detailsArray)
+          // Check if test_measure is not an empty string for any element in detailsArray
+          if (detailsArray.some((detail) => detail.test_measure === "Pickup" && detail.value !== null)) {
+            // Increment countDict['bare'] for every 3 occurrences of 'bare'
+            bareCount++;
+            if (bareCount % 3 === 0) {
+              countDict[key]['bare'] = (countDict[key]['bare'] || 0) + 1;
+            }
+          }
+        } else if (testTarget.includes('carpet')) {
+          // Increment countDict['carpet'] for every 4 occurrences of 'carpet'
+          carpetCount++;
+          if (carpetCount % 4 === 0) {
+            countDict[key]['carpet'] = (countDict[key]['carpet'] || 0) + 1;
+          }
+        }
       }
     });
+  });
 
-      // Update counts based on the average for each set of unique slugs
-  countDict['bare'] = countDict['bare'] ? countDict['bare'] + bareCount  : bareCount ;
-  countDict['carpet'] = countDict['carpet'] ? countDict['carpet'] + carpetCount / uniqueSlugs.length : carpetCount / uniqueSlugs.length;
+  // Use useRef for countDict
+  countDictRef.current = countDict;
+  // Log or use the count dictionary as needed
+  console.log('Count Dictionary:', countDictRef.current);
+};
 
 
 
-    });
-     // Use useRef for countDict
-     countDictRef.current = countDict;
-    // Log or use the count dictionary as needed
-    console.log('Count Dictionary:', countDictRef.current);
-  };
 
 // Invoke the calculateCounts function where needed
   calculateCounts();
 
 
-  // // Calculate counts when component mounts
-  // useEffect(() => {
-  //   calculateCounts();
-  // }, [groupedDetails]);
+  const getBorderStyle = (category, counts) => {
+    if (category.toLowerCase().includes('stick') && category.toLowerCase().includes('cordless')) {
+      const bareCount = counts?.bare;
+      const bareTotalCount = (bareCount?.sand || 0) + (bareCount?.rice || 0) + (bareCount?.cheerios || 0);
 
+      const carpetCount = counts?.carpet?.sand || 0;
+      const edgeCount = counts?.edge?.sand || 0;
+
+      // Check conditions for changing the border color
+      if (bareCount?.sand >= 3 && bareCount?.rice >= 3 && bareCount?.cheerios && carpetCount  >= 3 && edgeCount  >= 3) {
+        return '4px solid #03cea4'; // Green border if all counts are 3 or greater
+      } else if (bareTotalCount > 0 || carpetCount > 0 || edgeCount > 0) {
+        return '3px solid #efaac4'; // Yellow border if any count is greater than 0
+      } else {
+        return '1px dashed #ff6978'; // Red border if neither condition is met
+      }
+    } else if (category.toLowerCase().includes('robot')) {
+      const bareCount = counts?.bare || 0;
+
+
+      const carpetCount = counts?.carpet || 0;
+
+
+      // Check conditions for changing the border color
+      if (bareCount >= 3 &&  carpetCount  >= 3 ) {
+        return '4px solid #03cea4'; // Green border if all counts are 3 or greater
+      } else if (bareCount > 0 || carpetCount > 0 ) {
+        return '3px solid #efaac4'; // Yellow border if any count is greater than 0
+      } else {
+        return '1px dashed #ff6978'; // Red border if neither condition is met
+      }
+    } else {
+
+    // Default style if no matching category
+    return '2px solid #ccc';
+    }
+  };
 
   return (
 
@@ -268,26 +296,7 @@ export default function TestDetailsBody(props) {
                 </TableCell>
                 <Box
                   sx={{
-                    border: () => {
-                      // Get the counts for the current key
-                      const bareCount = countDictRef.current[key]?.bare;
-                      const bareTotalCount = (bareCount?.sand || 0) + (bareCount?.rice || 0) + (bareCount?.cheerios || 0);
-
-                      console.log('bareTotalCount:', bareTotalCount);
-
-                      const carpetCount = countDictRef.current[key]?.carpet?.sand || 0;
-                      const edgeCount = countDictRef.current[key]?.edge?.sand || 0;
-
-
-                      // Check conditions for changing the border color
-                      if (bareTotalCount >= 3 && carpetCount  >= 3 && edgeCount  >= 3) {
-                        return '4px solid #03cea4'; // Green border if all counts are 3 or greater
-                      } else if (bareTotalCount > 0 || carpetCount > 0 || edgeCount > 0) {
-                        return '3px solid #efaac4'; // Yellow border if any count is greater than 0
-                      } else {
-                        return '1px dotted #ff6978'; // Red border if neither condition is met
-                      }
-                    },
+                    border: getBorderStyle(props.productCategory, countDictRef.current[key]),
                     borderRadius: '8px',
                     overflow: 'hidden',
                     mt: 2,
@@ -426,7 +435,7 @@ export default function TestDetailsBody(props) {
                                   </Typography>
                                   <div style={{ display: 'flex', marginLeft: '10px' }}>
                                     <ColoredCircularProgress
-                                      count={countDictRef.current['bare'] || 0}
+                                      count={countDictRef.current[key]?.bare || 0}
                                       threshold={3}
                                       label=""
                                       style={{ fontWeight: 'bold', marginRight: '10px'}}
@@ -443,7 +452,7 @@ export default function TestDetailsBody(props) {
                                   </Typography>
                                   <div style={{ display: 'flex' }}>
                                     <ColoredCircularProgress
-                                      count = {countDictRef.current['carpet'] || 0}
+                                      count = {countDictRef.current[key]?.carpet || 0}
                                       threshold={3}
                                       label=""
                                       style={{ fontWeight: 'bold', marginRight: '10px' }}
