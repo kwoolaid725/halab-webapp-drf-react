@@ -20,6 +20,7 @@ import axiosInstance from "../../axios";
 import TestDetailsTableCrCordless from "./TestDetailsTableCR_Cordless";
 import TestDetailsTableCrRobot from "./TestDetailsTableCR_Robot";
 import ColoredCircularProgress from "../UI/CircularProgress";
+import TestDetailsCountBoxCordless from "./CR/TestDetailsCountBox_Cordless";
 
 import classes from './TestDetailsBody.module.css';
 
@@ -32,7 +33,7 @@ export default function TestDetailsBody(props) {
   const [totalCarpetCount, setTotalCarpetCount] = useState(0);
   const [totalEdgeCount, setTotalEdgeCount] = useState(0);
   const [keyCounts, setKeyCounts] = useState({});
-  const [testMeasures, setTestMeasures] = useState(null);
+
 
   const [bareSlugs, setBareSlugs] = useState([]);
   const [carpetSlugs, setCarpetSlugs] = useState([]);
@@ -46,18 +47,6 @@ export default function TestDetailsBody(props) {
 
 
 
-  useEffect(() => {
-      const fetchData = async () => {
-        try {
-          const response = await fetch('/test-measures.json');
-          const jsonData = await response.json();
-          setTestMeasures(jsonData);
-        } catch (error) {
-          console.error('Error fetching data', error);
-        }
-      };
-      fetchData();
-    }, []);
 
   useEffect(() => {
     // Fetch data and update state
@@ -115,7 +104,7 @@ export default function TestDetailsBody(props) {
 
 
      console.log('groupedDetails:', groupedDetails)
-     console.log('testMeasures:', testMeasures  )
+
 
 
 
@@ -152,38 +141,65 @@ export default function TestDetailsBody(props) {
   const calculateCounts = () => {
   // Initialize counters for each category
     const countDict = {};
+    // let bareCount = 0;
+    // let carpetCount = 0;
 
     Object.keys(groupedDetails).forEach((key) => {
       const detailsArray = groupedDetails[key];
       const uniqueSlugs = generateUniqueSlugs(detailsArray);
+      let bareCount = 0; // Initialize bareCount for each uniqueSlug set
+      let carpetCount = 0; // Initialize carpetCount for each uniqueSlug set
 
-      uniqueSlugs.forEach((uniqueSlug) => {
+       uniqueSlugs.forEach((uniqueSlug) => {
 
-        const firstHyphenIndex = uniqueSlug.indexOf('-');
-        const testGroup = uniqueSlug.substring(0, firstHyphenIndex);
+        if (props.productCategory.toLowerCase().includes('stick') && props.productCategory.toLowerCase().includes('cordless')) {
+          // Your existing logic for parsing unique slugs
+
+          const firstHyphenIndex = uniqueSlug.indexOf('-');
+          const testGroup = uniqueSlug.substring(0, firstHyphenIndex);
+          const testTarget = uniqueSlug.split('-')[1];
+          const lastHyphenIndex = uniqueSlug.lastIndexOf('-');
+          const secondLastHyphenIndex = uniqueSlug.lastIndexOf('-', lastHyphenIndex - 1);
+          const commonSuffix = uniqueSlug.substring(secondLastHyphenIndex + 1, lastHyphenIndex);
+
+          console.log('uniqueSlug:', uniqueSlug);
+
+          if (!countDict[commonSuffix]) {
+            countDict[commonSuffix] = {};
+          }
+
+          if (!countDict[commonSuffix][testTarget]) {
+            countDict[commonSuffix][testTarget] = {};
+          }
+
+          if (!countDict[commonSuffix][testTarget][testGroup]) {
+            countDict[commonSuffix][testTarget][testGroup] = 0;
+          }
+
+          countDict[commonSuffix][testTarget][testGroup]++;
+        }
+      if (props.productCategory.toLowerCase().includes('robot')) {
+        // Your existing logic for parsing unique slugs
         const testTarget = uniqueSlug.split('-')[1];
-        const lastHyphenIndex = uniqueSlug.lastIndexOf('-');
-        const secondLastHyphenIndex = uniqueSlug.lastIndexOf('-', lastHyphenIndex - 1);
-        const commonSuffix = uniqueSlug.substring(secondLastHyphenIndex + 1, lastHyphenIndex);
 
-        console.log('uniqueSlug:', uniqueSlug);
-
-        if (!countDict[commonSuffix]) {
-          countDict[commonSuffix] = {};
+        if (testTarget.includes('bare')) {
+          // Increment countDict['bare'] if bareCount is greater than 2
+          bareCount++;
+        } else if (testTarget.includes('carpet')) {
+          carpetCount++;
         }
 
-        if (!countDict[commonSuffix][testTarget]) {
-          countDict[commonSuffix][testTarget] = {};
-        }
 
-        if (!countDict[commonSuffix][testTarget][testGroup]) {
-          countDict[commonSuffix][testTarget][testGroup] = 0;
-        }
-
-        countDict[commonSuffix][testTarget][testGroup]++;
-      });
+      }
     });
 
+      // Update counts based on the average for each set of unique slugs
+  countDict['bare'] = countDict['bare'] ? countDict['bare'] + bareCount  : bareCount ;
+  countDict['carpet'] = countDict['carpet'] ? countDict['carpet'] + carpetCount / uniqueSlugs.length : carpetCount / uniqueSlugs.length;
+
+
+
+    });
      // Use useRef for countDict
      countDictRef.current = countDict;
     // Log or use the count dictionary as needed
@@ -191,28 +207,14 @@ export default function TestDetailsBody(props) {
   };
 
 // Invoke the calculateCounts function where needed
-calculateCounts();
+  calculateCounts();
 
 
-  // Calculate counts when component mounts
-  useEffect(() => {
-    calculateCounts();
-  }, [groupedDetails]);
-
-  // useEffect allCountDict
+  // // Calculate counts when component mounts
   // useEffect(() => {
-  //   setAllCountDict(allCountDict);
-  // }, [allCountDict]);
+  //   calculateCounts();
+  // }, [groupedDetails]);
 
-
-  const LabeledCircularProgress = ({ count, threshold, label, style }) => (
-    <div style={{ display: 'flex', alignItems: 'center', marginRight: '10px' }}>
-      <Typography variant="body1" fontSize="16px" style={{ fontWeight: 'bold', marginRight: '5px' }}>
-        {label}:
-      </Typography>
-      <ColoredCircularProgress count={count} threshold={threshold} style={style} />
-    </div>
-  );
 
   return (
 
@@ -349,76 +351,110 @@ calculateCounts();
                             align="center"
                             colSpan={4} // Adjust the colspan based on the number of columns
                           >
-                            {/* Bare Row */}
-                        <div style={{ display: 'flex', flexDirection: 'row',  }}>
-                          {/* Bare Row */}
-                          <div style={{ marginBottom: '10px' }}>
-                            <Typography variant="subtitle2" fontSize="14px" textAlign='center' style={{  color: "#345995" }}>
-                              Bare
-                            </Typography>
-                            <div style={{ display: 'flex', marginLeft:'10px'}}>
-                              <ColoredCircularProgress
-                                count={countDictRef.current[key]?.bare?.sand || 0}
-                                threshold={3}
-                                label="Sand"
-                                style={{ fontWeight: 'bold' }}
-                                color={'#db5375'}
-                              />
+                            {props.productCategory.toLowerCase().includes('stick') && props.productCategory.toLowerCase().includes('cordless') ? (
+                              <div style={{ display: 'flex', flexDirection: 'row' }}>
+                                {/* Bare Row */}
+                                <div style={{ marginBottom: '10px' }}>
+                                  <Typography variant="subtitle2" fontSize="14px" textAlign="center" style={{ color: '#345995' }}>
+                                    Bare
+                                  </Typography>
+                                  <div style={{ display: 'flex', marginLeft: '10px' }}>
+                                    <ColoredCircularProgress
+                                      count={countDictRef.current[key]?.bare?.sand || 0}
+                                      threshold={3}
+                                      label="Sand"
+                                      style={{ fontWeight: 'bold' }}
+                                      color={'#db5375'}
+                                    />
 
-                              <ColoredCircularProgress
-                                count={countDictRef.current[key]?.bare?.rice || 0}
-                                threshold={3}
-                                label="Rice"
-                                style={{ fontWeight: 'bold' }}
-                                color={'#db5375'}
-                              />
+                                    <ColoredCircularProgress
+                                      count={countDictRef.current[key]?.bare?.rice || 0}
+                                      threshold={3}
+                                      label="Rice"
+                                      style={{ fontWeight: 'bold' }}
+                                      color={'#db5375'}
+                                    />
 
-                              <ColoredCircularProgress
-                                count={countDictRef.current[key]?.bare?.cheerios || 0}
-                                threshold={3}
-                                label="Cheerios"
-                                style={{ fontWeight: 'bold' }}
-                                color={'#db5375'}
-                              />
+                                    <ColoredCircularProgress
+                                      count={countDictRef.current[key]?.bare?.cheerios || 0}
+                                      threshold={3}
+                                      label="Cheerios"
+                                      style={{ fontWeight: 'bold' }}
+                                      color={'#db5375'}
+                                    />
+                                  </div>
+                                </div>
 
-                            </div>
-                          </div>
+                                {/* Carpet Row */}
+                                <div style={{ marginBottom: '10px' }}>
+                                  <Typography variant="subtitle2" fontSize="14px" textAlign="center" style={{ color: '#345995' }}>
+                                    Carpet
+                                  </Typography>
+                                  <div style={{ display: 'flex' }}>
+                                    <ColoredCircularProgress
+                                      count={countDictRef.current[key]?.carpet?.sand || 0}
+                                      threshold={3}
+                                      label="Sand"
+                                      style={{ fontWeight: 'bold', marginRight: '10px' }}
+                                      color={'#73bfb8'}
+                                    />
+                                  </div>
+                                </div>
 
-                          {/* Carpet Row */}
-                          <div style={{ marginBottom: '10px' }}>
-                            <Typography variant="subtitle2" fontSize="14px" textAlign='center' style={{  color: "#345995" }}>
-                              Carpet
-                            </Typography>
-                            <div style={{ display: 'flex' }}>
-                              <ColoredCircularProgress
-                                count={countDictRef.current[key]?.carpet?.sand || 0}
-                                threshold={3}
-                                label="Sand"
-                                style={{ fontWeight: 'bold', marginRight: '10px' }}
-                                color={'#73bfb8'}
-                              />
-                            </div>
-                          </div>
+                                {/* Edge Row */}
+                                <div>
+                                  <Typography variant="subtitle2" fontSize="14px" textAlign="center" style={{ color: '#345995' }}>
+                                    Edge
+                                  </Typography>
+                                  <div style={{ display: 'flex' }}>
+                                    <ColoredCircularProgress
+                                      count={countDictRef.current[key]?.edge?.sand || 0}
+                                      threshold={3}
+                                      label="Sand"
+                                      style={{ fontWeight: 'bold', marginRight: '10px' }}
+                                      color={'#ff6b35'}
+                                    />
+                                  </div>
+                                </div>
+                              </div>
+                            ) : (
+                              <div style={{ display: 'flex', flexDirection: 'row' }}>
+                                {/* Bare Row */}
+                                <div style={{ marginBottom: '10px', width: '50%', boxSizing: 'border-box', paddingLeft: '75px' }}>
+                                  <Typography variant="subtitle2" fontSize="14px" textAlign="center" style={{ color: '#345995', marginBottom: '0px' }}>
+                                    Bare
+                                  </Typography>
+                                  <div style={{ display: 'flex', marginLeft: '10px' }}>
+                                    <ColoredCircularProgress
+                                      count={countDictRef.current['bare'] || 0}
+                                      threshold={3}
+                                      label=""
+                                      style={{ fontWeight: 'bold', marginRight: '10px'}}
+                                      color={'#db5375'}
+                                      updateBoxStyles={(count) => ({ top: count > 0 ? 0 : 0 })}
+                                    />
+                                  </div>
+                                </div>
 
-                          {/* Edge Row */}
-                          <div>
-                            <Typography variant="subtitle2" fontSize="14px" textAlign='center' style={{  color: "#345995" }}>
-                              Edge
-                            </Typography>
-                            <div style={{ display: 'flex' }}>
-                              <ColoredCircularProgress
-                                count={countDictRef.current[key]?.edge?.sand || 0}
-                                threshold={3}
-                                label="Sand"
-                                style={{ fontWeight: 'bold', marginRight: '10px' }}
-                                color={'#ff6b35'}
-                              />
-                            </div>
-                          </div>
-                        </div>
-                            {/*<Typography variant="body1" fontSize="16px">*/}
-                            {/*  {`Bare: ${keyCounts[key]?.bareCount || 0}, Carpet: ${keyCounts[key]?.carpetCount || 0}, Edge: ${keyCounts[key]?.edgeCount || 0}`}*/}
-                            {/*</Typography>*/}
+                                {/* Carpet Row */}
+                               <div style={{ marginBottom: '10px', width: '50%', boxSizing: 'border-box', marginRight:'50px', paddingRight:'30px', paddingLeft:'30px' }}>
+                                  <Typography variant="subtitle2" fontSize="14px" textAlign="center" style={{ color: '#345995' }}>
+                                    Carpet
+                                  </Typography>
+                                  <div style={{ display: 'flex' }}>
+                                    <ColoredCircularProgress
+                                      count = {countDictRef.current['carpet'] || 0}
+                                      threshold={3}
+                                      label=""
+                                      style={{ fontWeight: 'bold', marginRight: '10px' }}
+                                      color={'#73bfb8'}
+                                      updateBoxStyles={(count) => ({ top: count > 0 ? 0 : 0 })}
+                                    />
+                                  </div>
+                                </div>
+                              </div>
+                            )
+                          }
                           </TableCell>
                         </TableRow>
                       </TableBody>
@@ -429,8 +465,8 @@ calculateCounts();
 
               {/* Conditionally render TestDetailsTable or TestDetailsTableCR based on testCategory */}
 
-              {test?.test_category === 'CR' &&
-               (test?.product_category.toLowerCase().includes('stick') && test?.product_category.toLowerCase().includes('cordless')) ? (
+              {/*{test?.test_category === 'CR' &&*/}
+              {props.productCategory.toLowerCase().includes('stick') && props.productCategory.toLowerCase().includes('cordless') ? (
                 <TableRow>
                   <TableCell colSpan={4}>
                      <Collapse in={isDetailsOpen} timeout="auto" unmountOnExit>
@@ -446,7 +482,7 @@ calculateCounts();
                   </TableCell>
                 </TableRow>
               ) : (
-                 (test?.product_category.toLowerCase().includes('robot')) ? (
+                 (props.productCategory.toLowerCase().includes('robot')) ? (
                 <TableRow>
                   <TableCell colSpan={4}>
                     <Collapse in={openDetails[key]} timeout="auto" unmountOnExit>
