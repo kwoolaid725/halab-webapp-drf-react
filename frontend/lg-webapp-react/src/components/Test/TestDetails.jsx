@@ -133,6 +133,7 @@ export default function TestDetails(props) {
 
       <TestDetailsBody
           test={data}
+          productCategory={data?.product_category}
           // testDetails={dataDetails}
 
       />

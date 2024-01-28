@@ -1,9 +1,9 @@
 import React from 'react'
-import TestDetailsTableRowBare from './TestDetailsTableRowBare'
-import TestDetailsTableRowCarpet from './TestDetailsTableRowCarpet'
-import TestDetailsTableRowEdge from './TestDetailsTableRowEdge'
 
-import TestDetailsTableRowBareRobotBare from './CR/Vacuum_Robot/TestDetailsTableRow_RobotBare'
+import TestDetailsTableRowRobotCarpet from './CR/Vacuum_Robot/TestDetailsTableRow_RobotCarpet'
+import TestDetailsTableRowRobotBare from './CR/Vacuum_Robot/TestDetailsTableRow_RobotBare'
+
+
 import CustomTabPanel from '../UI/TabPanel'
 
 import Tabs from '@mui/material/Tabs'
@@ -40,7 +40,7 @@ const TestDetailsTableCrRobot = (props) => {
               </tr>
             </thead>
             <tbody style={{ border: '1px solid #ddd' }}>
-              <TestDetailsTableRowBareRobotBare
+              <TestDetailsTableRowRobotBare
                 testId={props.testId}
                 sample={props.sample}
                 brushType={props.brushType}
@@ -64,7 +64,7 @@ const TestDetailsTableCrRobot = (props) => {
               </tr>
             </thead>
             <tbody style={{ border: '1px solid #ddd' }}>
-              <TestDetailsTableRowCarpet
+              <TestDetailsTableRowRobotCarpet
                 testId={props.testId}
                 sample={props.sample}
                 brushType={props.brushType}
