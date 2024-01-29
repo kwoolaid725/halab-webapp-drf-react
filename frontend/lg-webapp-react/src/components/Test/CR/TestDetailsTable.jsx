@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import TableCell from '@mui/material/TableCell';
 import Typography from '@mui/material/Typography';
-import axiosInstance from "../../axios";
+import axiosInstance from "../../../axios";
 import TestDetailsTableRow from "./TestDetailsTableRow";
-import TestDetailsTableRowBare from "./TestDetailsTableRowBare";
+import TestDetailsTableRowBare from "./Vacuum_Cordless/TestDetailsTableRowBare";
 
 const TestDetailsTable = (props) => {
   const [testMeasures, setTestMeasures] = useState(null);

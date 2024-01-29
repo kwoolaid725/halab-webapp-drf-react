@@ -39,11 +39,12 @@ import CRBareData from "./components/Admin/Test/CR/CRCordlessBareDataCreate";
 import Table from "./components/Admin/Test/CR/Table";
 import TestLists from "./components/Test/TestLists";
 
-import TestDetailsTableRow from './components/Test/TestDetailsTableRow'
-import TestDetailsTableRowCarpet from './components/Test/TestDetailsTableRowCarpet'
-import TestDetailsTable from './components/Test/TestDetailsTable'
-import TestDetails from './components/Test/TestDetails'
+import TestDetailsTableRow from './components/Test/CR/TestDetailsTableRow'
+import TestDetailsTableRowCarpet from './components/Test/CR/Vacuum_Cordless/TestDetailsTableRowCarpet'
+import TestDetailsTable from './components/Test/CR/TestDetailsTable'
+import TestDetails from './components/Test/CR/TestDetails'
 import TestDetailsTableRowRobotBare from './components/Test/CR/Vacuum_Robot/TestDetailsTableRow_RobotBare'
+import AnalyticsHome from './components/Test/Chart/AnalyticsHome'
 
 
 function Routes() {
@@ -71,6 +72,7 @@ function Routes() {
 		{ path: '/admin/samples/edit/:id', element: <SampleEdit /> },
 
 		{ path: '/tests', element: <TestLists /> },
+		{ path: '/tests/analytics', element: <AnalyticsHome />},
 		{ path: '/test/:id', element: <TestDetails /> },
 
 		{ path: '/admin/tests', element: <AdminTestsList /> },

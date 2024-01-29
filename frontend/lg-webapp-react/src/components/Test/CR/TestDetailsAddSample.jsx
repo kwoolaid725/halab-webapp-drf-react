@@ -19,7 +19,7 @@ import GroupItems from '@mui/material/ListItem';
 
 import TestDetailsTableCR from "./TestDetailsTableCR_Cordless";
 import TestDetailsTable from "./TestDetailsTable";
-import axiosInstance from "../../axios";
+import axiosInstance from "../../../axios";
 import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";

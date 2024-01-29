@@ -1,5 +1,5 @@
 import React, { useState,useEffect } from 'react';
-import axiosInstance from '../../axios';
+import axiosInstance from '../../../axios';
 import { useNavigate } from 'react-router-dom';
 
 import TableRow from '@mui/material/TableRow';
@@ -9,7 +9,7 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
-import theme from '../UI/Theme';
+import theme from '../../UI/Theme';
 import Checkbox from '@mui/material/Checkbox';
 import { ThemeProvider } from '@mui/material/styles';
 
@@ -77,9 +77,6 @@ import { styled } from '@mui/system';
         marginLeft: '10px',
 
     },
-
-
-
           // [theme.breakpoints.up('md')]: {
           //   width: '100%', // Adjust the width for medium screens
           // },
@@ -163,7 +160,7 @@ import { styled } from '@mui/system';
         axiosInstance.patch(`admin/tests/edit/${props.testId}/`, { test_status: newTestStatus, remarks, completion_date: newCompletionDate })
           .then((res) => {
             console.log('Test status updated to', newTestStatus);
-            navigate('/admin/tests/');
+            navigate('/tests/');
             // You may want to update your local state or perform other actions upon success
           })
           .catch((error) => {

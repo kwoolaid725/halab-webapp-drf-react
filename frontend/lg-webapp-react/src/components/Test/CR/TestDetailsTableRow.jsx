@@ -4,11 +4,11 @@ import React, {
 } from 'react'
 import { BsFillTrashFill, BsFillPencilFill } from 'react-icons/bs';
 import Button from '@mui/material/Button';
-import axiosInstance from '../../axios'
+import axiosInstance from '../../../axios'
 import Typography from '@mui/material/Typography';
 import TableCell from '@mui/material/TableCell';
-import EditableRow  from './EditableRow'
-import StaticRow  from './StaticRow'
+import EditableRow  from './Vacuum_Cordless/EditableRow'
+import StaticRow  from './Vacuum_Cordless/StaticRow'
 
 
 function TestDetailsTableRow(props){
@@ -20,17 +20,17 @@ function TestDetailsTableRow(props){
 
 
 
-  // useEffect(() => {
-  //   // Fetch rows from the database and update the 'allRows' state
-  //   axiosInstance.get('admin/tests/vacuum/testdetail/')
-  //     .then(response => {
-  //       setAllRows(response.data);
-  //     })
-  //     .catch(error => {
-  //       console.error('Error fetching rows', error);
-  //     });
-  //
-  // }, []); // Fetch only once on component mount
+  useEffect(() => {
+    // Fetch rows from the database and update the 'allRows' state
+    axiosInstance.get('admin/tests/vacuum/testdetail/')
+      .then(response => {
+        setAllRows(response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching rows', error);
+      });
+
+  }, []); // Fetch only once on component mount
 
 
 
@@ -75,40 +75,40 @@ function TestDetailsTableRow(props){
 
 
   // Use useEffect to update rows, keys, and values when the component mounts
-  useEffect(() => {
-    const fetchDataAndUpdateState = async () => {
-      try {
-        const response = await axiosInstance.get('admin/tests/vacuum/testdetail/');
-        const fetchedData = response.data;
-
-        // Assuming props.testMeasures has the required data structure
-        const selectedMeasures = Array.isArray(props.testMeasures)
-          ? props.testMeasures
-          : [props.testMeasures];
-
-        if (selectedMeasures.length > 0) {
-          const values = selectedMeasures[0];
-          const keys = Object.keys(values);
-
-          setValues(values);
-          setKeys(keys);
-
-          // Update the rows state with new keys and values for the selected measures
-          setRows(prevRows =>
-            prevRows.map(row => ({
-              ...row,
-              values: { ...values },
-              keys: [...keys],
-            }))
-          );
-        }
-      } catch (error) {
-        console.error('Error fetching rows', error);
-      }
-    };
-
-    fetchDataAndUpdateState();
-  }, [props.testTarget, props.testGroup, props.testMeasures]);
+  // useEffect(() => {
+  //   const fetchDataAndUpdateState = async () => {
+  //     try {
+  //       const response = await axiosInstance.get('admin/tests/vacuum/testdetail/');
+  //       const fetchedData = response.data;
+  //
+  //       // Assuming props.testMeasures has the required data structure
+  //       const selectedMeasures = Array.isArray(props.testMeasures)
+  //         ? props.testMeasures
+  //         : [props.testMeasures];
+  //
+  //       if (selectedMeasures.length > 0) {
+  //         const values = selectedMeasures[0];
+  //         const keys = Object.keys(values);
+  //
+  //         setValues(values);
+  //         setKeys(keys);
+  //
+  //         // Update the rows state with new keys and values for the selected measures
+  //         setRows(prevRows =>
+  //           prevRows.map(row => ({
+  //             ...row,
+  //             values: { ...values },
+  //             keys: [...keys],
+  //           }))
+  //         );
+  //       }
+  //     } catch (error) {
+  //       console.error('Error fetching rows', error);
+  //     }
+  //   };
+  //
+  //   fetchDataAndUpdateState();
+  // }, [props.testTarget, props.testGroup, props.testMeasures]);
 
 
   useEffect(() => {

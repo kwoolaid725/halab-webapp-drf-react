@@ -4,11 +4,6 @@ import React, {
   useRef
 } from 'react'
 
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
@@ -17,8 +12,10 @@ import MenuItem from '@mui/material/MenuItem';
 import Box from '@mui/material/Box';
 import SaveIcon from '@mui/icons-material/Save';
 import CloseIcon from '@mui/icons-material/Close';
+import TableCell from "@mui/material/TableCell";
 
-const EditableRow = ({
+
+const EditableRowEdge = ({
   row,
   idx,
   testGroup,
@@ -33,7 +30,8 @@ const EditableRow = ({
   onCancelEdit
 
 }) => {
-    const initialRow = useRef({ ...row } ); // Preserve the initial row prop
+    const initialRow = useRef({ ...row }); // Preserve the initial row prop
+
 
     const handleFieldChange = (fieldName, value) => {
       const updatedRow = { ...row, [fieldName]: value };
@@ -48,19 +46,14 @@ const EditableRow = ({
   // Function to handle changes in testGroup selection
   const handleTestGroupChange = (selectedTestGroup) => {
 
-      if (selectedTestGroup === '') {
-          return;
-      }
-
+     if (selectedTestGroup === '') {
+        return;
+    }
     const soilWt = soilWtMap[selectedTestGroup].Soil_Wt.value || 0;
-    // console.log('row:', row)
-    
-      
     const updatedValues = {
       ...row.values,
       Soil_Wt: { value: soilWt, units: 'g' }
     };
-
 
     const sameGroupRows = rows.filter((r) => r.testGroup === selectedTestGroup);
     const maxRunInGroup = sameGroupRows.reduce((maxRun, r) => {
@@ -95,8 +88,9 @@ const EditableRow = ({
 
 
   return (
+
     <TableRow key={idx} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-      <TableCell component="th" scope="row">
+      <TableCell component="th" scope="row" align="center" sx={{ fontSize: '8px'}}>
         {row.slug}
       </TableCell>
       <TableCell>
@@ -104,7 +98,7 @@ const EditableRow = ({
           type="text"
           value={row.tester}
           onChange={(e) => handleFieldChange('tester', e.target.value)}
-          style={{ width: '30px', fontSize: '16px', textAlign: 'center', backgroundColor: row.tester === '' ? 'lightpink' : ''}}
+          style={{ width: '30px', fontSize: '14px', textAlign: 'center', backgroundColor: row.tester === '' ? 'lightpink' : ''}}
         />
       </TableCell>
 
@@ -124,31 +118,51 @@ const EditableRow = ({
       </TableCell>
 
       {keys.map((key, index) => (
-        <TableCell key={index} align={"center"}>
+          <TableCell key={index} align={"center"} sx={{ margin: '1px', padding: '2px' }}>
 
-        {["Pre-Wt.", "Post-Wt."].includes(key) ? (
-            <input
+            {['F1','F2','F3','F4','F5','F6', 'L1','L2','L3', 'R1','R2','R3'].includes(key) ? (
+              <input
                 type="text"
                 value={row.values[key]?.value || ''}
                 onChange={(e) => handleInputChange(row.slug, key, e.target.value)}
                 style={{
-                    width: '75px',
-                    fontSize: '16px',
-                    marginRight: '5px',
+                  width: '30px', // Adjust the width as needed
+                  fontSize: '14px',
+                  // marginRight: '1px',
+                   padding: '0.5px 0',
+                  textAlign: 'right',
+                  backgroundColor: (row.values[key]?.value || '') === '' ? 'lightpink' : ''
+                }}
+              />
+            ) : (
+              ['L_Pre-Wt.', 'L_Post-Wt.', 'R_Pre-Wt.', 'R_Post-Wt.'].includes(key) ? (
+                <input
+                  type="text"
+                  value={row.values[key]?.value || ''}
+                  onChange={(e) => handleInputChange(row.slug, key, e.target.value)}
+                  style={{
+                    width: '45px', // Adjust the width as needed
+                    fontSize: '14px',
+                    marginRight: '1px',
                     textAlign: 'right',
-                    // backgroundColor: (row.values[key]?.value || '') === '' ? 'yellow' : (key === "Pre-Wt." ? 'lightblue' : 'lightgreen')
                     backgroundColor: (row.values[key]?.value || '') === '' ? 'lightpink' : ''
-            }}
-            />
-        ) : (
-            <span style={{ width: '75px', fontSize: '16px', marginRight: '5px', textAlign: 'right' }}>
-                {row.values[key]?.value || ''}
-            </span>
-        )}
-        <span>{row.values[key]?.units || ''}</span>
+                  }}
+                />
+              ) : (
+                <span style={{
+                  width: '30px', // Default width for other keys
+                  fontSize: '14px',
+                  marginRight: '1px',
+                  textAlign: 'right'
+                }}>
+                  {row.values[key]?.value || ''}
+                </span>
+              )
+            )}
+            <span>{row.values[key]?.units || ''}</span>
 
-        </TableCell>
-    ))}
+          </TableCell>
+        ))}
 
       <TableCell>
         <input
@@ -162,7 +176,7 @@ const EditableRow = ({
           style={{
               width: '30px',
               textAlign: 'center',
-              fontSize: '16px',
+              fontSize: '14px',
               backgroundColor: isNaN(row.run) || row.run === 0 ? 'lightpink' : 'transparent'
 
         }} // Adjust width as needed
@@ -175,7 +189,7 @@ const EditableRow = ({
           type="text"
           value={row.remarks}
           onChange={(e) => handleFieldChange('remarks', e.target.value)}
-          style={{ width: '300px', textAlign: 'left', fontSize: '16px' }}
+          style={{ width: '200px', textAlign: 'left', fontSize: '14px' }}
         />
       </TableCell>
       <TableCell>{row.created_at}</TableCell>
@@ -192,7 +206,8 @@ const EditableRow = ({
     </TableCell>
     </TableRow>
 
+
   );
 };
 
-export default EditableRow;
+export default EditableRowEdge;
