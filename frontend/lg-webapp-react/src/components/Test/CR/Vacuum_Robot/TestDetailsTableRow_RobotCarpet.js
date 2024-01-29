@@ -4,9 +4,8 @@ import React, {
 } from 'react'
 import { BsFillTrashFill, BsFillPencilFill } from 'react-icons/bs';
 import axiosInstance from '../../../../axios';
-import EditableRowRobotBare from './EditableRowRobotBare';
-import StaticRowRobotBare from './StaticRowRobotBare';
-import EditableRow from '../Vacuum_Cordless/EditableRow'
+import EditableRowRobotCarpet from './EditableRowRobotCarpet';
+import StaticRowRobotCarpet from './StaticRowRobotCarpet';
 
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -21,7 +20,7 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 
 
-function TestDetailsTableRowRobotBare(props){
+function TestDetailsTableRowRobotCarpet(props){
 
   const [testMeasures, setTestMeasures] = useState(null);
   const [categoriesData, setCategoriesData] = useState([]);
@@ -41,9 +40,9 @@ function TestDetailsTableRowRobotBare(props){
         try {
           const response = await fetch('/test-measures-robot.json');
           const jsonData = await response.json();
-          const bareData = jsonData["CR"]["Bare"];
-          console.log('robot measures:', bareData)
-          setTestMeasures(bareData);
+          const carpetData = jsonData["CR"]["Carpet"];
+          console.log('robot measures:', carpetData)
+          setTestMeasures(carpetData);
         } catch (error) {
           console.error('Error fetching data', error);
         }
@@ -54,7 +53,7 @@ function TestDetailsTableRowRobotBare(props){
 
   useEffect(() => {
     // Fetch rows from the database and update the 'allRows' state
-    axiosInstance.get(`/admin/tests/vacuum/testdetail/${props.testId}/?test_target=Bare`)
+    axiosInstance.get(`/admin/tests/vacuum/testdetail/${props.testId}/?test_target=Carpet`)
       .then(response => {
         setAllRows(response.data);
       })
@@ -87,9 +86,9 @@ function TestDetailsTableRowRobotBare(props){
       setRows(() => {
         const newRow = {
           id: '',  // You may need to generate a unique ID here
-          slug: `${props.testId}-Bare-${props.sample}${props.brushType}${props.testCase}-1`,
+          slug: `${props.testId}-Carpet-${props.sample}${props.brushType}${props.testCase}-1`,
           tester: props.tester,
-          testTarget: 'Bare',
+          testTarget: 'Carpet',
           run: 1,
           remarks: '',
           created_at: '',
@@ -116,7 +115,7 @@ function TestDetailsTableRowRobotBare(props){
 
 
    const calculatePickupValue = (values, category, key) => {
-    if (category === 'Silica/Rice' && key === 'Unpicked_Amt.') {
+    if ((category === 'Sand' || category ===  'Rice' || category === 'Cat-Hair') && key === 'Unpicked_Amt.') {
       const soilWt = parseFloat(values[category]['Soil_Wt']['value']);
       const unpickedAmt = parseFloat(values[category]['Unpicked_Amt.']['value']);
       if (!isNaN(soilWt) && !isNaN(unpickedAmt)) {
@@ -128,7 +127,7 @@ function TestDetailsTableRowRobotBare(props){
       }
     }
 
-    if ((category === 'Cheerios' || category === 'Paper-Squares') && key === 'Unpicked_Ct.') {
+    if (category === 'Cheerios' && key === 'Unpicked_Ct.') {
       const initialCt = parseFloat(values[category]['Initial_Ct.']['value']);
       const unpickedCt = parseFloat(values[category]['Unpicked_Ct.']['value']);
       if (!isNaN(initialCt) && !isNaN(unpickedCt)) {
@@ -179,9 +178,9 @@ function TestDetailsTableRowRobotBare(props){
       // Set 'initialRowState' as the default 'rows' state
       const initialRowState = {
         id: '',
-        slug: `${props.testId}-Bare-${props.sample}${props.brushType}${props.testCase}-1`,
+        slug: `${props.testId}-Carpet-${props.sample}${props.brushType}${props.testCase}-1`,
         tester: props.tester,
-        testTarget: 'Bare',
+        testTarget: 'Carpet',
         // testGroup: '',
         run: 1,
         remarks: '',
@@ -203,11 +202,11 @@ function TestDetailsTableRowRobotBare(props){
       axiosInstance(`/samples/?inv_no=${props.sample}`)
         .then(response => {
           const sampleId = response.data[0]?.id;
-            axiosInstance(`/admin/tests/vacuum/testdetail/${props.testId}/?sample=${sampleId}&brush_type=${props.brushType}&test_case=${props.testCase}&test_target=Bare`)
+            axiosInstance(`/admin/tests/vacuum/testdetail/${props.testId}/?sample=${sampleId}&brush_type=${props.brushType}&test_case=${props.testCase}&test_target=Carpet`)
               .then((res) => {
                 const fetchedRows = res.data || [];
                 setFetchedRows(fetchedRows);
-                // console.log('fetchedRows-robotBare', fetchedRows)
+
               })
               .catch((error) => {
                 console.error('Error fetching detailed data: ', error);
@@ -270,32 +269,32 @@ function TestDetailsTableRowRobotBare(props){
 
       id: '', // Assign an appropriate ID
       slug: row.slug,
-      tester: row.tester,
-      testTarget: row.test_target,
-      // testGroup: row.test_group,
-      run: row.run,
-      remarks: row.remarks,
-      created_at: convertToAMPM(row.created_at.split('.')[0]),
-      last_updated: convertToAMPM(row.last_updated.split('.')[0]),
-      isEditing: false,
-      values: row.values || {},
-      // units: row.units || {},
+      tester: row.tester, // Assuming 'tester' exists in fetchedRows
+      testTarget: row.test_target, // Assuming 'testTarget' exists in fetchedRows
+      // testGroup: row.test_group, // Assuming 'testGroup' exists in fetchedRows
+      run: row.run, // Adjust as needed
+      remarks: row.remarks, // Adjust as needed
+      created_at: convertToAMPM(row.created_at.split('.')[0]), // Adjust as needed
+      last_updated: convertToAMPM(row.last_updated.split('.')[0]), // Adjust as needed
+      isEditing: false, // Assuming default isEditing as false
+      values: row.values || {}, // Setting the values from combinedRows
+      // units: row.units || {}, // Setting the units from combinedRows
     }));
 
-    // console.log('transformedRows-RobotBare', transformedRows);
+
 
     setRows(transformedRows);
   }
 }, [fetchedRows]);
 
   useEffect(() => {
-    console.log('rows-robotBare', rows);
+    console.log('rows-robotCarpet', rows);
   }, [rows]);
 
 
  const handleAddRow = () => {
     const maxIndex = rows.length > 0 ? Math.max(...rows.map(row => parseInt(row.slug.split('-').pop()))) + 1 : 1;
-    const newSlug = `${props.testId}-Bare-${props.sample}${props.brushType}${props.testCase}-${maxIndex}`;
+    const newSlug = `${props.testId}-Carpet-${props.sample}${props.brushType}${props.testCase}-${maxIndex}`;
 
     const previousRow = rows[rows.length - 1];
     const previousRun = previousRow ? previousRow.run : 0;
@@ -320,7 +319,7 @@ function TestDetailsTableRowRobotBare(props){
     const updatedNewRow = {
       ...previousRow,
       slug: newSlug,
-      testTarget: "Bare",
+      testTarget: "Carpet",
       run: previousRun + 1,
       remarks: '',
       values: valuesToKeep,
@@ -590,7 +589,7 @@ function TestDetailsTableRowRobotBare(props){
         <TableBody>
           {rows.map((row, idx) => (
               row.isEditing ? (
-                <EditableRowRobotBare
+                <EditableRowRobotCarpet
                   key={idx}
                   row={row}
                   idx={idx}
@@ -614,7 +613,7 @@ function TestDetailsTableRowRobotBare(props){
                   }}
               />
               ) : (
-                <StaticRowRobotBare
+                <StaticRowRobotCarpet
                   key={idx}
                   row={row}
                   idx={idx}
@@ -644,5 +643,5 @@ function TestDetailsTableRowRobotBare(props){
   );
 };
 
-export default TestDetailsTableRowRobotBare;
+export default TestDetailsTableRowRobotCarpet;
 

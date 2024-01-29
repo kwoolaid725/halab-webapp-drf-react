@@ -35,6 +35,7 @@ function CircularProgressWithLabel(props) {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
+           ...(props.updateBoxStyles ? props.updateBoxStyles(props.count) : {}), // Apply additional styles if the callback is provided
         }}
       >
         <Typography variant="caption" component="div" color="text.secondary" fontWeight="bold">
@@ -50,8 +51,9 @@ CircularProgressWithLabel.propTypes = {
   label: PropTypes.string.isRequired,
   color: PropTypes.string.isRequired,
   threshold: PropTypes.number.isRequired,
+  updateBoxStyles: PropTypes.func,
 };
 
-export default function ColoredCircularProgress({ count, label, color, threshold }) {
-  return <CircularProgressWithLabel count={count} label={label} color={color} threshold={threshold} />;
+export default function ColoredCircularProgress({ count, label, color, threshold, updateBoxStyles }) {
+  return <CircularProgressWithLabel count={count} label={label} color={color} threshold={threshold} updateBoxStyles={updateBoxStyles} />;
 }

@@ -3,7 +3,7 @@ import React, {
   useState
 } from 'react'
 import { BsFillTrashFill, BsFillPencilFill } from 'react-icons/bs';
-import axiosInstance from '../../axios'
+import axiosInstance from '../../../../axios'
 import EditableRow  from './EditableRow'
 import StaticRow  from './StaticRow'
 
@@ -20,7 +20,7 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 
 
-function TestDetailsTableRowCordless(props){
+function TestDetailsTableRowBare(props){
 
   const [testMeasures, setTestMeasures] = useState(null);
   const [rows, setRows] = useState([]);
@@ -399,7 +399,7 @@ function TestDetailsTableRowCordless(props){
             formData.append('test_measure', key);
             formData.append('value', value);
             formData.append('units', units);
-            formData.append('test', 1);
+            formData.append('test', props.testId);
             formData.append('sample', props.sample);
             formData.append('brush_type', props.brushType);
             formData.append('tester', 1);
@@ -698,5 +698,5 @@ function TestDetailsTableRowCordless(props){
   );
 };
 
-export default TestDetailsTableRowCordless;
+export default TestDetailsTableRowBare;
 

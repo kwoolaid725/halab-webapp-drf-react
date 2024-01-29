@@ -4,23 +4,22 @@ import React, {
 } from 'react'
 import { BsFillTrashFill, BsFillPencilFill } from 'react-icons/bs';
 import Button from '@mui/material/Button';
-import axiosInstance from '../../axios'
+import axiosInstance from '../../../../axios'
 import Typography from '@mui/material/Typography';
 import TableCell from '@mui/material/TableCell';
-import EditableRowEdge  from './EditableRowEdge'
-import StaticRowEdge  from './StaticRowEdge'
-import TableRow from "@mui/material/TableRow";
-import TableHead from "@mui/material/TableHead";
-import IconButton from "@mui/material/IconButton";
-import AddIcon from "@mui/icons-material/Add";
+import EditableRow  from './EditableRow'
+import StaticRow  from './StaticRow'
+import TableContainer from "@mui/material/TableContainer";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
 import TableBody from "@mui/material/TableBody";
-import TableContainer from "@mui/material/TableContainer";
+import IconButton from "@mui/material/IconButton";
+import AddIcon from "@mui/icons-material/Add";
 
 
-
-function TestDetailsTableRowEdge(props){
+function TestDetailsTableRowCarpet(props){
 
   const [testMeasures, setTestMeasures] = useState(null);
   const [rows, setRows] = useState([]);
@@ -42,10 +41,10 @@ function TestDetailsTableRowEdge(props){
 
         // console.log('Fetched Data:', jsonData); // Log the fetched data
 
-        const edgeData = jsonData["Edge"];
-        // console.log('Edge Data:', edgeData); // Log the specific "Carpet" data
+        const carpetData = jsonData["Carpet"];
+        console.log('Carpet Data:', carpetData); // Log the specific "Carpet" data
 
-        setTestMeasures(edgeData);
+        setTestMeasures(carpetData);
       } catch (error) {
         console.error('Error fetching data', error);
       }
@@ -55,12 +54,12 @@ function TestDetailsTableRowEdge(props){
   }, []); // Empty dependency array, ensuring the effect runs only once on mount
 
   useEffect(() => {
-    // console.log('testMeasures - Edge', testMeasures);
+    // console.log('testMeasures - CARPET', testMeasures);
   }, [testMeasures]);
 
   useEffect(() => {
     // Fetch rows from the database and update the 'allRows' state
-    axiosInstance.get(`admin/tests/vacuum/testdetail/${props.testId}/?test_target=Edge`)
+    axiosInstance.get(`admin/tests/vacuum/testdetail/${props.testId}/?test_target=Carpet`)
       .then(response => {
         setAllRows(response.data);
       })
@@ -68,103 +67,42 @@ function TestDetailsTableRowEdge(props){
         console.error('Error fetching rows', error);
       });
 
-  }, []); // Fetch only once on component mount
+  }, []);
 
-   useEffect(() => {
-      if (testMeasures && Object.keys(testMeasures).length > 0) {
-        let soilWtMapData = {};
+ useEffect(() => {
+    if (testMeasures && Object.keys(testMeasures).length > 0) {
+      let soilWtMapData = {};
 
-        Object.keys(testMeasures).forEach((key) => {
-          const values = testMeasures[key];
-          soilWtMapData[key] = { ...values };
-        });
+      Object.keys(testMeasures).forEach((key) => {
+        const values = testMeasures[key];
+        soilWtMapData[key] = { ...values };
+      });
 
-        setSoilWtMap(soilWtMapData);
-      }
-    }, [testMeasures]);
+      setSoilWtMap(soilWtMapData);
+    }
+  }, [testMeasures]);
+//
+//
 
-   const handleInputChange = (rows, setRows, slug, key, value) => {
+
+ const handleInputChange = (rows, setRows, slug, key, value) => {
     const updatedRows = rows.map((row) => {
       if (row.slug === slug) {
         let updatedValues = { ...row.values, [key]: { value, units: row.values[key]?.units || '' } };
 
         // Calculate Weight Diff. when Pre-Wt. or Post-Wt. changes
-        if (key === 'L_Pre-Wt.' || key === 'L_Post-Wt.' ) {
-          const preWt = parseFloat(updatedValues['L_Pre-Wt.'].value) || 0;
-          const postWt = parseFloat(updatedValues['L_Post-Wt.'].value) || 0;
+        if (key === 'Pre-Wt.' || key === 'Post-Wt.') {
+          const preWt = parseFloat(updatedValues['Pre-Wt.'].value) || 0;
+          const postWt = parseFloat(updatedValues['Post-Wt.'].value) || 0;
           const weightDiff = (postWt - preWt).toFixed(2).replace(/\.?0+$/, '');
-          const soilWt = parseFloat(updatedValues['Soil_Wt'].value) || 0; // Assuming Soil_Wt exists in values
+          const soilWt = parseFloat(updatedValues['Soil_Wt'].value) || 0;
+
           const pickup = soilWt !== 0 ? ((weightDiff / soilWt) * 100).toFixed(2).replace(/\.?0+$/, '') : 0;
 
           updatedValues = {
             ...updatedValues,
-            'L_Pickup': { value: pickup, units: '%' } // Setting Pickup value and units
-          };
-        }
-
-        if (key === 'R_Pre-Wt.' || key === 'R_Post-Wt.' ) {
-          const preWt = parseFloat(updatedValues['R_Pre-Wt.'].value) || 0;
-          const postWt = parseFloat(updatedValues['R_Post-Wt.'].value) || 0;
-          const weightDiff = (postWt - preWt).toFixed(2).replace(/\.?0+$/, '');
-          const soilWt = parseFloat(updatedValues['Soil_Wt'].value) || 0; // Assuming Soil_Wt exists in values
-          const pickup = soilWt !== 0 ? ((weightDiff / soilWt) * 100).toFixed(2).replace(/\.?0+$/, '') : 0;
-
-          updatedValues = {
-            ...updatedValues,
-            'R_Pickup': { value: pickup, units: '%' } // Setting Pickup value and units
-          };
-        }
-
-        if (key === 'F1' || key === 'F2' || key === 'F3' || key === 'F4' || key === 'F5' || key === 'F6' ) {
-          const F_values = ['F1', 'F2', 'F3', 'F4', 'F5', 'F6'];
-
-          // Filter out the values that are not defined or not valid floats
-          const validValues = F_values.map(f => parseFloat(updatedValues[f]?.value)).filter(value => !isNaN(value));
-
-          // Calculate the sum of valid values
-          const sum = validValues.reduce((acc, value) => acc + value, 0);
-
-          // Calculate the average based on the number of valid values
-          const F_Avg = validValues.length > 0 ? (sum / validValues.length).toFixed(2).replace(/\.?0+$/, '') : 0;
-
-          updatedValues = {
-            ...updatedValues,
-            'F_AVG': { value: F_Avg, units: 'in' } // Setting Pickup value and units
-          };
-        }
-        if (key === 'L1' || key === 'L2' || key === 'L3' ) {
-          const L_values = ['L1', 'L2', 'L3'];
-
-          // Filter out the values that are not defined or not valid floats
-          const validValues = L_values.map(f => parseFloat(updatedValues[f]?.value)).filter(value => !isNaN(value));
-
-          // Calculate the sum of valid values
-          const sum = validValues.reduce((acc, value) => acc + value, 0);
-
-          // Calculate the average based on the number of valid values
-          const L_Avg = validValues.length > 0 ? (sum / validValues.length).toFixed(2).replace(/\.?0+$/, '') : 0;
-
-          updatedValues = {
-            ...updatedValues,
-            'L_AVG': { value: L_Avg, units: 'in' } // Setting Pickup value and units
-          };
-        }
-
-        if (key === 'R1' || key === 'R2' || key === 'R3' ) {
-          const L_values = ['R1', 'R2', 'R3'];
-
-          // Filter out the values that are not defined or not valid floats
-          const validValues = L_values.map(f => parseFloat(updatedValues[f]?.value)).filter(value => !isNaN(value));
-
-          // Calculate the sum of valid values
-          const sum = validValues.reduce((acc, value) => acc + value, 0);
-
-          // Calculate the average based on the number of valid values
-          const R_Avg = validValues.length > 0 ? (sum / validValues.length).toFixed(2).replace(/\.?0+$/, '') : 0;
-
-          updatedValues = {
-            ...updatedValues,
-            'R_AVG': { value: R_Avg, units: 'in' } // Setting Pickup value and units
+            'Wt.-Diff.': { value: weightDiff, units: 'g' },
+            'Pickup': { value: pickup, units: '%' }
           };
         }
 
@@ -186,9 +124,9 @@ function TestDetailsTableRowEdge(props){
       // Set 'initialRowState' as the default 'rows' state
       const initialRowState = {
         id: '',
-        slug: `${props.testId}-Edge-${props.sample}${props.brushType}${props.testCase}-1`,
+        slug: `${props.testId}-Carpet-${props.sample}${props.brushType}${props.testCase}-1`,
         tester: props.tester,
-        testTarget: 'Edge',
+        testTarget: 'Carpet',
         testGroup: '',
         run: 1,
         remarks: '',
@@ -197,21 +135,21 @@ function TestDetailsTableRowEdge(props){
         isEditing: true,
         values: {},
         units: {},
-        model: ''
+        model: '',
+
       };
       setRows([initialRowState]);
       // console.log('initialRowState', initialRowState);
 
-  }, [props.testId, props.testTarget, props.testGroup, props.tester]);
+  }, [props.testId, props.testTarget, props.testGroup, props.tester, props.model]);
 
 
   useEffect(() => {
     // console.log('Test Measures Sand:', testMeasures);
-    // console.log('Edge Measuress:', testMeasures)
+    // console.log('Carpet Measuress:', testMeasures)
 
     if (testMeasures) {
       let selectedMeasures = Array.isArray(testMeasures) ? testMeasures : [testMeasures];
-
 
       if (selectedMeasures) {
         const values = selectedMeasures[0]['Sand']; // Accessing the values for "Sand"
@@ -239,7 +177,7 @@ function TestDetailsTableRowEdge(props){
       axiosInstance(`/samples/?inv_no=${props.sample}`)
         .then(response => {
           const sampleId = response.data[0]?.id;
-            axiosInstance(`/admin/tests/vacuum/testdetail/${props.testId}/?sample=${sampleId}&brush_type=${props.brushType}&test_case=${props.testCase}&test_target=Edge`)
+            axiosInstance(`/admin/tests/vacuum/testdetail/${props.testId}/?sample=${sampleId}&brush_type=${props.brushType}&test_case=${props.testCase}&test_target=Carpet`)
               .then((res) => {
                 const fetchedRows = res.data || [];
                 setFetchedRows(fetchedRows);
@@ -275,7 +213,8 @@ function TestDetailsTableRowEdge(props){
       return acc;
     }, {});
 
-    const convertToAMPM = (timestamp) => {
+
+     const convertToAMPM = (timestamp) => {
       const date = new Date(timestamp);
 
       const options = {
@@ -291,6 +230,8 @@ function TestDetailsTableRowEdge(props){
 
       return date.toLocaleDateString('en-US', options)
     };
+
+
 
     // Transform combinedRows to match the initialState structure
     const transformedRows = Object.values(combinedRows).map(row => ({
@@ -315,7 +256,7 @@ function TestDetailsTableRowEdge(props){
 }, [fetchedRows]);
 
   useEffect(() => {
-    // console.log('rows Edge', rows);
+    // console.log('rows Carpet', rows);
   }, [rows]);
 
 
@@ -323,16 +264,16 @@ function TestDetailsTableRowEdge(props){
     id: '',
     slug: '',
     tester: props.tester,
-    testTarget: 'Edge',
+    testTarget: 'Carpet',
     testGroup: '',
     run: 1,
     remarks: '',
     created_at: '',
     last_updated: '',
     isEditing: false,
-    values: {},
+    values: {}, // Initialize as an empty object
     units: {},
-    model: ''
+    model: ''// Initialize as an empty object
   });
 
   useEffect(() => {
@@ -370,7 +311,7 @@ function TestDetailsTableRowEdge(props){
 
   const handleAddRow = () => {
     const maxIndex = rows.length > 0 ? Math.max(...rows.map(row => parseInt(row.slug.split('-').pop()))) + 1 : 1; // Get the maximum index of existing rows and increment by 1
-    const newSlug = `${props.testId}-Edge-${props.sample}${props.brushType}${props.testCase}-${maxIndex}`; // Create a new slug for the row
+    const newSlug = `${props.testId}-Carpet-${props.sample}${props.brushType}${props.testCase}-${maxIndex}`; // Create a new slug for the row
 
     const previousRow = rows[rows.length - 1]; // Get the previous row
     const previousRun = previousRow ? previousRow.run : 0; // Get the previous row's run
@@ -442,8 +383,9 @@ function TestDetailsTableRowEdge(props){
 
 
 
-  const submitRow = async (index) => {
+  const submitRow = (index) => {
     const editedRow = rows[index];
+    // Filter rows to find all rows with the same slug
     const rowsWithSameSlug = allRows.filter(row => row.slug === editedRow.slug);
 
     if (rowsWithSameSlug.length > 0) {
@@ -504,34 +446,40 @@ function TestDetailsTableRowEdge(props){
           console.error('Error updating row:', error);
         });
     } else {
-      // New entry, perform a POST request
-      const formDataArray = [];
+        // New entry, perform a POST request
+        const formDataArray = [];
 
-      editedRow.keys.forEach((key) => {
-        const formData = new FormData();
+        // console.log('editedRow', editedRow)
 
-        const value = editedRow.values[key]?.value || '';
-        const units = editedRow.values[key]?.units || '';
+        editedRow.keys.forEach((key) => {
+          const formData = new FormData();
 
-        formData.append('test_measure', key);
-        formData.append('value', value);
-        formData.append('units', units);
-        formData.append('test', 1);
-        formData.append('sample', props.sample);
-        formData.append('brush_type', props.brushType);
-        formData.append('tester', 1);
-        formData.append('owner', 1);
-        formData.append('test_target', editedRow.testTarget);
-        formData.append('test_group', editedRow.testGroup);
-        formData.append('test_case', props.testCase);
-        formData.append('slug', editedRow.slug);
-        formData.append('run', editedRow.run);
-        formData.append('remarks', editedRow.remarks);
-        formData.append('model', props.model);
+          const value = editedRow.values[key]?.value || '';
+          const units = editedRow.values[key]?.units || '';
 
-        formDataArray.push(formData);
-      });
+          // Populate formData with appropriate values for the current key
+          formData.append('test_measure', key);
+          formData.append('value', value);
+          formData.append('units', units);
+          formData.append('test', 1);
+          formData.append('sample', props.sample);
+          formData.append('brush_type', props.brushType);
+          formData.append('tester', 1);
+          formData.append('owner', 1);
+          formData.append('test_target', editedRow.testTarget);
+          formData.append('test_group', editedRow.testGroup);
+          formData.append('test_case', props.testCase);
+          formData.append('slug', editedRow.slug);
+          formData.append('run', editedRow.run);
+          formData.append('remarks', editedRow.remarks);
+          formData.append('model', props.model);
 
+          formDataArray.push(formData);
+
+
+        });
+
+       // Submit each formData instance separately
       const postRequests = formDataArray.map(formData => {
         const url = `admin/tests/vacuum/testdetail/`;
         const requestType = 'POST';
@@ -546,11 +494,14 @@ function TestDetailsTableRowEdge(props){
         });
       });
 
+      // Wait for all POST requests to complete
       Promise.all(postRequests)
         .then(responses => {
+          // Fetch updated data after all POST requests are completed
           axiosInstance.get('admin/tests/vacuum/testdetail/')
             .then(response => {
               const updatedRows = response.data.map(row => {
+                // Adjust this logic based on the structure of your response
                 if (row.slug === editedRow.slug) {
                   return {
                     ...row,
@@ -560,8 +511,8 @@ function TestDetailsTableRowEdge(props){
                 }
                 return row;
               });
-              setAllRows(response.data);
-              setRows(updatedRows);
+              setAllRows(response.data); // Update allRows state with the latest data
+              setRows(updatedRows); // Update rows state with new 'created_at' and 'last_updated' values
               toggleEditing(index);
             })
             .catch(error => {
@@ -570,84 +521,85 @@ function TestDetailsTableRowEdge(props){
         })
         .catch(errors => {
           console.error('Error posting data', errors);
+          // Handle errors
         });
-    }
+    };
   };
 
-   const sortedData = rows.sort((a, b) => {
-      // Assuming testGroup is a string, modify accordingly if it's a different type
-      const testGroupComparison = b.testGroup.localeCompare(a.testGroup); // Reverse the order
-      if (testGroupComparison !== 0) {
-        return testGroupComparison;
-      }
-      // If testGroup is the same, compare by run
-      return a.run - b.run; // Assuming run is a number, adjust accordingly if it's a string
-    });
+  const sortedData = rows.sort((a, b) => {
+    // Assuming testGroup is a string, modify accordingly if it's a different type
+    const testGroupComparison = b.testGroup.localeCompare(a.testGroup); // Reverse the order
+    if (testGroupComparison !== 0) {
+      return testGroupComparison;
+    }
+    // If testGroup is the same, compare by run
+    return a.run - b.run; // Assuming run is a number, adjust accordingly if it's a string
+  });
 
   return (
-    <TableContainer component={Paper} sx={{ overflowX: 'auto' }} >
+     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
-     <TableHead>
-        <TableRow>
-          <TableCell align="center" sx={{ margin: '0.1px', padding: '0.5px' }}>
-            <Typography variant="subtitle2" fontWeight="bold">Row ID</Typography>
-          </TableCell>
-          <TableCell align="center" sx={{ margin: '0.1px', padding: '0.5px' }}>
-            <Typography variant="subtitle2" fontWeight="bold">Tester</Typography>
-          </TableCell>
-          <TableCell align="center" sx={{ margin: '0.1px', padding: '0.5px' }}>
-            <Typography variant="subtitle2" fontWeight="bold">Test Group</Typography>
-          </TableCell>
-          {keys && keys.map((key, index) => (
-            <TableCell align="center" key={index} sx={{ margin: '0.1px', padding: '0.5px' }}>
-              <Typography variant="subtitle2" fontWeight="bold">{key}</Typography>
+        <TableHead>
+          <TableRow>
+            <TableCell align="center">
+              <Typography variant="subtitle1" fontWeight="bold">Row ID</Typography>
             </TableCell>
-          ))}
-          <TableCell align="center" sx={{ margin: '0.1px', padding: '0.5px' }}>
-            <Typography variant="subtitle2" fontWeight="bold">Run</Typography>
-          </TableCell>
-          <TableCell align="center" sx={{ margin: '0.1px', padding: '0.5px' }}>
-            <Typography variant="subtitle2" fontWeight="bold">Remarks</Typography>
-          </TableCell>
-          <TableCell align="center" sx={{ margin: '0.1px', padding: '0.5px' }}>
-            <Typography variant="subtitle2" fontWeight="bold">Created</Typography>
-          </TableCell>
-          <TableCell align="center" sx={{ margin: '0.1px', padding: '0.5px' }}>
-            <Typography variant="subtitle2" fontWeight="bold">Updated</Typography>
-          </TableCell>
-          <TableCell align="center" sx={{ margin: '0.1px', padding: '0.5px' }}>
-            <Typography variant="subtitle2" fontWeight="bold">Actions</Typography>
-          </TableCell>
-        </TableRow>
-      </TableHead>
-
+            <TableCell align="center">
+              <Typography variant="subtitle1" fontWeight="bold">Tester</Typography>
+            </TableCell>
+            <TableCell align="center">
+              <Typography variant="subtitle1" fontWeight="bold">Test Group</Typography>
+            </TableCell>
+            {keys && keys.map((key, index) => (
+              <TableCell align="center" key={index}>
+                <Typography variant="subtitle1" fontWeight="bold">{key}</Typography>
+              </TableCell>
+            ))}
+            <TableCell align="center">
+              <Typography variant="subtitle1" fontWeight="bold">Run</Typography>
+            </TableCell>
+            <TableCell align="center">
+              <Typography variant="subtitle1" fontWeight="bold">Remarks</Typography>
+            </TableCell>
+            <TableCell align="center">
+              <Typography variant="subtitle1" fontWeight="bold">Created</Typography>
+            </TableCell>
+            <TableCell align="center">
+              <Typography variant="subtitle1" fontWeight="bold">Updated</Typography>
+            </TableCell>
+            <TableCell align="center">
+              <Typography variant="subtitle1" fontWeight="bold">Actions</Typography>
+            </TableCell>
+          </TableRow>
+        </TableHead>
 
         <TableBody>
           {sortedData.map((row, idx) => (
               row.isEditing ? (
-                <EditableRowEdge
-                key={idx}
-                row={row}
-                idx={idx}
-                // testGroup='Sand'
-                testId={props.testId}
-                keys={keys}
-                handleInputChange={(slug, key, value) => handleInputChange(rows, setRows, slug, key, value)}
-                submitRow={submitRow}
-                setRows={setRows}
-                rows={rows}
-                testGroupOptions={testGroupOptions}
-                soilWtMap={soilWtMap}
-                onCancelEdit={(cancelIdx) => {
-                  setRows((prevRows) =>
-                    prevRows.map((r, index) =>
-                      index === cancelIdx ? { ...r, isEditing: false } : r
-                    )
-                  );
-                }}
+                <EditableRow
+                  key={idx}
+                  row={row}
+                  idx={idx}
+                  // testGroup='Sand'
+                  testId={props.testId}
+                  keys={keys}
+                  values={values}
+                  handleInputChange={(slug, key, value) => handleInputChange(rows, setRows, slug, key, value)}
+                  submitRow={submitRow}
+                  setRows={setRows}
+                  rows={rows}
+                  testGroupOptions={testGroupOptions}
+                  soilWtMap={soilWtMap}
+                  onCancelEdit={(cancelIdx) => {
+                    setRows((prevRows) =>
+                      prevRows.map((r, index) =>
+                        index === cancelIdx ? { ...r, isEditing: false } : r
+                      )
+                    );
+                  }}
               />
               ) : (
-                <StaticRowEdge
+                <StaticRow
                   key={idx}
                   row={row}
                   idx={idx}
@@ -659,8 +611,7 @@ function TestDetailsTableRowEdge(props){
                 />
               )
             ))}
-
-          <tr>
+           <tr>
             <td colSpan={keys.length + 7} align={"center"}>
 
               <IconButton variant="outlined" onClick={handleAddRow} style={{ color: 'steelblue' }} >
@@ -670,10 +621,11 @@ function TestDetailsTableRowEdge(props){
           </tr>
 
         </TableBody>
-     </Table>
+      </Table>
     </TableContainer>
+
   );
 };
 
-export default TestDetailsTableRowEdge;
+export default TestDetailsTableRowCarpet;
 

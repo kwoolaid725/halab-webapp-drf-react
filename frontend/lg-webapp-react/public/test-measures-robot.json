@@ -75,7 +75,7 @@
               "value": "50",
               "units": "g"
             },
-            "Unpicked": {
+            "Unpicked_Amt.": {
               "value": "",
               "units": "g"
             },
@@ -93,7 +93,7 @@
               "value": "50",
               "units": "g"
             },
-            "Unpicked": {
+            "Unpicked_Amt.": {
               "value": "",
               "units": "g"
             },
@@ -107,13 +107,13 @@
       {
         "Cheerios": [
           {
-            "Initial Ct.": {
+            "Initial_Ct.": {
               "value": "12",
-              "units": "Ct"
+              "units": "ct."
             },
-            "Unpicked": {
+            "Unpicked_Ct.": {
               "value": "",
-              "units": "ct"
+              "units": "ct."
             },
             "Pickup": {
               "value": "",
@@ -123,13 +123,13 @@
         ]
       },
       {
-        "Cat_Hair": [
+        "Cat-Hair": [
           {
             "Soil_Wt": {
-              "value": "50",
+              "value": "5",
               "units": "g"
             },
-            "Unpicked": {
+            "Unpicked_Amt.": {
               "value": "",
               "units": "g"
             },
