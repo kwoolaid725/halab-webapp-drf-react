@@ -16,13 +16,12 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import TextField from '@mui/material/TextField';
 import {useParams} from "react-router-dom";
-import axiosInstance from "../../axios";
+import axiosInstance from "../../../axios";
 import TestDetailsTableCrCordless from "./TestDetailsTableCR_Cordless";
 import TestDetailsTableCrRobot from "./TestDetailsTableCR_Robot";
-import ColoredCircularProgress from "../UI/CircularProgress";
-import TestDetailsCountBoxCordless from "./CR/TestDetailsCountBox_Cordless";
+import ColoredCircularProgress from "../../UI/CircularProgress";
+import TestDetailsCountBoxCordless from "./TestDetailsCountBox_Cordless";
 
-import classes from './TestDetailsBody.module.css';
 
 export default function TestDetailsBody(props) {
   const { test } = props;

@@ -6,7 +6,7 @@ import { BsFillTrashFill, BsFillPencilFill } from 'react-icons/bs';
 import axiosInstance from '../../../../axios';
 import EditableRowRobotBare from './EditableRowRobotBare';
 import StaticRowRobotBare from './StaticRowRobotBare';
-import EditableRow from '../../EditableRow'
+import EditableRow from '../Vacuum_Cordless/EditableRow'
 
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -270,16 +270,16 @@ function TestDetailsTableRowRobotBare(props){
 
       id: '', // Assign an appropriate ID
       slug: row.slug,
-      tester: row.tester, // Assuming 'tester' exists in fetchedRows
-      testTarget: row.test_target, // Assuming 'testTarget' exists in fetchedRows
-      // testGroup: row.test_group, // Assuming 'testGroup' exists in fetchedRows
-      run: row.run, // Adjust as needed
-      remarks: row.remarks, // Adjust as needed
-      created_at: convertToAMPM(row.created_at.split('.')[0]), // Adjust as needed
-      last_updated: convertToAMPM(row.last_updated.split('.')[0]), // Adjust as needed
-      isEditing: false, // Assuming default isEditing as false
-      values: row.values || {}, // Setting the values from combinedRows
-      // units: row.units || {}, // Setting the units from combinedRows
+      tester: row.tester,
+      testTarget: row.test_target,
+      // testGroup: row.test_group,
+      run: row.run,
+      remarks: row.remarks,
+      created_at: convertToAMPM(row.created_at.split('.')[0]),
+      last_updated: convertToAMPM(row.last_updated.split('.')[0]),
+      isEditing: false,
+      values: row.values || {},
+      // units: row.units || {},
     }));
 
     // console.log('transformedRows-RobotBare', transformedRows);

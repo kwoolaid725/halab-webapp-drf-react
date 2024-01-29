@@ -1,16 +1,14 @@
 import React from 'react'
-
-import TestDetailsTableRowRobotCarpet from './CR/Vacuum_Robot/TestDetailsTableRow_RobotCarpet'
-import TestDetailsTableRowRobotBare from './CR/Vacuum_Robot/TestDetailsTableRow_RobotBare'
-
-
-import CustomTabPanel from '../UI/TabPanel'
+import TestDetailsTableRowBare from './Vacuum_Cordless/TestDetailsTableRowBare'
+import TestDetailsTableRowCarpet from './Vacuum_Cordless/TestDetailsTableRowCarpet'
+import TestDetailsTableRowEdge from './Vacuum_Cordless/TestDetailsTableRowEdge'
+import CustomTabPanel from '../../UI/TabPanel'
 
 import Tabs from '@mui/material/Tabs'
 import Tab from '@mui/material/Tab'
 import Box from '@mui/material/Box'
 
-const TestDetailsTableCrRobot = (props) => {
+const TestDetailsTableCrCordless = (props) => {
 
   const [value, setValue] = React.useState(0);
 
@@ -20,11 +18,12 @@ const TestDetailsTableCrRobot = (props) => {
 
 
    return (
-    <Box sx={{ width: '100%', marginLeft: '10px' }}>
+    <Box sx={{ width: '100%', marginLeft: '40px' }}>
       <Box sx={{ borderBottom: 1, borderColor: 'divider',  marginLeft: '25px' }}>
         <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
           <Tab label="Bare" />
           <Tab label="Carpet" />
+          <Tab label="Edge" />
           {/* Add more tabs as needed */}
         </Tabs>
       </Box>
@@ -40,7 +39,7 @@ const TestDetailsTableCrRobot = (props) => {
               </tr>
             </thead>
             <tbody style={{ border: '1px solid #ddd' }}>
-              <TestDetailsTableRowRobotBare
+              <TestDetailsTableRowBare
                 testId={props.testId}
                 sample={props.sample}
                 brushType={props.brushType}
@@ -64,7 +63,7 @@ const TestDetailsTableCrRobot = (props) => {
               </tr>
             </thead>
             <tbody style={{ border: '1px solid #ddd' }}>
-              <TestDetailsTableRowRobotCarpet
+              <TestDetailsTableRowCarpet
                 testId={props.testId}
                 sample={props.sample}
                 brushType={props.brushType}
@@ -75,9 +74,33 @@ const TestDetailsTableCrRobot = (props) => {
             </tbody>
           </table>
         </CustomTabPanel>
+
+        <CustomTabPanel value={value} index={2}>
+          <table style={{ borderCollapse: 'collapse', width: '100%' }}>
+
+            <thead>
+              <tr>
+                <th style={{ borderBottom: '2px solid #fed0bb', padding: '2px', textAlign: 'center', backgroundColor: '#ff6b35' }}>
+                  <h3 style={{ margin: '0', fontSize: '1.5rem',  color: 'white'  }}>Edge</h3>
+                </th>
+              </tr>
+            </thead>
+            <tbody style={{ border: '1px solid #ddd' }}>
+              <TestDetailsTableRowEdge
+                testId={props.testId}
+                sample={props.sample}
+                brushType={props.brushType}
+                tester={props.tester}
+                testCase={props.testCase}
+                model={props.model}
+              />
+            </tbody>
+          </table>
+        </CustomTabPanel>
+
       {/* Add more CustomTabPanel components for additional tabs as needed */}
     </Box>
   );
 };
 
-export default TestDetailsTableCrRobot;
+export default TestDetailsTableCrCordless;

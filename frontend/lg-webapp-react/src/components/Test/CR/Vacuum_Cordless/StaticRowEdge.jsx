@@ -20,7 +20,7 @@ const StaticRowEdge = ({ row, idx, keys, handleEdit, handleDelete }) => {
 
   return (
   <TableRow key={idx} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-      <TableCell component="th" scope="row" align="center" sx={{ fontSize: '12px', padding: '8px', whiteSpace: 'nowrap' }}>
+      <TableCell component="th" scope="row" align="center" sx={{ fontSize: '8px', padding: '8px', whiteSpace: 'nowrap' }}>
       {row.slug}
     </TableCell>
       <TableCell component="th" scope="row" align={"center"}>

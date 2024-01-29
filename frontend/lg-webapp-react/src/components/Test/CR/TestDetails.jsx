@@ -15,7 +15,7 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import TextField from '@mui/material/TextField';
 import {useParams} from "react-router-dom";
-import axiosInstance from "../../axios";
+import axiosInstance from "../../../axios";
 import TestDetailsTableCRVacuum from "./TestDetailsTableCR_Cordless";
 import TestDetailsBody from "./TestDetailsBody";
 import Button from "@mui/material/Button";
@@ -23,7 +23,7 @@ import TestDetailsAddSample from "./TestDetailsAddSample";
 import AddCircleOutlineTwoToneIcon from '@mui/icons-material/AddCircleOutlineTwoTone';
 import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
 
-import ModalComponent from "../UI/Modal";
+import ModalComponent from "../../UI/Modal";
 
 export default function TestDetails(props) {
 
