@@ -62,51 +62,64 @@ const AnalyticsHome = (props) => {
 
 
     useEffect(() => {
-    const fetchData = async () => {
-        try {
-            let lowerCaseProductCategory = productCategory.toLowerCase();
+        const fetchData = async () => {
+            try {
+                let lowerCaseProductCategory = productCategory.toLowerCase();
 
-            if (lowerCaseProductCategory.includes("cordless")) {
-                lowerCaseProductCategory = "cordless";
+                if (lowerCaseProductCategory.includes("cordless")) {
+                    lowerCaseProductCategory = "cordless";
+                }
+
+                if (lowerCaseProductCategory.includes("robot")) {
+                    lowerCaseProductCategory = "robot";
+                }
+
+                const response = await fetch(`/test-measures-${lowerCaseProductCategory}.json`);
+                const jsonData = await response.json();
+                const testMeasuresCategory = jsonData[testCategory];
+
+                // Set testMeasures as a whole object
+                setTestMeasures(testMeasuresCategory);
+
+            } catch (error) {
+                console.error('Error fetching data', error);
             }
+        };
 
-            if (lowerCaseProductCategory.includes("robot")) {
-                lowerCaseProductCategory = "robot";
-            }
+        fetchData();
+    }, [testCategory]);
 
-            const response = await fetch(`/test-measures-${lowerCaseProductCategory}.json`);
-            const jsonData = await response.json();
-            const testMeasuresCategory = jsonData[testCategory];
 
-            // Set testMeasures as a whole object
-            setTestMeasures(testMeasuresCategory);
+    const flattenData = (data) => {
+  // Group data by slug
+  const groupedBySlug = data.reduce((acc, row) => {
+    const { slug, test_target, test_group, value } = row;
 
-            // Extract keys from testMeasuresCategory for targetKeys
-            const extractedTargetKeys = Object.keys(testMeasuresCategory);
-            setTargetKeys(extractedTargetKeys);
+    // Create a unique key for each slug
+    const key = `${slug}-${test_target}-${test_group}`;
 
-            // Assuming the first key in testMeasuresCategory is present
-            // You can modify this according to your data structure
-            const firstKey = extractedTargetKeys[0];
-             if (firstKey) {
-                // Extract keys from the first key's value for measureKeys
-                const valueKeys = Object.keys(testMeasuresCategory[firstKey]);
+    // Initialize an array for each unique key if it doesn't exist
+    acc[key] = acc[key] || [];
 
-                // Check if the keys are numeric indices or string keys
-                const areNumericIndices = valueKeys.every(key => /^\d+$/.test(key));
+    // Push the row to the array for the current key
+    acc[key].push({
+      category: slug,
+      subgroup: `${test_target}-${test_group}`,
+      value,
+      units: row.units,
+    });
 
-                // If they are numeric indices, convert them to strings
-                const finalMeasureKeys = areNumericIndices ? valueKeys.map(String) : valueKeys;
+    return acc;
+  }, {});
 
-                setMeasureKeys(finalMeasureKeys);
-            }
-        } catch (error) {
-            console.error('Error fetching data', error);
-        }
-    };
+  // Flatten the grouped data
+  const flattenedData = Object.values(groupedBySlug).flatMap((group) => group);
 
-    fetchData();
-}, [testCategory]);
+  return flattenedData;
+};
+
+const flattenedData = flattenData(testData);
+
 
     console.log('targetKeys', targetKeys);
     console.log('measureKeys', measureKeys);
@@ -129,7 +142,7 @@ const AnalyticsHome = (props) => {
             analytics home
             <main>
                 <BoxPlotChart
-                    data={testData}
+                      data={flattenedData}
 
                 />
             </main>

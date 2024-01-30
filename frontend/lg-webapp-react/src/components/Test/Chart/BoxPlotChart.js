@@ -2,23 +2,31 @@
 import React from 'react';
 import { ResponsiveBoxPlot } from '@nivo/boxplot';
 
-const BoxPlotChart = ({ data }) => (
-  <div style={{ height: '400px' }}>
-    <ResponsiveBoxPlot
-      data={data}
-      margin={{ top: 60, right: 140, bottom: 60, left: 60 }}
-      minValue={0}
-      maxValue={10}
-      subGroupBy="subgroup"
-      padding={0.12}
-      enableGridX={true}
-      axisTop={{
-        tickSize: 5,
-        tickPadding: 5,
-        tickRotation: 0,
-        legend: '',
-        legendOffset: 36
-      }}
+const BoxPlotChart = ({ data }) => {
+
+
+  // const flattenedData = flattenData(data);
+
+
+
+   return (
+    <div style={{ height: '400px' }}>
+      <ResponsiveBoxPlot
+        data={data}
+        margin={{ top: 60, right: 140, bottom: 60, left: 60 }}
+        minValue={0}
+        maxValue={100} // Adjust the maxValue as per your data
+        groupBy="subgroup" // Group by subgroup for multiple box plots
+        subGroupBy="category" // Group by category for each box plot
+        padding={0.12}
+        enableGridX={true}
+        axisTop={{
+          tickSize: 5,
+          tickPadding: 5,
+          tickRotation: 0,
+          legend: '',
+          legendOffset: 36
+        }}
       axisRight={{
         tickSize: 5,
         tickPadding: 5,
@@ -86,6 +94,7 @@ const BoxPlotChart = ({ data }) => (
       ]}
     />
   </div>
-);
+  );
+};
 
 export default BoxPlotChart;
