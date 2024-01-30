@@ -51,7 +51,8 @@ urlpatterns = [
 
     # Test URLs
     path('tests/', TestList.as_view(), name='test_listtest'),
-    path('tests/<int:pk>/', TestDetailVacuumList.as_view(), name='test_listtestdetail'),
+    path('tests/testdetails/', TestDetailVacuumList.as_view(), name='test_listtestdetails'),
+    # path('test/<int:pk>/', TestDetailVacuumList.as_view(), name='test_listtestdetail'),
 
     # Test Admin URLs
     path('admin/tests/create/', CreateTest.as_view(), name='test_createtest'),

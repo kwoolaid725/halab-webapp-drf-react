@@ -37,12 +37,12 @@ function TestDetailsTableRowEdge(props){
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('/test-measures.json');
+        const response = await fetch('/test-measures-cordless.json');
         const jsonData = await response.json();
 
         // console.log('Fetched Data:', jsonData); // Log the fetched data
 
-        const edgeData = jsonData["Edge"];
+        const edgeData = jsonData["CR"]["Edge"];
         // console.log('Edge Data:', edgeData); // Log the specific "Carpet" data
 
         setTestMeasures(edgeData);

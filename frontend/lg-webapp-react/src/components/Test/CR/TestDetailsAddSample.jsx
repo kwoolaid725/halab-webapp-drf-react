@@ -93,9 +93,9 @@ export default function TestDetailsAddSample (props) {
   useEffect(() => {
       const fetchData = async () => {
         try {
-          const response = await fetch('/test-measures.json');
+          const response = await fetch('/test-measures-cordless.json');
           const jsonData = await response.json();
-          const bareData = jsonData["Bare"];
+          const bareData = jsonData["CR"]["Bare"];
           // console.log('Bare Data:', bareData)
           setTestMeasures(bareData);
         } catch (error) {
