@@ -72,7 +72,6 @@ function Routes() {
 		{ path: '/admin/samples/edit/:id', element: <SampleEdit /> },
 
 		{ path: '/tests', element: <TestLists /> },
-		{ path: '/tests/analytics', element: <AnalyticsHome />},
 		{ path: '/test/:id', element: <TestDetails /> },
 
 		{ path: '/admin/tests', element: <AdminTestsList /> },
@@ -86,6 +85,9 @@ function Routes() {
 		{ path: '/admin/tests/testtable', element: <TestDetailsTable /> },
 		{ path: '/admin/tests/testrow', element: <TestDetailsTableRow /> },
 		{ path: '/admin/tests/testrowrobot', element: <TestDetailsTableRowRobotBare /> },
+
+
+		{ path: '/analytics/', element: <AnalyticsHome />},
 
 
 		{ path: '/register', element: <Register /> },

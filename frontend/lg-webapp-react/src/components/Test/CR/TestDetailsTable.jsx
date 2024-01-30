@@ -7,7 +7,6 @@ import TestDetailsTableRow from "./TestDetailsTableRow";
 import TestDetailsTableRowBare from "./Vacuum_Cordless/TestDetailsTableRowBare";
 
 const TestDetailsTable = (props) => {
-  const [testMeasures, setTestMeasures] = useState(null);
   const [fetchedRows, setFetchedRows] = useState([]);
   const [rows, setRows] = useState();
 
@@ -17,16 +16,6 @@ const TestDetailsTable = (props) => {
     setSelectedComponent(componentName);
   };
 
-  useEffect(() => {
-    fetch('/test-measures.json')
-      .then((response) => response.json())
-      .then((jsonData) => {
-        setTestMeasures(jsonData);
-      })
-      .catch((error) => {
-        console.error('Error fetching data', error);
-      });
-  }, []);
 
   useEffect(() => {
     if (props.testId) {

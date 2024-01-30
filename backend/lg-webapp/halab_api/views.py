@@ -1,12 +1,16 @@
 from rest_framework import generics
-from ..halab.models import Category, Brand, Product,Post, Sample, Test, TestDetailVacuum, CrProductData, VocReviews
-from .serializers import ProductSerializer, BrandSerializer, PostSerializer, SampleSerializer, CategorySerializer, TestSerializer, TestDetailVacuumSerializer
-from rest_framework.permissions import IsAuthenticated, IsAdminUser, DjangoModelPermissions, BasePermission, SAFE_METHODS, IsAuthenticatedOrReadOnly, DjangoModelPermissionsOrAnonReadOnly
+from ..halab.models import Category, Brand, Product, Post, Sample, Test, TestDetailVacuum, CrProductData, VocReviews
+from .serializers import ProductSerializer, BrandSerializer, PostSerializer, SampleSerializer, CategorySerializer, \
+    TestSerializer, TestDetailVacuumSerializer
+from rest_framework.permissions import IsAuthenticated, IsAdminUser, DjangoModelPermissions, BasePermission, \
+    SAFE_METHODS, IsAuthenticatedOrReadOnly, DjangoModelPermissionsOrAnonReadOnly
 from rest_framework import viewsets, filters, generics, permissions
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
+from django.db.models import Q
+
 
 class PostUserWritePermission(BasePermission):
     # permission_classes = [DjangoModelPermissions]
@@ -14,7 +18,6 @@ class PostUserWritePermission(BasePermission):
     message = 'Editing posts is restricted to the author only.'
 
     def has_object_permission(self, request, view, obj):
-
         if request.method in SAFE_METHODS:
             return True
 
@@ -22,7 +25,6 @@ class PostUserWritePermission(BasePermission):
 
 
 class CategoryList(generics.ListCreateAPIView):
-
     # queryset = Category.objects.all()
     serializer_class = CategorySerializer
 
@@ -32,7 +34,6 @@ class CategoryList(generics.ListCreateAPIView):
 
         if name:
             queryset = queryset.filter(name=name)
-
 
         return queryset
 
@@ -47,6 +48,7 @@ class PostList(generics.ListAPIView):
         # return Post.objects.filter(author=user)
         return Post.objects.all()
 
+
 # class PostDetail(generics.RetrieveAPIView):
 #    serializer_class = PostSerializer
 #    lookup_field = 'slug'
@@ -57,7 +59,6 @@ class PostList(generics.ListAPIView):
 #
 #         return Post.objects.all()
 class PostDetail(generics.RetrieveAPIView):
-
     serializer_class = PostSerializer
 
     def get_object(self, queryset=None, **kwargs):
@@ -67,7 +68,6 @@ class PostDetail(generics.RetrieveAPIView):
 
 # search post
 class PostListDetailfilter(generics.ListAPIView):
-
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     filter_backends = [filters.SearchFilter]
@@ -78,6 +78,7 @@ class PostListDetailfilter(generics.ListAPIView):
     # '@' full-text search (currently only supported Django's PostgreSQL backend).
     # '$' regex search.
 
+
 # Post Admin
 
 # class CreatePost(generics.CreateAPIView):
@@ -85,12 +86,14 @@ class PostListDetailfilter(generics.ListAPIView):
 #     queryset = Post.objects.all()
 #     serializer_class = PostSerializer
 
-    # def perform_create(self, serializer):
-    #     serializer.save(author=self.request.user)
+# def perform_create(self, serializer):
+#     serializer.save(author=self.request.user)
 
 class CreatePost(APIView):
     # permission_classes = [permissions.IsAuthenticated]
-    parser_classes = [MultiPartParser, FormParser]  # you typically want to use both in order to fully support all possible client upload scenarios.
+    parser_classes = [MultiPartParser,
+                      FormParser]  # you typically want to use both in order to fully support all possible client upload scenarios.
+
     def post(self, request, format=None):
         print(request.data)
         serializer = PostSerializer(data=request.data)
@@ -99,21 +102,24 @@ class CreatePost(APIView):
             return Response(serializer.data, status=200)
         else:
             return Response(serializer.errors, status=400)
+
+
 class AdminPostDetail(generics.RetrieveAPIView):
     # permission_classes = [permissions.IsAuthenticated]
     queryset = Post.objects.all()
     serializer_class = PostSerializer
+
 
 class EditPost(generics.UpdateAPIView):
     # permission_classes = [permissions.IsAuthenticated]
     queryset = Post.objects.all()
     serializer_class = PostSerializer
 
+
 class DeletePost(generics.DestroyAPIView):
     # permission_classes = [permissions.IsAuthenticated]
     queryset = Post.objects.all()
     serializer_class = PostSerializer
-
 
 
 # class PostList(viewsets.ModelViewSet):
@@ -128,12 +134,11 @@ class DeletePost(generics.DestroyAPIView):
 #         return Post.objects.all()
 
 
-
-
 class BrandList(generics.ListCreateAPIView):
     queryset = Brand.objects.all()
     serializer_class = BrandSerializer
     pass
+
 
 class BrandDetail(generics.RetrieveUpdateDestroyAPIView):
     pass
@@ -164,7 +169,6 @@ class ProductList(generics.ListAPIView):
 
 
 class ProductDetail(generics.RetrieveAPIView):
-
     serializer_class = ProductSerializer
 
     def get_object(self, queryset=None, **kwargs):
@@ -172,12 +176,13 @@ class ProductDetail(generics.RetrieveAPIView):
         return get_object_or_404(Product, slug=item)
 
 
-
 # Product Admin
 
 class CreateProduct(APIView):
     # permission_classes = [permissions.IsAuthenticated]
-    parser_classes = [MultiPartParser, FormParser]  # you typically want to use both in order to fully support all possible client upload scenarios.
+    parser_classes = [MultiPartParser,
+                      FormParser]  # you typically want to use both in order to fully support all possible client upload scenarios.
+
     def post(self, request, format=None):
         print(request.data)
         serializer = ProductSerializer(data=request.data)
@@ -186,15 +191,19 @@ class CreateProduct(APIView):
             return Response(serializer.data, status=200)
         else:
             return Response(serializer.errors, status=400)
+
+
 class AdminProductDetail(generics.RetrieveAPIView):
     # permission_classes = [permissions.IsAuthenticated]
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
 
+
 class EditProduct(generics.UpdateAPIView):
     # permission_classes = [permissions.IsAuthenticated]
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+
 
 class DeleteProduct(generics.DestroyAPIView):
     # permission_classes = [permissions.IsAuthenticated]
@@ -204,7 +213,6 @@ class DeleteProduct(generics.DestroyAPIView):
 
 # search post
 class ProductListDetailfilter(generics.ListAPIView):
-
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     filter_backends = [filters.SearchFilter]
@@ -218,7 +226,6 @@ class ProductListDetailfilter(generics.ListAPIView):
 
         if category is not None:
             queryset = queryset.filter(category=category)
-
 
         return queryset
     # '^' starts-with search.
@@ -240,7 +247,6 @@ class SampleList(generics.ListCreateAPIView):
         product = self.request.query_params.get('product', None)
         inv_no = self.request.query_params.get('inv_no', None)
 
-
         if product is not None:
             queryset = queryset.filter(product=product)
 
@@ -248,6 +254,7 @@ class SampleList(generics.ListCreateAPIView):
             queryset = queryset.filter(inv_no=inv_no)
 
         return queryset
+
 
 class CreateSample(generics.CreateAPIView):
     # permission_classes = [permissions.IsAuthenticated]
@@ -260,10 +267,12 @@ class AdminSampleDetail(generics.RetrieveAPIView):
     queryset = Sample.objects.all()
     serializer_class = SampleSerializer
 
+
 class EditSample(generics.UpdateAPIView):
     # permission_classes = [permissions.IsAuthenticated]
     queryset = Sample.objects.all()
     serializer_class = SampleSerializer
+
 
 class DeleteSample(generics.DestroyAPIView):
     # permission_classes = [permissions.IsAuthenticated]
@@ -273,9 +282,34 @@ class DeleteSample(generics.DestroyAPIView):
 
 # Test
 class TestList(generics.ListCreateAPIView):
-    queryset = Test.objects.all()
+    # queryset = Test.objects.all()
     serializer_class = TestSerializer
-    pass
+
+    def get_queryset(self):
+        queryset = Test.objects.all()
+        test_category = self.request.query_params.get('test_category')
+        product_category = self.request.query_params.get('product_category')
+        test_status = self.request.query_params.get('test_status')
+        description = self.request.query_params.get('description')
+        created_at = self.request.query_params.get('created_at')
+
+        if test_category:
+            queryset = queryset.filter(test_category=test_category)
+
+        if product_category:
+            queryset = queryset.filter(product_category=product_category)
+
+        if test_status:
+            queryset = queryset.filter(test_status=test_status)
+
+        if description:
+            queryset = queryset.filter(description=description)
+
+        if created_at:
+            queryset = queryset.filter(created_at=created_at)
+
+        return queryset
+
 
 # class CreateTest(APIView):
 #     # permission_classes = [permissions.IsAuthenticated]
@@ -300,21 +334,17 @@ class AdminTestDetail(generics.RetrieveAPIView):
     queryset = Test.objects.all()
     serializer_class = TestSerializer
 
+
 class EditTest(generics.UpdateAPIView):
     # permission_classes = [permissions.IsAuthenticated]
     queryset = Test.objects.all()
     serializer_class = TestSerializer
 
+
 class DeleteTest(generics.DestroyAPIView):
     # permission_classes = [permissions.IsAuthenticated]
     queryset = Test.objects.all()
     serializer_class = TestSerializer
-
-
-class TestDetailVacuumList(generics.ListCreateAPIView):
-    queryset = TestDetailVacuum.objects.all()
-    serializer_class = TestDetailVacuumSerializer
-
 
 
 class TestDetailVacuumCreate(generics.ListCreateAPIView):
@@ -323,6 +353,23 @@ class TestDetailVacuumCreate(generics.ListCreateAPIView):
     serializer_class = TestDetailVacuumSerializer
 
 
+class TestDetailVacuumList(generics.ListCreateAPIView):
+    # queryset = Test.objects.all()
+    serializer_class = TestDetailVacuumSerializer
+
+    def get_queryset(self):
+        queryset = TestDetailVacuum.objects.all()
+
+        test_ids = self.request.query_params.getlist('test')
+
+        if test_ids:
+            # Use Q objects to filter by multiple test IDs
+            query = Q()
+            for test_id in test_ids:
+                query |= Q(test=test_id)
+            queryset = queryset.filter(query)
+
+        return queryset
 class TestDetailVacuumSample(generics.ListCreateAPIView):
     serializer_class = TestDetailVacuumSerializer
 
@@ -367,6 +414,8 @@ class TestDetailVacuumSlug(generics.ListCreateAPIView):
             queryset = queryset.filter(slug=slug)
 
         return queryset
+
+
 class TestDetailVacuumSlugEdit(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = TestDetailVacuumSerializer
 
