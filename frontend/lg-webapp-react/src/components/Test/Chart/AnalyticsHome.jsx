@@ -90,65 +90,87 @@ const AnalyticsHome = (props) => {
     }, [testCategory]);
 
 
-    const flattenData = (data) => {
-  // Group data by slug
-  const groupedBySlug = data.reduce((acc, row) => {
-    const { slug, test_target, test_group, value } = row;
+  const flattenData = (data) => {
+      // Group data by model, sample, and brush_type
+      const groupedData = data.reduce((acc, row) => {
+        const { model, brush_type, sample, test_target, test_group, test_measure, value } = row;
 
-    // Create a unique key for each slug
-    const key = `${slug}-${test_target}-${test_group}`;
+        // Create a unique key for each combination of model, sample, and brush_type
+        const key = `${model}-${sample}-${brush_type}`;
 
-    // Initialize an array for each unique key if it doesn't exist
-    acc[key] = acc[key] || [];
+        // Initialize an array for each unique key if it doesn't exist
+        acc[key] = acc[key] || [];
 
-    // Push the row to the array for the current key
-    acc[key].push({
-      category: slug,
-      subgroup: `${test_target}-${test_group}`,
-      value,
-      units: row.units,
-    });
+        // Create an array of grouping keys dynamically
+        const groupingKeys = [test_target, test_group, test_measure];
 
-    return acc;
-  }, {});
+        // Create a nested structure based on the array of grouping keys
+        let currentLevel = acc[key];
+        groupingKeys.forEach((groupingKey) => {
+          currentLevel[groupingKey] = currentLevel[groupingKey] || [];
+          currentLevel = currentLevel[groupingKey];
+        });
 
-  // Flatten the grouped data
-  const flattenedData = Object.values(groupedBySlug).flatMap((group) => group);
+        // Push the row to the innermost array
+        currentLevel.push({
+          model,
+          sample,
+          brush_type,
+          test_target,
+          test_group,
+          test_measure,
+          value,
+          units: row.units,
+        });
 
-  return flattenedData;
-};
+        return acc;
+      }, {});
 
-const flattenedData = flattenData(testData);
+      return groupedData;
+    };
+
+    const groupedData = flattenData(testData);
+
+    // console.log('groupedData', groupedData);
 
 
-    console.log('targetKeys', targetKeys);
-    console.log('measureKeys', measureKeys);
 
-    console.log('testIds', testIds);
-    console.log('productCategoryId', productCategoryId);
-    console.log('testMeasures', testMeasures);
-
+    // console.log('targetKeys', targetKeys);
+    // console.log('measureKeys', measureKeys);
+    //
+    // console.log('testIds', testIds);
+    // console.log('productCategoryId', productCategoryId);
+    // console.log('testMeasures', testMeasures);
+    //
+    //
 
     // x-axis: model
     // select test_target, test_group, test_measure,
     // y-axis: value (test_measure)
+    ;
+   return (
+  <div className="App">
+    analytics home
+    <main>
+      {testMeasures && typeof testMeasures === 'object' && (
+        <>
+          {/*<pre>{JSON.stringify(groupedData, null, 2)}</pre>*/}
+          {/* Render a BoxPlotChart for each testMeasure */}
+          {Object.keys(testMeasures).map((testMeasure) => (
+            <div key={testMeasure}>
+              <h2>{testMeasure}</h2>
+              {/* Pass relevant data to BoxPlotChart */}
+              <BoxPlotChart
+                  data={groupedData}
+                  testMeasure={testMeasure} />
+            </div>
+          ))}
 
-
-    return (
-        <div className="App">
-            {/*<header className="App-header">*/}
-            {/*  <h1>Nivo Interactive Bar Chart Example</h1>*/}
-            {/*</header>*/}
-            analytics home
-            <main>
-                <BoxPlotChart
-                      data={flattenedData}
-
-                />
-            </main>
-
-        </div>
-    );
+        </>
+      )}
+    </main>
+  </div>
+);
 }
 
 export default AnalyticsHome;
