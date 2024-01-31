@@ -15,6 +15,8 @@ const AnalyticsHome = (props) => {
     const [groupKeys, setGroupKeys] = useState([]);
     const [measureKeys, setMeasureKeys] = useState([]);
 
+    const [selectedTestMeasure, setSelectedTestMeasure] = useState(null);
+
     useEffect(() => {
         axiosInstance(`/categories/?name=${productCategory}`)
             .then(response => {
@@ -90,59 +92,68 @@ const AnalyticsHome = (props) => {
     }, [testCategory]);
 
 
-  const flattenData = (data) => {
-      // Group data by model, sample, and brush_type
-      const groupedData = data.reduce((acc, row) => {
-        const { model, brush_type, sample, test_target, test_group, test_measure, value } = row;
+  // Assuming data is an array of objects like the one you provided
 
-        // Create a unique key for each combination of model, sample, and brush_type
-        const key = `${model}-${sample}-${brush_type}`;
+  const groupedData = testData.reduce((groups, item) => {
+  const key = `${item.test}-${item.test_case}-${item.test_target}-${item.test_group}-${item.model}-${item.sample}-${item.brush_type}`;
+  const subgroupKey = item.test_measure;
 
-        // Initialize an array for each unique key if it doesn't exist
-        acc[key] = acc[key] || [];
-
-        // Create an array of grouping keys dynamically
-        const groupingKeys = [test_target, test_group, test_measure];
-
-        // Create a nested structure based on the array of grouping keys
-        let currentLevel = acc[key];
-        groupingKeys.forEach((groupingKey) => {
-          currentLevel[groupingKey] = currentLevel[groupingKey] || [];
-          currentLevel = currentLevel[groupingKey];
-        });
-
-        // Push the row to the innermost array
-        currentLevel.push({
-          model,
-          sample,
-          brush_type,
-          test_target,
-          test_group,
-          test_measure,
-          value,
-          units: row.units,
-        });
-
-        return acc;
-      }, {});
-
-      return groupedData;
+  if (!groups[key]) {
+    groups[key] = {
+      group: key,
     };
+  }
 
-    const groupedData = flattenData(testData);
+  // Filter based on test_measure containing 'Pickup'
+  if (subgroupKey.includes('Pickup')) {
+    // Check if the subgroup key exists
+    if (!groups[key][subgroupKey]) {
+      groups[key][subgroupKey] = {
+        mu: 0,
+        sd: 0,
+        n: 0,
+        values: [],
+      };
+    }
 
-    // console.log('groupedData', groupedData);
+    const subgroup = groups[key][subgroupKey];
 
+    // Check for duplicate values before adding them
+    if (!subgroup.values.includes(item.value)) {
+      subgroup.values.push(item.value);
+      subgroup.n += 1; // Increment the count
 
+      // Calculate running mean and standard deviation (Welford's method)
+      const delta = item.value - subgroup.mu;
+      subgroup.mu += delta / subgroup.n;
+      const delta2 = item.value - subgroup.mu;
+      subgroup.sd += delta * delta2;
+    }
+  }
 
-    // console.log('targetKeys', targetKeys);
-    // console.log('measureKeys', measureKeys);
-    //
-    // console.log('testIds', testIds);
-    // console.log('productCategoryId', productCategoryId);
-    // console.log('testMeasures', testMeasures);
-    //
-    //
+  return groups;
+}, {});
+
+// The groupedData object now contains the desired format
+console.log(Object.values(groupedData));
+
+const transformedData = Object.values(groupedData).flatMap((group) => {
+  return Object.keys(group)
+    .filter((key) => key !== 'group')
+    .flatMap((subgroupKey) => {
+      const subgroup = group[subgroupKey];
+      return subgroup.values.map((value) => ({
+        group: group.group,
+        subgroup: subgroupKey,
+        mu: subgroup.mu,
+        sd: subgroup.sd,
+        value: value,
+      }));
+    });
+});
+
+console.log(transformedData);
+
 
     // x-axis: model
     // select test_target, test_group, test_measure,
@@ -152,22 +163,27 @@ const AnalyticsHome = (props) => {
   <div className="App">
     analytics home
     <main>
-      {testMeasures && typeof testMeasures === 'object' && (
-        <>
-          {/*<pre>{JSON.stringify(groupedData, null, 2)}</pre>*/}
-          {/* Render a BoxPlotChart for each testMeasure */}
-          {Object.keys(testMeasures).map((testMeasure) => (
-            <div key={testMeasure}>
-              <h2>{testMeasure}</h2>
-              {/* Pass relevant data to BoxPlotChart */}
-              <BoxPlotChart
-                  data={groupedData}
-                  testMeasure={testMeasure} />
-            </div>
-          ))}
+        {/*{testMeasures && typeof testMeasures === 'object' && (*/}
+        {/*  <>*/}
+        {/*    <select onChange={(e) => setSelectedTestMeasure(e.target.value)}>*/}
+        {/*      {Object.keys(testMeasures).map((testMeasure) => (*/}
+        {/*        <option key={testMeasure} value={testMeasure}>*/}
+        {/*          {testMeasure}*/}
+        {/*        </option>*/}
+        {/*      ))}*/}
+        {/*    </select>*/}
 
-        </>
-      )}
+        {/*    {selectedTestMeasure && (*/}
+        {/*      <BoxPlotChart*/}
+        {/*        groupedData={groupedData}*/}
+        {/*        // selectedTestMeasure={selectedTestMeasure}*/}
+        {/*      />*/}
+        {/*    )}*/}
+        {/*  </>*/}
+        {/*)}*/}
+      <BoxPlotChart
+        data={transformedData}
+        />
     </main>
   </div>
 );
