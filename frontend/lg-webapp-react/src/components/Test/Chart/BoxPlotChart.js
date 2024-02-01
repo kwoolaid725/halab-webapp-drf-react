@@ -4,6 +4,12 @@ import { ResponsiveBoxPlot } from '@nivo/boxplot';
 
 const BoxPlotChart = ({ data }) => {
 
+   const formatXAxisTick = tickValue => {
+    // Assuming tickValue is an object with properties 'model' and 'brushType'
+    return `${tickValue.model}-${tickValue.brushType}`;
+  };
+
+
   return (
     <div style={{ height: '400px' }}>
           <ResponsiveBoxPlot
@@ -30,13 +36,22 @@ const BoxPlotChart = ({ data }) => {
               legend: '',
               legendOffset: 0
             }}
+            // axisBottom={{
+            //   tickSize: 5,
+            //   tickPadding: 5,
+            //   tickRotation: 0,
+            //   legend: 'group',
+            //   legendPosition: 'middle',
+            //   legendOffset: 32
+            // }}
             axisBottom={{
               tickSize: 5,
               tickPadding: 5,
               tickRotation: 0,
-              legend: 'group',
+              legend: 'model-sample-brushType',
               legendPosition: 'middle',
-              legendOffset: 32
+              legendOffset: 32,
+              // tickValues: data.map(item => `${item.model}-${item.brushType}`)
             }}
             axisLeft={{
               tickSize: 5,
@@ -88,6 +103,7 @@ const BoxPlotChart = ({ data }) => {
                 ]
               }
             ]}
+            // Custom axis definition
           />
     </div>
   );
