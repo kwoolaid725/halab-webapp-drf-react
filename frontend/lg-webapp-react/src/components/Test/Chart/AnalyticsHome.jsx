@@ -13,16 +13,25 @@ const AnalyticsHome = (props) => {
     const [testMeasures, setTestMeasures] = useState([])
     const [testData, setTestData] = useState([])
     const [uniqueSelections, setUniqueSelections] = useState([])
-    const [selectedModel, setSelectedModel] = useState(null)
-    const [selectedBrushType, setSelectedBrushType] = useState(null)
-    const [selectedSample, setSelectedSample] = useState(null)
+
     const [uniqueTestTargets, setUniqueTestTargets] = useState([])
     const [uniqueTestMeasures, setUniqueTestMeasures] = useState([])
     const [selectedCategory, setSelectedCategory] = useState(null)
     const [selectedSubCategory, setSelectedSubCategory] = useState(null)
     const [selectedMeasure, setSelectedMeasure] = useState(null)
 
+
+    const [modelSelections, setModelSelections] = useState({});
+
     const [selectedModels, setSelectedModels] = useState([])
+
+    const [selectedModel, setSelectedModel] = useState('');
+    const [selectedBrushType, setSelectedBrushType] = useState(null)
+    const [selectedSample, setSelectedSample] = useState(null)
+
+
+    const [filteredBrushTypes, setFilteredBrushTypes] = useState([]);
+    const [filteredSamples, setFilteredSamples] = useState([]);
 
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(null)
@@ -125,112 +134,156 @@ const AnalyticsHome = (props) => {
     useEffect(() => {
         if (testData && testData.length > 0) {
             const uniqueModels = [...new Set(testData.map((item) => item.model))]
-            const uniqueBrushTypes = [...new Set(testData.map((item) => item.brush_type))]
-            const uniqueSamples = [...new Set(testData.map((item) => item.sample))]
+            // const uniqueBrushTypes = [...new Set(testData.map((item) => item.brush_type))]
+            // const uniqueSamples = [...new Set(testData.map((item) => item.sample))]
 
             setUniqueSelections({
                 models: uniqueModels,
-                brushTypes: uniqueBrushTypes,
-                samples: uniqueSamples,
+                // brushTypes: uniqueBrushTypes,
+                // samples: uniqueSamples,
             })
         }
     }, [testData])
 
-    // const handleModelChange = (event) => {
-    //     const selectedModel = event.target.value
-    //
-    //     // Toggle the selection of the model
-    //     setSelectedModels((prevSelectedModels) => {
-    //         if (prevSelectedModels.includes(selectedModel)) {
-    //             // If the model is already selected, remove it
-    //             return prevSelectedModels.filter((model) => model !== selectedModel)
-    //         } else {
-    //             // If the model is not selected, add it
-    //             return [
-    //                 ...prevSelectedModels,
-    //                 selectedModel
-    //             ]
-    //         }
-    //     })
-    //
-    //
-    //     // Filter unique samples and brush types based on the selected model
-    //     const filteredSamples = testData
-    //         .filter((item) => item.model === event.target.value)
-    //         .map((item) => item.sample)
-    //
-    //     const filteredBrushTypes = testData
-    //         .filter((item) => item.model === event.target.value)
-    //         .map((item) => item.brush_type)
-    //
-    //     // Update the state with the filtered samples and brush types
-    //     setUniqueSelections((prevSelections) => ({
-    //         ...prevSelections,
-    //         samples: [...new Set(filteredSamples)],
-    //         brushTypes: [...new Set(filteredBrushTypes)],
-    //     }))
-    // }
 
     const handleModelChange = (event) => {
-        const selectedModel = event.target.value;
+        const newSelectedModel = event.target.value;
 
-        // Toggle the selection of the model
-        setSelectedModels((prevSelectedModels) => {
-            if (prevSelectedModels.includes(selectedModel)) {
-                // If the model is already selected, remove it
-                return prevSelectedModels.filter((model) => model !== selectedModel);
+        // Update the state with the new selected model
+        setSelectedModel(newSelectedModel);
+
+        // Filter unique samples based on the selected model
+        const modelData = testData.filter((item) => item.model === newSelectedModel);
+        const filteredSamples = [...new Set(modelData.map((item) => item.sample))];
+
+        // Get unique brush types based on the selected model and filtered samples
+        const uniqueBrushTypes = getUniqueBrushTypes(modelData, filteredSamples);
+
+        // Update the state with the filtered samples and brush types for the selected model
+        setFilteredSamples(filteredSamples);
+        setFilteredBrushTypes(uniqueBrushTypes);
+    };
+
+    // Function to get unique brush types based on model data and samples
+
+    const getUniqueBrushTypes = (modelData, filteredSamples) => {
+        const uniqueBrushTypes = [];
+
+        filteredSamples.forEach((sample) => {
+            const brushTypesForSample = [...new Set(modelData.filter((item) => item.sample === sample).map((item) => item.brush_type))];
+            uniqueBrushTypes.push({model: modelData[0].model, sample, brushTypes: brushTypesForSample});
+        });
+
+        return uniqueBrushTypes;
+    };
+
+    console.log('modelSelections:', modelSelections);
+    console.log('filteredBrushTypes:', filteredBrushTypes);
+
+    const handleBrushTypeChange = (event) => {
+        setSelectedBrushType(event.target.value);
+    };
+
+    const handleSampleChange = (event) => {
+        setSelectedSample(event.target.value);
+    };
+
+
+    const handleAddSample = () => {
+        // Ensure a model is selected
+        if (!selectedModel) {
+            console.error('Please select a model first.');
+            return;
+        }
+
+        // Ensure a sample is selected
+        if (!selectedSample || !selectedBrushType) {
+            console.error('Please select a sample and brush type first.');
+            return;
+        }
+
+        // Update the state with the new data object
+        setModelSelections((prevModelSelections) => {
+            // Check if the model already exists in the state
+            if (prevModelSelections[selectedModel]) {
+                const existingModelData = {...prevModelSelections[selectedModel]};
+
+                // Check if the sample already exists for the model
+                if (existingModelData.samples && existingModelData.samples[selectedSample]) {
+                    // If it does, update the brushTypes for the sample
+                    existingModelData.samples[selectedSample].brushTypes = [
+                        ...new Set([
+                            ...existingModelData.samples[selectedSample].brushTypes,
+                            selectedBrushType,
+                        ]),
+                    ];
+                } else {
+                    // If the sample doesn't exist, create a new entry for the sample
+                    existingModelData.samples = {
+                        ...existingModelData.samples,
+                        [selectedSample]: {
+                            brushTypes: [selectedBrushType],
+                        },
+                    };
+                }
+
+                // Update the state with the modified model data
+                return {
+                    ...prevModelSelections,
+                    [selectedModel]: existingModelData,
+                };
             } else {
-                // If the model is not selected, add it
-                return [
-                    ...prevSelectedModels,
-                    selectedModel
-                ];
+                // If the model doesn't exist, create a new entry for the model with the sample and brush type
+                return {
+                    ...prevModelSelections,
+                    [selectedModel]: {
+                        samples: {
+                            [selectedSample]: {
+                                brushTypes: [selectedBrushType],
+                            },
+                        },
+                    },
+                };
             }
         });
 
-        // Filter unique samples and brush types based on the selected model
-        const filteredSamples = testData
-            .filter((item) => item.model === event.target.value)
-            .map((item) => item.sample);
+        // Clear selected sample, brush type, and model after adding
+        setSelectedSample('');
+        setSelectedBrushType('');
+        setSelectedModel('');
+    };
 
-        const filteredBrushTypes = testData
-            .filter((item) => item.model === event.target.value)
-            .map((item) => item.brush_type);
+    // Function to render model selections
+    const renderModelSelections = () => {
+        return (
+            <div>
+                <h2>Model Selections:</h2>
+                <ul>
+                    {Object.entries(modelSelections).map(([model, modelData]) => (
+                        <li key={model}>
+                            <strong>{model}</strong>
+                            <ul>
+                                {Object.entries(modelData.samples).map(([sample, sampleData]) => (
+                                    <li key={sample}>
+                                        <strong>Sample: {sample}</strong>
+                                        <ul>
+                                            {sampleData.brushTypes.map((brushType, index) => (
+                                                <li key={index}>{brushType}</li>
+                                            ))}
+                                        </ul>
+                                    </li>
+                                ))}
+                            </ul>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        );
+    };
 
-        // Update the state with the filtered samples and brush types
-        setUniqueSelections((prevSelections) => ({
-            ...prevSelections,
-            samples: [...new Set(filteredSamples)],
-            brushTypes: [...new Set(filteredBrushTypes)],
-        }));
-
-        // Set selected brush type and sample based on the selected model
-        setSelectedBrushType(filteredBrushTypes[0] || ''); // Assuming only one brush type per model
-        setSelectedSample(filteredSamples[0] || ''); // Assuming only one sample per model
-    }
 
 
-    const handleBrushTypeChange = (event) => {
-        setSelectedBrushType(event.target.value)
-    }
 
-    const handleSampleChange = (event) => {
-        setSelectedSample(event.target.value)
-    }
-
-    const generateSelectionPanel = (label, options, onChangeHandler) => (
-        <div>
-            <label>{`Select ${label}:`}</label>
-            <select onChange={onChangeHandler}>
-                <option value="">All {label}</option>
-                {options && options.map((option) => (
-                    <option key={option} value={option}>
-                        {option}
-                    </option>
-                ))}
-            </select>
-        </div>
-    )
 
     const groupedData = testData.reduce((groups, item) => {
         let key
@@ -276,45 +329,6 @@ const AnalyticsHome = (props) => {
     }, {})
 
     console.log(Object.values(groupedData))
-
-    // const filterChartData = () => {
-    //     const filteredData = Object.values(groupedData).flatMap((group) => {
-    //         return Object.keys(group)
-    //             .filter((key) => key !== 'group')
-    //             .flatMap((subgroupKey) => {
-    //                 const subgroup = group[subgroupKey]
-    //
-    //                 return subgroup.values.map((value) => ({
-    //                     group: group.group,
-    //                     subgroup: subgroupKey,
-    //                     mu: subgroup.mu,
-    //                     sd: subgroup.sd,
-    //                     value: value,
-    //                     testId: subgroup.testId,
-    //                     testCase: subgroup.testCase,
-    //                     testTarget: subgroup.testTarget,
-    //                     testGroup: subgroup.testGroup,
-    //                     model: subgroup.model,
-    //                     sample: subgroup.sample,
-    //                     brushType: subgroup.brushType,
-    //                 }))
-    //             })
-    //     }).filter((item) => (
-    //         (!selectedModels.length || selectedModels.includes(item.model)) &&
-    //         (!selectedBrushType || item.brushType === selectedBrushType) &&
-    //         (!selectedSample || item.sample === selectedSample)
-    //     ))
-    //
-    //     // Render your BoxPlotChart based on filtered data
-    //     // return <BoxPlotChart data={filteredData}/>
-    //
-    //     return (
-    //
-    //         <BoxPlotChart data={filteredData}/>
-    //
-    //     );
-    //
-    // }
 
     // Extract unique combinations of model, sample, and brush type
     const filterChartData = () => {
@@ -552,24 +566,12 @@ const AnalyticsHome = (props) => {
             {/*  {generateSelectionPanel('Model', uniqueSelections.models, handleModelChange)}*/}
 
             <div>
-                <label>Select Models:</label>
-                <select multiple onChange={handleModelChange} value={selectedModels}>
+                <label>Select Model:</label>
+                <select onChange={handleModelChange} value={selectedModel}>
+                    <option value="">Select Model</option>
                     {uniqueSelections && uniqueSelections.models && uniqueSelections.models.map((model) => (
                         <option key={model} value={model}>
                             {model}
-                        </option>
-                    ))}
-                </select>
-            </div>
-
-
-            <div>
-                <label>Select Brush Type:</label>
-                <select onChange={handleBrushTypeChange} value={selectedBrushType}>
-                    <option value="">All Brush Types</option>
-                    {uniqueSelections && uniqueSelections.brushTypes && uniqueSelections.brushTypes.map((brushType) => (
-                        <option key={brushType} value={brushType}>
-                            {brushType}
                         </option>
                     ))}
                 </select>
@@ -579,7 +581,7 @@ const AnalyticsHome = (props) => {
                 <label>Select Sample:</label>
                 <select onChange={handleSampleChange} value={selectedSample}>
                     <option value="">All Samples</option>
-                    {uniqueSelections && uniqueSelections.samples && uniqueSelections.samples.map((sample) => (
+                    {filteredSamples.map((sample) => (
                         <option key={sample} value={sample}>
                             {sample}
                         </option>
@@ -587,19 +589,32 @@ const AnalyticsHome = (props) => {
                 </select>
             </div>
 
-            <button onClick={filterChartData}>Apply Filters</button>
-
             <div>
-                <label>Selected Models:</label>
-                <ul>
-                    {selectedModels.map((model) => (
-                        <li key={model}>
-                            {model} - {selectedBrushType || ''} - {selectedSample || ''}
-                        </li>
-                    ))}
-                </ul>
+                <label>Select Brush Type:</label>
+                <select onChange={handleBrushTypeChange} value={selectedBrushType}>
+                    <option value="">All Brush Types</option>
+                    {filteredBrushTypes
+                        .filter((brushTypeData) => brushTypeData.model === selectedModel && brushTypeData.sample === selectedSample)
+                        .map((brushTypeData) => (
+                            // Map over brushTypes array to generate individual options
+                            brushTypeData.brushTypes.map((brushType) => (
+                                <option key={brushType} value={brushType}>
+                                    {brushType}
+                                </option>
+                            ))
+                        ))}
+                </select>
             </div>
 
+            >
+
+            <button onClick={filterChartData}>Apply Filters</button>
+
+
+            <button onClick={handleAddSample}>Add Sample</button>
+
+             {/* Render model selections */}
+            {Object.keys(modelSelections).length > 0 && renderModelSelections()}
             {/* Render your BoxPlotChart based on filtered data */}
             {selectedModel && selectedBrushType && selectedSample && filterChartData()}
             {/*</div>*/}
