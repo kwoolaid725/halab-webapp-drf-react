@@ -4,12 +4,13 @@ import { ResponsiveBoxPlot } from '@nivo/boxplot'
 
 const BoxPlotChart = ({ data }) => {
 
+
   return (
     <div style={{ height: '400px' }}>
       <ResponsiveBoxPlot
         data={data}
         margin={{ top: 60, right: 140, bottom: 60, left: 60 }}
-        minValue={0}
+        minValue= 'auto'
         maxValue={100} // Adjust the maxValue as per your data
         groupBy="group" // Group by subgroup for multiple box plots
         groupMode="grouped"
