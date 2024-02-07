@@ -1,0 +1,18 @@
+.mantine-Tabs-tab[data-active="true"] {
+    background-color: lightgoldenrodyellow;
+    font-size: 25px;
+    font-weight: bold;
+}
+.mantine-Tabs-tab {
+    color: black;
+    font-size: 22px;
+    font-weight: normal;
+}
+.accordion-control-header {
+    font-size: 22px;
+    font-weight: bold;
+
+}
+.multiselect-input{
+    font-size: 20px;
+}

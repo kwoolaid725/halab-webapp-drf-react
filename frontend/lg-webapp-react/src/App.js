@@ -45,6 +45,7 @@ import TestDetailsTable from './components/Test/CR/TestDetailsTable'
 import TestDetails from './components/Test/CR/TestDetails'
 import TestDetailsTableRowRobotBare from './components/Test/CR/Vacuum_Robot/TestDetailsTableRow_RobotBare'
 import AnalyticsHome from './components/Test/Chart/AnalyticsHome'
+import DashAppLink  from "./components/Test/Chart/DashPlotly";
 
 
 function Routes() {
@@ -88,6 +89,7 @@ function Routes() {
 
 
 		{ path: '/analytics/', element: <AnalyticsHome />},
+		{ path: '/Dash/', element: <DashAppLink />},
 
 
 		{ path: '/register', element: <Register /> },
