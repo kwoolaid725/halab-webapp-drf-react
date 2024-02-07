@@ -682,7 +682,7 @@ console.log('filteredChartData:', filteredChartData);
         </select>
       </div>
 
-      >
+
 
       {/*<button onClick={filterChartData}>Apply Filters</button>*/}
 
