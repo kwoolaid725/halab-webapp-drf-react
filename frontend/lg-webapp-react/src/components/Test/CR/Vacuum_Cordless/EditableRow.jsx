@@ -126,7 +126,7 @@ const EditableRow = ({
       {keys.map((key, index) => (
         <TableCell key={index} align={"center"}>
 
-        {["Pre-Wt.", "Post-Wt."].includes(key) ? (
+        {["Pre-Wt.", "Post-Wt.", "RT", "RH"].includes(key) ? (
             <input
                 type="text"
                 value={row.values[key]?.value || ''}

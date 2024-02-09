@@ -101,6 +101,14 @@
         "Pickup": {
           "value": "",
           "units": "%"
+        },
+        "RT": {
+          "value": "",
+          "units": "F"
+        },
+         "RH": {
+          "value": "",
+          "units": "%"
         }
       }
     },

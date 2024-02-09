@@ -68,7 +68,7 @@ bare_df = bare_df[bare_df['TEST_MEASURE'] == 'Pickup']
 # carpet
 carpet_df = cordless_df[cordless_df['TEST_TARGET'] == 'Carpet']
 # carpet_df = carpet_df[carpet_df['TEST_MEASURE'].isin(['pickup', 'r_temp', 'r_humidity'])]
-carpet_df = carpet_df[carpet_df['TEST_MEASURE'].isin(['Pickup', 9, 8])]
+carpet_df = carpet_df[carpet_df['TEST_MEASURE'].isin(['Pickup', 'RT', 'RH'])]
 
 
 # edge
