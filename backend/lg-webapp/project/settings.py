@@ -178,7 +178,7 @@ CORS_ALLOWED_ORIGINS = [
 # CORS_ALLOW_ALL_ORIGINS = True
 
 # Custom users model
-AUTH_USER_MODEL = "users.NewUser"
+AUTH_USER_MODEL = "users.Users"
 
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
@@ -196,6 +196,7 @@ SIMPLE_JWT = {
     'AUDIENCE': None,
     'ISSUER': None,
 
+    # 'AUTH_HEADER_TYPES': ('Bearer', 'JWT'),
     'AUTH_HEADER_TYPES': ('Bearer', 'JWT'),
     'USER_ID_FIELD': 'id',
     'USER_ID_CLAIM': 'user_id',

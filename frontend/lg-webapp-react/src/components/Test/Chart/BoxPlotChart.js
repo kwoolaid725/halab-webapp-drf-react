@@ -25,13 +25,13 @@ const BoxPlotChart = ({ data }) => {
       <div style={{ position: 'relative', width: '100%', height: '80%' }}>
         <ResponsiveBoxPlot
           data={data}
-          margin={{ top: 40, right: 200, bottom: 80, left: 80 }}
+          margin={{ top: 40, right: 300, bottom: 80, left: 80 }}
           minValue="auto"
           maxValue="auto"// Adjust the maxValue as per your data
-          groupBy="model" // Group by subgroup for multiple box plots
-          // groupMode="grouped"
-          subGroupBy="group"
-          subGroupMode="grouped"
+          groupBy="group" // Group by subgroup for multiple box plots
+          groupMode="grouped"
+          subGroupBy="subgroup"
+          // subGroupMode="grouped"
           padding={0.3}
           enableGridX={true}
 
