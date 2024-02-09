@@ -178,7 +178,7 @@ CORS_ALLOWED_ORIGINS = [
 # CORS_ALLOW_ALL_ORIGINS = True
 
 # Custom users model
-AUTH_USER_MODEL = "users.Users"
+AUTH_USER_MODEL = "users.CustomUser"
 
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

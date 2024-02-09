@@ -1,12 +1,12 @@
 from django.contrib import admin
-from .models import Users
+from .models import CustomUser
 from django.contrib.auth.admin import UserAdmin
 from django.forms import TextInput, Textarea, CharField
 from django.db import models
 
 
 class UserAdminConfig(UserAdmin):
-    model = Users
+    model = CustomUser
     search_fields = ('email', 'user_name', 'first_name', 'last_name')
     list_filter = ('email', 'user_name', 'first_name', 'last_name','is_active', 'is_engineer', 'is_staff')
     ordering = ('-start_date',)
@@ -28,4 +28,4 @@ class UserAdminConfig(UserAdmin):
     )
 
 
-admin.site.register(Users, UserAdminConfig)
+admin.site.register(CustomUser, UserAdminConfig)
