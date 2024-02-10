@@ -16,21 +16,22 @@ import Button from '@mui/material/Button';
 
 
 const convertToAMPM = (timestamp) => {
-      const date = new Date(timestamp);
 
-      const options = {
+    const date = new Date(timestamp);
+
+    const options = {
         year: 'numeric',
         month: 'numeric',
         day: 'numeric',
         hour: 'numeric',
         minute: 'numeric',
         hour12: true
-      };
-
-      // const formattedTime = date.toLocaleTimeString('en-US', options).replace(/:\d{2}\s/, ' ').replace(/^0/, '');
-      return date.toLocaleDateString('en-US', options)
     };
 
+    // Check if date is null before formatting
+    const formattedTime = date ? date.toLocaleDateString('en-US', options) : null; // Return null if date is null
+    return formattedTime;
+};
 const Tests = (props) => {
 	const { tests } = props;
 
@@ -77,7 +78,7 @@ const Tests = (props) => {
 											<TableCell align="left">{test.test_status}</TableCell>
 											<TableCell align="left">{convertToAMPM(test.created_at.split('.')[0])}</TableCell>
 											<TableCell align="left">{test.due_date}</TableCell>
-											<TableCell align="left">{convertToAMPM(test.completion_date.split('.')[0])}</TableCell>
+											<TableCell align="left">{test.completion_date ? convertToAMPM(test.completion_date.split('.')[0]) : ''}</TableCell>
 											<TableCell align="left">
 												<a href={test.attachment} download>Download</a>
 											</TableCell>

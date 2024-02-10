@@ -401,10 +401,10 @@ function TestDetailsTableRowCarpet(props){
             formData.append('test_measure', key);
             formData.append('value', value);
             formData.append('units', units);
-            formData.append('test', 1);
+            formData.append('test', props.testId);
             formData.append('sample', props.sample);
             formData.append('brush_type', props.brushType);
-            formData.append('tester', 1);
+            // formData.append('tester', 1);
             formData.append('owner', 1);
             formData.append('test_target', editedRow.testTarget);
             formData.append('test_group', editedRow.testGroup);
@@ -461,10 +461,10 @@ function TestDetailsTableRowCarpet(props){
           formData.append('test_measure', key);
           formData.append('value', value);
           formData.append('units', units);
-          formData.append('test', 1);
+          formData.append('test', props.testId);
           formData.append('sample', props.sample);
           formData.append('brush_type', props.brushType);
-          formData.append('tester', 1);
+          // formData.append('tester', 1);
           formData.append('owner', 1);
           formData.append('test_target', editedRow.testTarget);
           formData.append('test_group', editedRow.testGroup);

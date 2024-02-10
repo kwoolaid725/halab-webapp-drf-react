@@ -15,7 +15,8 @@ urlpatterns = [
     path('api/', include('lg-webapp.halab_api.urls', namespace='halab_api')),
     # User management
     path('api/user/', include('lg-webapp.users.urls', namespace='users')),
-    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    # path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    path('api-auth/', include('rest_framework.urls')),
 
     # JWT authentication
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
@@ -33,5 +34,3 @@ urlpatterns = [
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
-

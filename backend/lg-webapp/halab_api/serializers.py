@@ -1,7 +1,10 @@
 from rest_framework import serializers
 from rest_framework.fields import ReadOnlyField
 from ..halab.models import Category, Brand, Product, Post, Sample, Test, TestDetailVacuum
+from ..users.models import CustomUser
 from django.conf import settings
+from django.contrib.auth import get_user_model
+
 
 # is it like schema in fastapi?
 
@@ -82,18 +85,26 @@ class TestSerializer(serializers.ModelSerializer):
 class TestDetailVacuumSerializer(serializers.ModelSerializer):
     test = serializers.IntegerField(source='test.id')
     sample = serializers.CharField(source='sample.inv_no')
+    # tester = serializers.PrimaryKeyRelatedField(queryset=CustomUser.objects.all())
+
     created_at = serializers.DateTimeField(read_only=True)
     last_updated = serializers.DateTimeField(read_only=True)
 
     class Meta:
         model = TestDetailVacuum
-        fields = ('id', 'test', 'tester', 'sample', 'model', 'brush_type', 'test_target', 'test_group',  'test_case', 'slug', 'test_measure', 'run', 'value', 'units', 'remarks', 'owner','created_at','last_updated')
+        fields = ('id', 'test', 'tester', 'sample', 'model', 'brush_type', 'test_target', 'test_group',  'test_case', 'slug', 'test_measure', 'run', 'value', 'units', 'remarks', 'owner', 'created_at', 'last_updated')
 
     def create(self, validated_data):
+        # # Get the logged-in user
+        # user = self.context['request'].user
+
         test_id = validated_data.pop('test')['id']
         test, created = Test.objects.get_or_create(id=test_id)
         sample_id = validated_data.pop('sample')['inv_no']
         sample, created = Sample.objects.get_or_create(inv_no=sample_id)
+
+        # # Assign the logged-in user as the tester
+        # validated_data['tester'] = user
 
         testdetailvacuum = TestDetailVacuum.objects.create(test=test, sample=sample, **validated_data)
         return testdetailvacuum

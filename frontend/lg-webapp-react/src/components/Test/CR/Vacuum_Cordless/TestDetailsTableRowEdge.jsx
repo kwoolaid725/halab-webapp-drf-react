@@ -459,7 +459,7 @@ function TestDetailsTableRowEdge(props){
             formData.append('test_measure', key);
             formData.append('value', value);
             formData.append('units', units);
-            formData.append('test', 1);
+            formData.append('test', props.testId);
             formData.append('sample', props.sample);
             formData.append('brush_type', props.brushType);
             formData.append('tester', 1);
@@ -516,7 +516,7 @@ function TestDetailsTableRowEdge(props){
         formData.append('test_measure', key);
         formData.append('value', value);
         formData.append('units', units);
-        formData.append('test', 1);
+        formData.append('test', props.testId);
         formData.append('sample', props.sample);
         formData.append('brush_type', props.brushType);
         formData.append('tester', 1);

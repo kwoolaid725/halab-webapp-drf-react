@@ -284,6 +284,7 @@ class DeleteSample(generics.DestroyAPIView):
 class TestList(generics.ListCreateAPIView):
     # queryset = Test.objects.all()
     serializer_class = TestSerializer
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         queryset = Test.objects.all()
@@ -347,11 +348,26 @@ class DeleteTest(generics.DestroyAPIView):
     serializer_class = TestSerializer
 
 
+# class TestDetailVacuumCreate(generics.ListCreateAPIView):
+#     queryset = TestDetailVacuum.objects.all()
+#     serializer_class = TestDetailVacuumSerializer
+#     permission_classes = [IsAuthenticated]
+#
+#     def perform_create(self, serializer):
+#         # Set the currently logged-in user as the tester
+#         serializer.save(tester=self.request.user)
+
+
 class TestDetailVacuumCreate(generics.ListCreateAPIView):
-    # permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     queryset = TestDetailVacuum.objects.all()
     serializer_class = TestDetailVacuumSerializer
-
+    #
+    # def perform_create(self, serializer):
+    #     # Get the logged-in user's ID
+    #     tester = self.request.user.id
+    #     # Set the tester field to the logged-in user's ID
+    #     serializer.save(tester=tester)
 
 class TestDetailVacuumList(generics.ListCreateAPIView):
     # queryset = Test.objects.all()
@@ -372,6 +388,7 @@ class TestDetailVacuumList(generics.ListCreateAPIView):
         return queryset
 class TestDetailVacuumSample(generics.ListCreateAPIView):
     serializer_class = TestDetailVacuumSerializer
+    # permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         queryset = TestDetailVacuum.objects.all()
@@ -379,6 +396,7 @@ class TestDetailVacuumSample(generics.ListCreateAPIView):
         brush_type = self.request.query_params.get('brush_type')
         test_case = self.request.query_params.get('test_case')
         test_target = self.request.query_params.get('test_target')
+        slug = self.request.query_params.get('slug')
 
         test = self.kwargs.get('test')
 
@@ -394,10 +412,17 @@ class TestDetailVacuumSample(generics.ListCreateAPIView):
         if test_target:
             queryset = queryset.filter(test_target=test_target)
 
-        if test is not None:
+        if test:
             queryset = queryset.filter(test=test)
 
+        if slug:
+            queryset = queryset.filter(slug=slug)
+
         return queryset
+
+    def perform_create(self, serializer):
+        # Automatically set owner to the id of the logged-in user
+        serializer.save(tester=self.request.user)
 
 
 class TestDetailVacuumSlug(generics.ListCreateAPIView):
