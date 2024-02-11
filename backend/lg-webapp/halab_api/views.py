@@ -348,15 +348,6 @@ class DeleteTest(generics.DestroyAPIView):
     serializer_class = TestSerializer
 
 
-# class TestDetailVacuumCreate(generics.ListCreateAPIView):
-#     queryset = TestDetailVacuum.objects.all()
-#     serializer_class = TestDetailVacuumSerializer
-#     permission_classes = [IsAuthenticated]
-#
-#     def perform_create(self, serializer):
-#         # Set the currently logged-in user as the tester
-#         serializer.save(tester=self.request.user)
-
 
 class TestDetailVacuumCreate(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated]

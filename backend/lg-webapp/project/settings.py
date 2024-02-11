@@ -146,8 +146,10 @@ STATIC_URL = 'static/'
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny',  # Or specify your desired permission classes
+
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication', #
         'rest_framework.authentication.SessionAuthentication',  # Use session authentication if needed
         'rest_framework.authentication.TokenAuthentication',  # Or 'rest_framework_simplejwt.authentication.JWTAuthentication' for JWT
     ],
@@ -195,7 +197,7 @@ SIMPLE_JWT = {
     'ISSUER': None,
 
     # 'AUTH_HEADER_TYPES': ('Bearer', 'JWT'),
-    'AUTH_HEADER_TYPES': ('Bearer', 'JWT'),
+    'AUTH_HEADER_TYPES': ('JWT',),
     'USER_ID_FIELD': 'id',
     'USER_ID_CLAIM': 'user_id',
     'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
