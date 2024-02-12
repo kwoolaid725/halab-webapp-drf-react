@@ -190,6 +190,10 @@ function TestDetailsTableRowBare(props){
   }, [props.testId]);
 
   useEffect(() => {
+    console.log('fetchedRowssssss', fetchedRows)
+  }, [fetchedRows])
+
+  useEffect(() => {
   if (fetchedRows.length > 0) {
     const combinedRows = fetchedRows.reduce((acc, row) => {
       const { slug, test_measure, value, units, ...otherValues } = row;
@@ -235,7 +239,7 @@ function TestDetailsTableRowBare(props){
 
       id: '', // Assign an appropriate ID
       slug: row.slug,
-      tester: row.tester, // Assuming 'tester' exists in fetchedRows
+      tester: row.tester_firstname,// Assuming 'tester' exists in fetchedRows
       testTarget: row.test_target, // Assuming 'testTarget' exists in fetchedRows
       testGroup: row.test_group, // Assuming 'testGroup' exists in fetchedRows
       run: row.run, // Adjust as needed
@@ -254,7 +258,7 @@ function TestDetailsTableRowBare(props){
 }, [fetchedRows]);
 
   useEffect(() => {
-    // console.log('rows', rows);
+    console.log('rowsssssssssss', rows);
   }, [rows]);
 
 
