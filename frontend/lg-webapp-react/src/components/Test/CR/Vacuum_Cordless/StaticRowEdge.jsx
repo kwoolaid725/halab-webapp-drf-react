@@ -23,7 +23,7 @@ const StaticRowEdge = ({ row, idx, keys, handleEdit, handleDelete }) => {
       <TableCell component="th" scope="row" align="center" sx={{ fontSize: '8px', padding: '8px', whiteSpace: 'nowrap' }}>
       {row.slug}
     </TableCell>
-      <TableCell component="th" scope="row" align={"center"}>
+      <TableCell component="th" scope="row" align="left" sx={{ fontSize: '12px'}}>
         {row.tester}
       </TableCell>
       <TableCell component="th" scope="row" align={"center"}>

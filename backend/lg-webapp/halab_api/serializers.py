@@ -21,10 +21,12 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         fields = ('email', 'user_name', 'first_name', 'last_name')
         extra_kwargs = {'password': {'write_only': True}}
 
+
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = "__all__"
+
 
 class PostSerializer(serializers.ModelSerializer):
     class Meta:
@@ -36,6 +38,8 @@ class BrandSerializer(serializers.ModelSerializer):
     class Meta:
         model = Brand
         fields = "__all__"
+
+
 class ProductSerializer(serializers.ModelSerializer):
     brand = serializers.CharField(source='brand.name')
     category = serializers.CharField(source='category.name')
@@ -66,6 +70,7 @@ class SampleSerializer(serializers.ModelSerializer):
         model = Sample
         fields = ('id', 'inv_no', 'product', 'product_stage', 'remarks', 'serial_no', 'owner')
 
+
 class TestSerializer(serializers.ModelSerializer):
     product_category = serializers.CharField(source='product_category.name')
     created_at = serializers.DateTimeField(read_only=True)
@@ -73,7 +78,9 @@ class TestSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Test
-        fields = ('id', 'test_category', 'product_category', 'description', 'test_status', 'created_at','due_date','completion_date',  'remarks', 'owner')
+        fields = ('id', 'test_category', 'product_category', 'description', 'test_status', 'created_at', 'due_date',
+                  'completion_date', 'remarks', 'owner')
+
     #
     def create(self, validated_data):
         category_name = validated_data.pop('product_category')['name']
@@ -82,6 +89,7 @@ class TestSerializer(serializers.ModelSerializer):
         test = Test.objects.create(product_category=category, **validated_data)
         return test
 
+
 class TestDetailVacuumSerializer(serializers.ModelSerializer):
     test = serializers.IntegerField(source='test.id')
     sample = serializers.CharField(source='sample.inv_no')
@@ -89,11 +97,26 @@ class TestDetailVacuumSerializer(serializers.ModelSerializer):
     created_at = serializers.DateTimeField(read_only=True)
     last_updated = serializers.DateTimeField(read_only=True)
 
-    tester_firstname = serializers.CharField(source='tester.first_name', read_only=True)
+    # tester_firstname = serializers.CharField(source='tester.first_name', read_only=True)
+    # tester_lastname= serializers.CharField(source='tester.last_name', read_only=True)
+    tester_name = serializers.SerializerMethodField()
 
     class Meta:
         model = TestDetailVacuum
-        fields = ('id', 'test', 'tester', 'tester_firstname', 'sample', 'model', 'brush_type', 'test_target', 'test_group',  'test_case', 'slug', 'test_measure', 'run', 'value', 'units', 'remarks', 'owner', 'created_at', 'last_updated')
+        fields = (
+        'id', 'test', 'tester', 'tester_name', 'sample', 'model', 'brush_type', 'test_target', 'test_group',
+        'test_case', 'slug', 'test_measure', 'run', 'value', 'units', 'remarks', 'owner', 'created_at', 'last_updated')
+
+    def get_tester_name(self, obj):
+        # Get the tester's first name and last name
+        first_name = obj.tester.first_name if obj.tester else ""
+        last_name = obj.tester.last_name if obj.tester else ""
+
+        # Combine the first initial and last name
+        if first_name:
+            return f"{first_name.capitalize()} {last_name[0].upper()}."
+        else:
+            return f"{last_name}"
 
     def create(self, validated_data):
 
@@ -128,11 +151,9 @@ class TestDetailVacuumSerializer(serializers.ModelSerializer):
         instance.remarks = validated_data.get('remarks', instance.remarks)
         instance.owner = validated_data.get('owner', instance.owner)
 
-
         # Save the instance with updated data
         instance.save()
         return instance
-
 
 # SlugRelatedField is used to represent the related Product model. The queryset argument is required, and should be a queryset that includes all items you might want to refer to. The slug_field is the field on the related object that is used to represent it.
 #

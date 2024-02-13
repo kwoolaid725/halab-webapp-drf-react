@@ -125,7 +125,7 @@ function TestDetailsTableRowCarpet(props){
       const initialRowState = {
         id: '',
         slug: `${props.testId}-Carpet-${props.sample}${props.brushType}${props.testCase}-1`,
-        tester: props.tester,
+        tester: '',
         testTarget: 'Carpet',
         testGroup: '',
         run: 1,
@@ -141,7 +141,7 @@ function TestDetailsTableRowCarpet(props){
       setRows([initialRowState]);
       // console.log('initialRowState', initialRowState);
 
-  }, [props.testId, props.testTarget, props.testGroup, props.tester, props.model]);
+  }, [props.testId, props.testTarget, props.testGroup, props.model]);
 
 
   useEffect(() => {
@@ -238,7 +238,7 @@ function TestDetailsTableRowCarpet(props){
 
       id: '', // Assign an appropriate ID
       slug: row.slug,
-      tester: row.tester, // Assuming 'tester' exists in fetchedRows
+      tester: row.tester_name,
       testTarget: row.test_target, // Assuming 'testTarget' exists in fetchedRows
       testGroup: row.test_group, // Assuming 'testGroup' exists in fetchedRows
       run: row.run, // Adjust as needed
@@ -263,7 +263,7 @@ function TestDetailsTableRowCarpet(props){
   const [newRow, setNewRow] = useState({
     id: '',
     slug: '',
-    tester: props.tester,
+    tester: '',
     testTarget: 'Carpet',
     testGroup: '',
     run: 1,
@@ -318,6 +318,7 @@ function TestDetailsTableRowCarpet(props){
 
     const updatedNewRow = {
         ...newRow,
+        tester:'',
         remarks: '',
         slug: newSlug,
         run: previousRun + 1, // Set the new row's run as the maximum index + 1
@@ -404,7 +405,7 @@ function TestDetailsTableRowCarpet(props){
             formData.append('test', props.testId);
             formData.append('sample', props.sample);
             formData.append('brush_type', props.brushType);
-            // formData.append('tester', 1);
+            formData.append('tester', 1);
             formData.append('owner', 1);
             formData.append('test_target', editedRow.testTarget);
             formData.append('test_group', editedRow.testGroup);
@@ -464,7 +465,7 @@ function TestDetailsTableRowCarpet(props){
           formData.append('test', props.testId);
           formData.append('sample', props.sample);
           formData.append('brush_type', props.brushType);
-          // formData.append('tester', 1);
+          formData.append('tester', 1);
           formData.append('owner', 1);
           formData.append('test_target', editedRow.testTarget);
           formData.append('test_group', editedRow.testGroup);

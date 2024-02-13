@@ -20,6 +20,7 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 
 
+
 function TestDetailsTableRowBare(props){
 
   const [testMeasures, setTestMeasures] = useState(null);
@@ -154,7 +155,7 @@ function TestDetailsTableRowBare(props){
       const initialRowState = {
         id: '',
         slug: `${props.testId}-Bare-${props.sample}${props.brushType}${props.testCase}-1`,
-        tester: props.tester,
+        tester: '',
         testTarget: 'Bare',
         testGroup: '',
         run: 1,
@@ -169,7 +170,7 @@ function TestDetailsTableRowBare(props){
       setRows([initialRowState]);
       // console.log('initialRowState', initialRowState);
 
-  }, [props.testId, props.testTarget, props.testGroup, props.tester, props.model]);
+  }, [props.testId, props.testTarget, props.testGroup, props.model]);
 
 
   useEffect(() => {
@@ -239,7 +240,7 @@ function TestDetailsTableRowBare(props){
 
       id: '', // Assign an appropriate ID
       slug: row.slug,
-      tester: row.tester_firstname,// Assuming 'tester' exists in fetchedRows
+      tester: row.tester_name,// Assuming 'tester' exists in fetchedRows
       testTarget: row.test_target, // Assuming 'testTarget' exists in fetchedRows
       testGroup: row.test_group, // Assuming 'testGroup' exists in fetchedRows
       run: row.run, // Adjust as needed
@@ -265,7 +266,7 @@ function TestDetailsTableRowBare(props){
   const [newRow, setNewRow] = useState({
     id: '',
     slug: '',
-    tester: props.tester,
+    tester: '',
     testTarget: 'Bare',
     testGroup: '',
     run: 1,
@@ -320,6 +321,7 @@ function TestDetailsTableRowBare(props){
 
     const updatedNewRow = {
         ...newRow,
+        tester:'',
         remarks: '',
         slug: newSlug,
         run: previousRun + 1, // Set the new row's run as the maximum index + 1

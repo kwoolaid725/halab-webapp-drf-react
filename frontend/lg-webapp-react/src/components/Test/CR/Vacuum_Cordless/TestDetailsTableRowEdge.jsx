@@ -187,7 +187,7 @@ function TestDetailsTableRowEdge(props){
       const initialRowState = {
         id: '',
         slug: `${props.testId}-Edge-${props.sample}${props.brushType}${props.testCase}-1`,
-        tester: props.tester,
+        tester: '',
         testTarget: 'Edge',
         testGroup: '',
         run: 1,
@@ -297,7 +297,7 @@ function TestDetailsTableRowEdge(props){
 
       id: '', // Assign an appropriate ID
       slug: row.slug,
-      tester: row.tester, // Assuming 'tester' exists in fetchedRows
+      tester: row.tester_name, // Assuming 'tester' exists in fetchedRows
       testTarget: row.test_target, // Assuming 'testTarget' exists in fetchedRows
       testGroup: row.test_group, // Assuming 'testGroup' exists in fetchedRows
       run: row.run, // Adjust as needed
@@ -377,6 +377,7 @@ function TestDetailsTableRowEdge(props){
 
     const updatedNewRow = {
         ...newRow,
+        tester: '',
         remarks: '',
         slug: newSlug,
         run: previousRun + 1, // Set the new row's run as the maximum index + 1

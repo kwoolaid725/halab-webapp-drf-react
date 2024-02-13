@@ -353,6 +353,7 @@ class TestDetailVacuumCreate(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated]
     queryset = TestDetailVacuum.objects.all()
     serializer_class = TestDetailVacuumSerializer
+
     #
     # def perform_create(self, serializer):
     #     # Get the logged-in user's ID
@@ -411,9 +412,7 @@ class TestDetailVacuumSample(generics.ListCreateAPIView):
 
         return queryset
 
-    def perform_create(self, serializer):
-        # Automatically set owner to the id of the logged-in user
-        serializer.save(tester=self.request.user)
+
 
 
 class TestDetailVacuumSlug(generics.ListCreateAPIView):

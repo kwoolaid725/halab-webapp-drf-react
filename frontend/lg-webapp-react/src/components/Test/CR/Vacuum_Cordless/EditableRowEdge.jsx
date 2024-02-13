@@ -93,13 +93,17 @@ const EditableRowEdge = ({
       <TableCell component="th" scope="row" align="center" sx={{ fontSize: '8px'}}>
         {row.slug}
       </TableCell>
-      <TableCell>
-        <input
-          type="text"
-          value={row.tester}
-          onChange={(e) => handleFieldChange('tester', e.target.value)}
-          style={{ width: '30px', fontSize: '14px', textAlign: 'center', backgroundColor: row.tester === '' ? 'lightpink' : ''}}
-        />
+      {/*<TableCell>*/}
+      {/*  <input*/}
+      {/*    type="text"*/}
+      {/*    value={row.tester}*/}
+      {/*    onChange={(e) => handleFieldChange('tester', e.target.value)}*/}
+      {/*    style={{ width: '30px', fontSize: '14px', textAlign: 'center', backgroundColor: row.tester === '' ? 'lightpink' : ''}}*/}
+      {/*  />*/}
+      {/*</TableCell>*/}
+
+      <TableCell component="th" scope="row" align="left" sx={{ fontSize: '12px'}}>
+        {row.tester}
       </TableCell>
 
       <TableCell>
