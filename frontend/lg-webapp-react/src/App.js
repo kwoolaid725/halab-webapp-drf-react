@@ -10,11 +10,13 @@ import {
 import Home from './components/Home/Home';
 import PostLists from './components/Post/PostLists';
 
-import ProductLists from './components/Product/ProductLists'
-import SingleProduct from './components/Product/SingleProduct'
+import ProductLists from './components/Product/ProductLists';
+import SingleProduct from './components/Product/SingleProduct';
+
 import Register from './components/Auth/Register';
-import Login from './components/Auth/Login';
-import Logout from './components/Auth/Logout';
+import SignIn from './components/Auth/Login';
+import SignOut from './components/Auth/Logout';
+
 import Single from './components/Post/Single';
 import Admin from './Admin';
 import AdminProductsList from "./components/Admin/Product/AdminProductsList";
@@ -47,6 +49,8 @@ import TestDetailsTableRowRobotBare from './components/Test/CR/Vacuum_Robot/Test
 import AnalyticsHome from './components/Test/Chart/AnalyticsHome'
 import DashAppLink  from "./components/Test/Chart/DashPlotly";
 
+
+import NavBar from './components/Home/NavBar'
 
 function Routes() {
 	const element = useRoutes([
@@ -93,8 +97,8 @@ function Routes() {
 
 
 		{ path: '/register', element: <Register /> },
-		{ path: '/login', element: <Login /> },
-		{ path: '/logout', element: <Logout /> },
+		{ path: '/login', element: <SignIn /> },
+		{ path: '/logout', element: <SignOut /> },
 		// { path: '/post/:slug', element: <Single /> },
 	]);
 	return element;
@@ -102,7 +106,12 @@ function Routes() {
 
 function App() {
 	return (
+		<>
+
 		<Router>
+			<div>
+				<NavBar />
+			</div>
 			<nav style={{ margin: 10 }}>
 				<Link to="/" style={{ padding: 5 }}>
 					Home
@@ -133,6 +142,9 @@ function App() {
 			</nav>
 			<Routes/>
 		</Router>
+
+
+		</>
 	);
 
 
