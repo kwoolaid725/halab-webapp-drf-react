@@ -1,19 +1,21 @@
-// AuthContext.js
 import React, { createContext, useState, useContext } from 'react';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState(null);
+  const [currentUser, setCurrentUser] = useState(() => {
+    const storedUser = localStorage.getItem('currentUser');
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
 
   const login = (userData) => {
-    // Logic to authenticate the user and set currentUser
     setCurrentUser(userData);
+    localStorage.setItem('currentUser', JSON.stringify(userData));
   };
 
   const logout = () => {
-    // Logic to logout the user and set currentUser to null
     setCurrentUser(null);
+    localStorage.removeItem('currentUser');
   };
 
   return (
