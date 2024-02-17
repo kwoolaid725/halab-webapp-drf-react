@@ -4,3 +4,4 @@
 ![image](https://github.com/kwoolaid725/LG-WebApp-ver2-drf-react/assets/107806433/bd20e150-0767-4fe0-aa98-555bd558ce63)
 ![image](https://github.com/kwoolaid725/LG-WebApp-ver2-drf-react/assets/107806433/55334d0c-8e74-449d-824f-a0846d64917c)
 ![image](https://github.com/kwoolaid725/LG-WebApp-ver2-drf-react/assets/107806433/dfb1505f-ee8b-44b2-8ad6-1545238f9763)
+![image](https://github.com/kwoolaid725/LG-WebApp-ver2-drf-react/assets/107806433/28b214a1-d2ea-4893-83ee-62b8cbcca7d8)
