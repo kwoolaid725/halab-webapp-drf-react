@@ -253,12 +253,12 @@ export default function TestDetailsAddSample(props) {
         e.preventDefault();
         const slug = `${props.testId}-Bare-${sampleValue}${brushTypeValue.customInput || brushTypeValue.value}${testCaseValue.customInput || testCaseValue.value}-1`;
         // Check if any test rows with the same slug already exist
-        const existingTestRows = await axiosInstance.get(`/admin/tests/vacuum/testdetail/?slug=${slug}`);
-        if (existingTestRows.data.length > 0) {
-            alert('Test rows with the same combination already exist. Please check the data and try again');
-            // Handle duplicate slug scenario (e.g., display a message to the user)
-            return;
-        }
+        // const existingTestRows = await axiosInstance.get(`/admin/tests/vacuum/testdetail/?slug=${slug}`);
+        // if (existingTestRows.data.length > 0) {
+        //     alert('Test rows with the same combination already exist. Please check the data and try again');
+        //     // Handle duplicate slug scenario (e.g., display a message to the user)
+        //     return;
+        // }
         const formDataArray = [];
 
 

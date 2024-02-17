@@ -33,7 +33,10 @@ const StaticRow = ({ row, idx, keys, handleEdit, handleDelete }) => {
           <TableCell align={"center"} key={idx}
                      sx={{fontWeight: [ 'Pickup' ].includes(key) ? 'bold' : 'normal',
                         color: ['Pickup'].includes(key) ? 'blue' : 'inherit' }}>
-            {row.values[key]?.value} {row.values[key]?.units}
+            {row.values[key]?.value}
+             <Box sx={{ display: 'inline-block', marginLeft: '1px', fontSize: '12px' }}>
+              {row.values[key]?.units}
+             </Box>
       </TableCell>
         ))}
       <TableCell component="th" scope="row" align={"center"}>

@@ -112,34 +112,34 @@ function App() {
 			<div>
 				<NavBar />
 			</div>
-			<nav style={{ margin: 10 }}>
-				<Link to="/" style={{ padding: 5 }}>
-					Home
-				</Link>
-				<Link to="/posts" style={{ padding: 5 }}>
-					Posts
-				</Link>
-				<Link to="/products" style={{ padding: 5 }}>
-					Products
-				</Link>
-				<Link to="/tests" style={{ padding: 5 }}>
-					Tests
-				</Link>
-				<Link to="/admin" style={{ padding: 5 }}>
-					BG Lab
-				</Link>
-				<Link to="/register" style={{ padding: 5 }}>
-					Register
-				</Link>
-				<Link to="/login" style={{ padding: 5 }}>
-					Login
-				</Link>
-				<Link to="/logout" style={{ padding: 5 }}>
-					Logout
-				</Link>
+			{/*<nav style={{ margin: 10 }}>*/}
+			{/*	<Link to="/" style={{ padding: 5 }}>*/}
+			{/*		Home*/}
+			{/*	</Link>*/}
+			{/*	<Link to="/posts" style={{ padding: 5 }}>*/}
+			{/*		Posts*/}
+			{/*	</Link>*/}
+			{/*	<Link to="/products" style={{ padding: 5 }}>*/}
+			{/*		Products*/}
+			{/*	</Link>*/}
+			{/*	<Link to="/tests" style={{ padding: 5 }}>*/}
+			{/*		Tests*/}
+			{/*	</Link>*/}
+			{/*	<Link to="/admin" style={{ padding: 5 }}>*/}
+			{/*		BG Lab*/}
+			{/*	</Link>*/}
+			{/*	<Link to="/register" style={{ padding: 5 }}>*/}
+			{/*		Register*/}
+			{/*	</Link>*/}
+			{/*	<Link to="/login" style={{ padding: 5 }}>*/}
+			{/*		Login*/}
+			{/*	</Link>*/}
+			{/*	<Link to="/logout" style={{ padding: 5 }}>*/}
+			{/*		Logout*/}
+			{/*	</Link>*/}
 
-				{/*<Navigation/>*/}
-			</nav>
+			{/*	/!*<Navigation/>*!/*/}
+			{/*</nav>*/}
 			<Routes/>
 		</Router>
 

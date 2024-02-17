@@ -13,12 +13,21 @@ import Tooltip from '@mui/material/Tooltip'
 import MenuItem from '@mui/material/MenuItem'
 import AdbIcon from '@mui/icons-material/Adb'
 
+
 import { useAuth } from '../Auth/AuthContext'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import SignIn from '../Auth/Login'
 import SignOut from '../Auth/Logout'
 
-const pages = ['HOME', 'PRODUCTS', 'SAMPLES', 'TEST', 'RESEARCH', 'ADMIN']
+const pages = [
+  { name: 'HOME', link: '/' },
+  { name: 'POSTS', link: '/posts' },
+  { name: 'PRODUCTS', link: '/products' },
+  { name: 'SAMPLES', link: '/samples' },
+  { name: 'TESTS', link: '/tests' },
+  { name: 'RESEARCH', link: '/research' },
+  { name: 'ADMIN', link: '/admin' },
+]
 const settings = ['Profile', 'Account', 'Dashboard']
 
 function NavBar () {
@@ -53,71 +62,74 @@ function NavBar () {
   }
 
   return (
-    <AppBar position="static">
-      <Container maxWidth="xl">
-        <Toolbar disableGutters>
-          {/* Code for logo and responsive menu omitted for brevity */}
+      <AppBar position="static" sx={{ backgroundColor: '#003566' }}>
+        <Container maxWidth="xl">
+          <Toolbar disableGutters>
+            {/* Code for logo and responsive menu omitted for brevity */}
 
-          {/* Render navigation links for different pages */}
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            {pages.map((page) => (
-              <Button
-                key={page}
-                onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: 'white', display: 'block' }}
-              >
-                {page}
-              </Button>
-            ))}
-          </Box>
-
-          {/* Render user information and settings */}
-          {currentUser ? (
-            <>
-              <div>Welcome, {currentUser.first_name} {currentUser.last_name}</div>
-              <Box sx={{ flexGrow: 0, ml: 2 }}>
-                <Tooltip title="Open settings">
-                  <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                    <Avatar alt={currentUser.last_name} src={currentUser.avatar}/>
-                  </IconButton>
-                </Tooltip>
-                <Menu
-                  sx={{ mt: '45px' }}
-                  id="menu-appbar"
-                  anchorEl={anchorElUser} // Only set anchorEl when the user clicks on the avatar icon
-                  anchorOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                  }}
-                  keepMounted
-                  transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                  }}
-                  open={Boolean(anchorElUser)}
-                  onClose={handleCloseUserMenu}
+            {/* Render navigation links for different pages */}
+            <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+              {pages.map((page) => (
+                <Button
+                  key={page.name}
+                  component={Link} // Use Link component from react-router-dom
+                  to={page.link} // Set the destination route
+                  onClick={handleCloseNavMenu}
+                  sx={{ my: 2, color: 'white', display: 'block' }}
                 >
-                  {/* Settings menu items */}
-                  {settings.map((setting) => (
-                    <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                      <Typography textAlign="center">{setting}</Typography>
+                  {page.name}
+                </Button>
+              ))}
+            </Box>
+
+            {/* Render user information and settings */}
+            {currentUser ? (
+              <>
+                <div>Welcome, {currentUser.first_name} {currentUser.last_name}</div>
+                <Box sx={{ flexGrow: 0, ml: 2 }}>
+                  <Tooltip title="Open settings">
+                    <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                      <Avatar alt={currentUser.last_name}
+                              src={currentUser.avatar}/>
+                    </IconButton>
+                  </Tooltip>
+                  <Menu
+                    sx={{ mt: '45px' }}
+                    id="menu-appbar"
+                    anchorEl={anchorElUser} // Only set anchorEl when the user clicks on the avatar icon
+                    anchorOrigin={{
+                      vertical: 'top',
+                      horizontal: 'right',
+                    }}
+                    keepMounted
+                    transformOrigin={{
+                      vertical: 'top',
+                      horizontal: 'right',
+                    }}
+                    open={Boolean(anchorElUser)}
+                    onClose={handleCloseUserMenu}
+                  >
+                    {/* Settings menu items */}
+                    {settings.map((setting) => (
+                      <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                        <Typography textAlign="center">{setting}</Typography>
+                      </MenuItem>
+                    ))}
+                    {/* Logout button */}
+                    <MenuItem onClick={handleLogout}>
+                      <Typography textAlign="center">Logout</Typography>
                     </MenuItem>
-                  ))}
-                  {/* Logout button */}
-                  <MenuItem onClick={handleLogout}>
-                    <Typography textAlign="center">Logout</Typography>
-                  </MenuItem>
-                </Menu>
-              </Box>
-            </>
-          ) : (
-            <Button onClick={handleLogin} sx={{ color: 'inherit' }}>
-              Login
-            </Button>
-          )}
-        </Toolbar>
-      </Container>
-    </AppBar>
+                  </Menu>
+                </Box>
+              </>
+            ) : (
+              <Button onClick={handleLogin} sx={{ color: 'inherit' }}>
+                Login
+              </Button>
+            )}
+          </Toolbar>
+        </Container>
+      </AppBar>
   )
 }
 
