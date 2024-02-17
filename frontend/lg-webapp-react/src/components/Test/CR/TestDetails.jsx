@@ -8,6 +8,7 @@ import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
 import TableBody from '@mui/material/TableBody';
 import Paper from '@mui/material/Paper';
+import Container from '@mui/material/Container';
 import TestDetailsTable from './TestDetailsTable';
 import TestDetailsHeader from './TestDetailsHeader';
 import IconButton from '@mui/material/IconButton';
@@ -22,6 +23,7 @@ import Button from "@mui/material/Button";
 import TestDetailsAddSample from "./TestDetailsAddSample";
 import AddCircleOutlineTwoToneIcon from '@mui/icons-material/AddCircleOutlineTwoTone';
 import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
+
 
 import ModalComponent from "../../UI/Modal";
 
@@ -95,6 +97,8 @@ export default function TestDetails(props) {
 
   return (
     <React.Fragment>
+      <Container maxWidth="xl" component="main">
+
       {/* TestDetailsHeader outside of the collapsible section */}
       <TestDetailsHeader
         testCategory={data?.test_category}
@@ -137,7 +141,7 @@ export default function TestDetails(props) {
           // testDetails={dataDetails}
 
       />
-
+      </Container>
     </React.Fragment>
   );
 }

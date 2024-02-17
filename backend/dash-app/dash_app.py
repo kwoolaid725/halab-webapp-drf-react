@@ -35,7 +35,7 @@ cur.execute("SELECT "
             " left join halab_sample as s on t.sample_id = s.id"
             " left join halab_product as p on s.product_id = p.id"
             " left join halab_brand as b on p.brand_id = b.id"
-            " left join users_newuser as u on t.tester_id = u.id"
+            " left join users_customuser as u on t.tester_id = u.id"
             " left join halab_test as ts on t.test_id = ts.id"
 
 

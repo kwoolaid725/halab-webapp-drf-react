@@ -41,7 +41,7 @@ const StaticRowEdge = ({ row, idx, keys, handleEdit, handleDelete }) => {
           }}>
 
             {row.values[key]?.value}
-              <Box sx={{ display: 'inline-block', marginLeft: '1px' }}>
+              <Box sx={{ display: 'inline-block', marginLeft: '1px', fontSize: '11px' }}>
                 {row.values[key]?.units}
               </Box>
       </TableCell>
