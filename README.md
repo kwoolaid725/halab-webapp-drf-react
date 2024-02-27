@@ -16,6 +16,11 @@
 ## 2. Flow Chart
 
 ## 3. Backend - DRF
+![image](https://github.com/kwoolaid725/LG-WebApp-ver2-drf-react/assets/107806433/288070d1-d66b-4630-bb3a-93ac4ec81b4b)
+
+![image](https://github.com/kwoolaid725/LG-WebApp-ver2-drf-react/assets/107806433/e94478b5-08a8-4900-9938-97e88086f4ab)
+
+![image](https://github.com/kwoolaid725/LG-WebApp-ver2-drf-react/assets/107806433/b759b980-f530-4efc-8816-87040281c581)
 
 ## 4. Frontend - React.js
 
