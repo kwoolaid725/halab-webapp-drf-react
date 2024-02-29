@@ -1,10 +1,15 @@
 # Overview:
+![Halab-Webapp drawio](https://github.com/kwoolaid725/LG-WebApp-ver2-drf-react/assets/107806433/fdfb308e-bb40-4751-a8ea-fe78ca71e5a6)
 
 
-## 1. DB 
+## 1. Database Diagram
 
-  
+### - All Tables
 ![lg-webapp-db](https://github.com/kwoolaid725/LG-WebApp-ver2-drf-react/assets/107806433/d8bb1fae-7e33-4283-b488-f1ec9fa28ab6)
+
+### - 
+![image](https://github.com/kwoolaid725/LG-WebApp-ver2-drf-react/assets/107806433/1f222ded-272b-489c-9a0a-ca23c35c67ef)
+
 
 
 ## 2. Flow Chart
