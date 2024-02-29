@@ -1,11 +1,5 @@
-# Test Category
-# Product Category
-# Brand
-# Product
-# Sample
-# User
-# Test
-# Test Details
+# Overview:
+
 
 ## 1. DB 
 
@@ -15,19 +9,45 @@
 
 ## 2. Flow Chart
 
-## 3. Backend - DRF
-![image](https://github.com/kwoolaid725/LG-WebApp-ver2-drf-react/assets/107806433/288070d1-d66b-4630-bb3a-93ac4ec81b4b)
+## 3. Backend - Django REST Framework
 
-![image](https://github.com/kwoolaid725/LG-WebApp-ver2-drf-react/assets/107806433/e94478b5-08a8-4900-9938-97e88086f4ab)
+API Documentation:
 
-![image](https://github.com/kwoolaid725/LG-WebApp-ver2-drf-react/assets/107806433/b759b980-f530-4efc-8816-87040281c581)
+<img width="1084" alt="image" src="https://github.com/kwoolaid725/LG-WebApp-ver2-drf-react/assets/107806433/c48da324-18fa-466e-9539-5486c46964f8">
+
+<img width="1087" alt="image" src="https://github.com/kwoolaid725/LG-WebApp-ver2-drf-react/assets/107806433/7ef08793-260c-4dff-ac3a-2b953a589cbe">
+
+#### Admin Page for Authorized Users to Edit
+
+<img width="1086" alt="image" src="https://github.com/kwoolaid725/LG-WebApp-ver2-drf-react/assets/107806433/5a5ab9f0-5ab7-4d31-b257-664e3fa1e85c">
+
+###### - Products 
+<img width="1076" alt="image" src="https://github.com/kwoolaid725/LG-WebApp-ver2-drf-react/assets/107806433/467faa3b-8a7b-457e-885e-fa0f76fbf459">
+
+###### - Samples
+<img width="1074" alt="image" src="https://github.com/kwoolaid725/LG-WebApp-ver2-drf-react/assets/107806433/757d7f11-8b6d-49fb-9039-470daf1c8164">
+
+###### - Tests (Parent)
+<img width="1078" alt="image" src="https://github.com/kwoolaid725/LG-WebApp-ver2-drf-react/assets/107806433/1342fe34-5bb3-4dde-a408-8e1af01d97f2">
+
+###### - Test Details for Vacuums (Child)
+<img width="1076" alt="image" src="https://github.com/kwoolaid725/LG-WebApp-ver2-drf-react/assets/107806433/57c7ee03-9e4f-43eb-809b-35da7468e67e">
+
 
 ## 4. Frontend - React.js
 
+##### 
+<img width="319" alt="image" src="https://github.com/kwoolaid725/LG-WebApp-ver2-drf-react/assets/107806433/8f434ceb-f0cb-4990-8b7c-2821f08800a4">
+<img width="319" alt="image" src="https://github.com/kwoolaid725/LG-WebApp-ver2-drf-react/assets/107806433/96840a16-c40e-4f72-b718-34810e307d3d">
+<img width="316" alt="image" src="https://github.com/kwoolaid725/LG-WebApp-ver2-drf-react/assets/107806433/888367cf-06d5-4c80-ae45-4e0cc95c851a">
 
 
 
 
+
+
+
+## -----
 ![image](https://github.com/kwoolaid725/LG-WebApp-ver2-drf-react/assets/107806433/9559d159-1eb4-40be-bd86-26a53b8d92d2)
 ![image](https://github.com/kwoolaid725/LG-WebApp-ver2-drf-react/assets/107806433/fa26aa10-3c4f-48af-ba15-3c9584a07f02)
 ![image](https://github.com/kwoolaid725/LG-WebApp-ver2-drf-react/assets/107806433/f66d3edc-da98-4650-b093-581aaf261120)
