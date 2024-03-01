@@ -25,6 +25,8 @@ pandas = "^2.2.0"
 python-dotenv = "^1.0.1"
 dash-mantine-components = "^0.12.1"
 dash-bootstrap-components = "^1.5.0"
+drf-spectacular = "^0.27.1"
+drf-yasg = "^1.21.7"
 
 
 [build-system]

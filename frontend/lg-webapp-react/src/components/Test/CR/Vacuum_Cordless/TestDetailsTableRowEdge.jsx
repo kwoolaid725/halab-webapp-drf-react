@@ -251,6 +251,10 @@ function TestDetailsTableRowEdge(props){
           }
   }, [props.testId]);
 
+   useEffect(() => {
+    console.log('fetchedRowssssss', fetchedRows)
+  }, [fetchedRows])
+
   useEffect(() => {
   if (fetchedRows.length > 0) {
     const combinedRows = fetchedRows.reduce((acc, row) => {
@@ -267,10 +271,8 @@ function TestDetailsTableRowEdge(props){
       }
 
       if (test_measure) {
-        if (!acc[slug].values[test_measure]) {
-          acc[slug].values[test_measure] = { value: value || '', units: units || '' };
-        }
-      }
+    acc[slug].values[test_measure] = { value, units: units || '' }; // Assign value directly without conditional checks
+  }
 
       return acc;
     }, {});
@@ -291,7 +293,7 @@ function TestDetailsTableRowEdge(props){
 
       return date.toLocaleDateString('en-US', options)
     };
-
+    console.log('combinedRows', combinedRows)
     // Transform combinedRows to match the initialState structure
     const transformedRows = Object.values(combinedRows).map(row => ({
 
@@ -315,7 +317,7 @@ function TestDetailsTableRowEdge(props){
 }, [fetchedRows]);
 
   useEffect(() => {
-    // console.log('rows Edge', rows);
+    console.log('rows Edge', rows);
   }, [rows]);
 
 
@@ -600,8 +602,9 @@ function TestDetailsTableRowEdge(props){
             <Typography variant="subtitle2" fontWeight="bold">Test Group</Typography>
           </TableCell>
           {keys && keys.map((key, index) => (
-            <TableCell align="center" key={index} sx={{ margin: '0.1px', padding: '0.5px' }}>
-              <Typography variant="subtitle2" fontWeight="bold">{key}</Typography>
+            <TableCell align="center" key={index} sx={{ margin: '0px', padding: '0px', borderLeft: '1px dotted #ddd', // Add border to the left side
+              borderRight: '1px dotted #ddd' }}>
+              <Typography variant="subtitle3" fontWeight="bold">{key}</Typography>
             </TableCell>
           ))}
           <TableCell align="center" sx={{ margin: '0.1px', padding: '0.5px' }}>
