@@ -2,21 +2,41 @@
 ![Halab-Webapp drawio](https://github.com/kwoolaid725/LG-WebApp-ver2-drf-react/assets/107806433/fdfb308e-bb40-4751-a8ea-fe78ca71e5a6)
 
 
-## 1. Database Diagram
 
-### - All Tables
+
+https://github.com/kwoolaid725/LG-WebApp-ver2-drf-react/assets/107806433/54401a70-803b-4c29-bc8b-1d2223735260
+
+
+https://github.com/kwoolaid725/LG-WebApp-ver2-drf-react/assets/107806433/bc6f160a-fe99-41f5-a5ed-754a8e837c8a
+
+
+https://github.com/kwoolaid725/LG-WebApp-ver2-drf-react/assets/107806433/10304667-3ca2-4a81-9806-d50560859288
+
+
+
+https://github.com/kwoolaid725/LG-WebApp-ver2-drf-react/assets/107806433/3b8c6c0f-cc66-4300-bcce-543b30d248aa
+
+
+
+
+
+## 1. Database
+
+<details>
+ <summary>Database Schema Overview</summary>
+  
 ![lg-webapp-db](https://github.com/kwoolaid725/LG-WebApp-ver2-drf-react/assets/107806433/d8bb1fae-7e33-4283-b488-f1ec9fa28ab6)
+</details>
 
-### - 
+
+##### - Data Structure for Certain Models
 ![image](https://github.com/kwoolaid725/LG-WebApp-ver2-drf-react/assets/107806433/1f222ded-272b-489c-9a0a-ca23c35c67ef)
 
 
 
-## 2. Flow Chart
+## 2. Backend
 
-## 3. Backend - Django REST Framework
-
-API Documentation:
+Django REST Framework API Documentation:
 
 <img width="1084" alt="image" src="https://github.com/kwoolaid725/LG-WebApp-ver2-drf-react/assets/107806433/c48da324-18fa-466e-9539-5486c46964f8">
 
