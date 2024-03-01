@@ -75,7 +75,7 @@ const AdminSamples = (props) => {
 								<TableRow>
 									<TableCell colSpan={4} align="right">
 										<Button
-											href={'/admin/products/create'}
+											href={'/admin/samples/create'}
 											variant="contained"
 											color="primary"
 										>

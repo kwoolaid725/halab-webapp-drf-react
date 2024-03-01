@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'django_filters',
     'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
+    'drf_yasg',
 
     # import apps
     'lg-webapp.halab.apps.HalabConfig',

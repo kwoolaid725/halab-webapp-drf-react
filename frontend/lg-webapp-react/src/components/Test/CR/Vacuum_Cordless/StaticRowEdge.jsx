@@ -33,15 +33,19 @@ const StaticRowEdge = ({ row, idx, keys, handleEdit, handleDelete }) => {
           <TableCell align={"center"} key={idx} sx={{
               fontSize: '14px',
               padding: '0 0',
-              fontWeight: ['F_AVG', 'R_AVG', 'L_Pickup', 'R_Pickup'].includes(key) ? 'bold' : 'normal',
-              color: ['F_AVG', 'R_AVG', 'L_Pickup', 'R_Pickup'].includes(key) ? 'blue' : 'inherit',
-              // border: '1px solid #ddd',
+              fontWeight: ['F_AVG', 'R_AVG', 'L_AVG', 'L_Pickup', 'R_Pickup'].includes(key) ? 'bold' : 'normal',
+              color: ['F_AVG', 'R_AVG', 'L_AVG', 'L_Pickup', 'R_Pickup'].includes(key) ? 'blue' : 'inherit',
+              borderLeft: '1px dotted #ddd', // Add border to the left side
+              borderRight: '1px dotted #ddd', // Add border to the right side
               width: '50px',
               textAlign: 'center',
           }}>
 
             {row.values[key]?.value}
-              <Box sx={{ display: 'inline-block', marginLeft: '1px', fontSize: '11px' }}>
+              <Box sx={{
+                display: 'inline',
+                marginLeft: '1px',
+                fontSize: '12px' }}>
                 {row.values[key]?.units}
               </Box>
       </TableCell>

@@ -190,9 +190,9 @@ function TestDetailsTableRowBare(props){
           }
   }, [props.testId]);
 
-  useEffect(() => {
-    console.log('fetchedRowssssss', fetchedRows)
-  }, [fetchedRows])
+  // useEffect(() => {
+  //   console.log('fetchedRowssssss', fetchedRows)
+  // }, [fetchedRows])
 
   useEffect(() => {
   if (fetchedRows.length > 0) {

@@ -9,9 +9,26 @@ from rest_framework_simplejwt.views import (
 from django.conf import settings
 from django.conf.urls.static import static
 
+from drf_yasg import openapi
+from drf_yasg.views import get_schema_view as swagger_get_schema_view
+
+schema_view = swagger_get_schema_view(
+    openapi.Info(
+        title="Home Appliance Lab API",
+        default_version='v1',
+        description="API for HA Lab",
+    ),
+    public=True,
+)
+
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('lg-webapp.halab.urls', namespace='halab')),
+
+    path('api/swagger/schema', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+
+
     path('api/', include('lg-webapp.halab_api.urls', namespace='halab_api')),
     # User management
     path('api/user/', include('lg-webapp.users.urls', namespace='users')),
