@@ -47,7 +47,13 @@
   <h3>&lt; Interactive Lab Test Data Input/Display Page 🔬 &gt;</h3>
 </div>
 
-<img width="850" alt="image" style="border: 1px solid red;" src="https://github.com/kwoolaid725/halab-webapp-drf-react/assets/107806433/44f40035-b817-4c29-9537-f5c2d8f7a4df">
+<img width="500" alt="image" src="https://github.com/kwoolaid725/halab-webapp-drf-react/assets/107806433/852d6816-c745-4759-932d-12b5160ca384">
+
+<img width="500" alt="image" src="https://github.com/kwoolaid725/halab-webapp-drf-react/assets/107806433/ef67671e-b09d-4b2a-8e95-5cfeb96c737e">
+
+
+
+<img width="1000" alt="image" style="border: 1px solid red;" src="https://github.com/kwoolaid725/halab-webapp-drf-react/assets/107806433/44f40035-b817-4c29-9537-f5c2d8f7a4df">
 
 -----------------------------------------
 <div align="center">
