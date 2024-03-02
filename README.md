@@ -107,7 +107,7 @@ https://github.com/kwoolaid725/halab-webapp-drf-react/assets/107806433/f613b6ef-
 
 ##  Frontend 
 
-### React.js
+### <React.js>
 
 - Used `MUI Library` for styling, supplemented by occasional use of `.module.css` files.
 - `axios.js` - to build connection with backend server
