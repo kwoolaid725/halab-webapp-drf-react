@@ -48,9 +48,9 @@
 </div>
 
 
-<img width="500" alt="image" src="https://github.com/kwoolaid725/halab-webapp-drf-react/assets/107806433/de072f85-c134-4832-828f-dec488fbf512">
+<img width="750" alt="image" src="https://github.com/kwoolaid725/halab-webapp-drf-react/assets/107806433/de072f85-c134-4832-828f-dec488fbf512">
 
-<img width="500" alt="image" src="https://github.com/kwoolaid725/halab-webapp-drf-react/assets/107806433/ef67671e-b09d-4b2a-8e95-5cfeb96c737e">
+<img width="750" alt="image" src="https://github.com/kwoolaid725/halab-webapp-drf-react/assets/107806433/ef67671e-b09d-4b2a-8e95-5cfeb96c737e">
 
 <sup>_[SearchBar for Brand / Model Name](#)_</sup>
 
