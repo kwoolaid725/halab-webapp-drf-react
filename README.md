@@ -4,26 +4,21 @@
 ## Table of Contents
 
 - [Hypothetical Web Application for a Home Appliance (HA) Lab or Company](#hypothetical-web-application-for-a-home-appliance-ha-lab-or-company)
-- 
-  - [Database](#database)
-  - [Frontend - React.js](#frontend---reactjs)
-  - [Backend](#backend)
-  
-- 
-  - [Lab Test Data Input Page 🔬](#lab-test-data-input-page--)
-  - [Data Visualization Page 📊](#data-visualization-page--)
-  - [Demo Videos 📹](#demo-videos--)
-  
+  - [Lab Test Data Input Page 🔬](#-lab-test-data-input-page--)
+  - [Data Visualization Page 📊](#-data-visualization-page--)
+  - [Demo Videos 📹](#-demo-videos--)
+    
 - [Database](#database)
-  - [PostgreSQL](#postgresql)
-  - [Data Structure for Certain Models](#data-structure-for-certain-models)
-  - [Example of test data stored in db](#example-of-test-data-stored-in-db)
-  
-- [Frontend - React.js](#frontend---reactjs)
-  - [Initial Flowchart Drawing for `Test` - `Test Details` Components](#initial-flowchart-drawing-for--test----test-details--components)
+  - [Data Structure for Certain Models](#--data-structure-for-certain-models)
+  - [Example of test data stored in db](#--example-of-test-data-stored-in-db)
+
+- [Frontend](#frontend)
+  - [Initial Flowchart Drawing for `Test` - `Test Details` Components](#initial-flowchart-drawing-for-test---test-details-components)
   - [Example of Test Details Page](#example-of-test-details-page)
-  
+
 - [Backend](#backend)
+   - [Django REST Framework API Documentation](#django-rest-framework-api-documentation)
+ 
 
 ## Hypothetical Web Application for a Home Appliance (HA) Lab or Company
 
@@ -110,7 +105,9 @@ https://github.com/kwoolaid725/halab-webapp-drf-react/assets/107806433/f613b6ef-
 
 -------------------------------------------------------------------
 
-##  Frontend - React.js
+##  Frontend 
+
+### React.js
 
 - Used `MUI Library` for styling, supplemented by occasional use of `.module.css` files.
 - `axios.js` - to build connection with backend server
@@ -144,7 +141,7 @@ turned into ⬇
 - `Simple JWT token` is used for user authorization
 - `Poetry` and `Makefile` were used for learning purposes.
 
-Django REST Framework API Documentation:
+### Django REST Framework API Documentation:
 
 <img width="1084" alt="image" src="https://github.com/kwoolaid725/LG-WebApp-ver2-drf-react/assets/107806433/c48da324-18fa-466e-9539-5486c46964f8">
 
