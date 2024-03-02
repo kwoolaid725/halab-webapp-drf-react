@@ -18,8 +18,8 @@
 
 - [Backend](#backend)
    - [Django REST Framework API Documentation](#django-rest-framework-api-documentation)
+   - [Admin Page for Authorized Users to Edit](#admin-page-for-authorized-users-to-edit)
  
-
 ## Hypothetical Web Application for a Home Appliance (HA) Lab or Company
 
 > [!NOTE]  
