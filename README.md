@@ -1,9 +1,22 @@
 # Project Overview:
-![Halab-Webapp drawio](https://github.com/kwoolaid725/LG-WebApp-ver2-drf-react/assets/107806433/fdfb308e-bb40-4751-a8ea-fe78ca71e5a6)
+##  Hypothetical Web Application for a Home Appliance (HA) Lab or Company 🏠🔬
+
+> [!NOTE]  
+> This website serves as an example web application for a company or organization involved in home appliance products, including testing and research.
+
+> [!WARNING]  
+> The test data are arbitrary values for demonstration purposes.
+
+
+<img width="900" alt="image" src="https://github.com/kwoolaid725/halab-webapp-drf-react/assets/107806433/b98146c8-a8c7-481b-b6c0-5216251f9a74">
+
+
 
 ## Table of Contents
 
-- [Hypothetical Web Application for a Home Appliance (HA) Lab or Company](#hypothetical-web-application-for-a-home-appliance-ha-lab-or-company)
+- [Tech Stacks](#tech-stacks)
+
+- [Visual Overview: Example Pages of the Web Application](#hypothetical-web-application-for-a-home-appliance-ha-lab-or-company)
   - [Lab Test Data Input Page 🔬](#-lab-test-data-input-page--)
   - [Data Visualization Page 📊](#-data-visualization-page--)
   - [Demo Videos 📹](#-demo-videos--)
@@ -19,20 +32,17 @@
 - [Backend](#backend)
    - [Django REST Framework API Documentation](#django-rest-framework-api-documentation)
    - [Admin Page for Authorized Users to Edit](#admin-page-for-authorized-users-to-edit)
+
+
+## Tech Stacks
+
+![Halab-Webapp drawio](https://github.com/kwoolaid725/LG-WebApp-ver2-drf-react/assets/107806433/fdfb308e-bb40-4751-a8ea-fe78ca71e5a6)
  
-## Hypothetical Web Application for a Home Appliance (HA) Lab or Company
-
-> [!NOTE]  
-> This website serves as an example web application for a company or organization involved in home appliance products, including testing and research.
-
-> [!WARNING]  
-> The test data are arbitrary values for demonstration purposes.
-
+## Visual Overview: Example Pages of the Web Application
 
 <img width="900" alt="image" src="https://github.com/kwoolaid725/halab-webapp-drf-react/assets/107806433/b98146c8-a8c7-481b-b6c0-5216251f9a74">
 
------------------------------------
-
+-------------------------------------------
 <div align="center">
   <h3>&lt; Lab Test Data Input Page 🔬 &gt;</h3>
 </div>
