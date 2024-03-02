@@ -49,7 +49,8 @@
 
 .
 
-<img width="500" alt="image" src="https://github.com/kwoolaid725/halab-webapp-drf-react/assets/107806433/852d6816-c745-4759-932d-12b5160ca384">
+
+<img width="500" alt="image" src="https://github.com/kwoolaid725/halab-webapp-drf-react/assets/107806433/de072f85-c134-4832-828f-dec488fbf512">
 
 <img width="500" alt="image" src="https://github.com/kwoolaid725/halab-webapp-drf-react/assets/107806433/ef67671e-b09d-4b2a-8e95-5cfeb96c737e">
 
