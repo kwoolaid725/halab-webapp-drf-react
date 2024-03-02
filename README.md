@@ -47,16 +47,18 @@
   <h3>&lt; Interactive Lab Test Data Input/Display Page 🔬 &gt;</h3>
 </div>
 
-.
-
 
 <img width="500" alt="image" src="https://github.com/kwoolaid725/halab-webapp-drf-react/assets/107806433/de072f85-c134-4832-828f-dec488fbf512">
 
 <img width="500" alt="image" src="https://github.com/kwoolaid725/halab-webapp-drf-react/assets/107806433/ef67671e-b09d-4b2a-8e95-5cfeb96c737e">
 
+<sup>_[SearchBar for Brand / Model Name](#myfootnote1)_</sup>
 
+-------------------------------------------
 
-<img width="1000" alt="image" style="border: 1px solid red;" src="https://github.com/kwoolaid725/halab-webapp-drf-react/assets/107806433/44f40035-b817-4c29-9537-f5c2d8f7a4df">
+<img width="1000" alt="image" src="https://github.com/kwoolaid725/halab-webapp-drf-react/assets/107806433/44f40035-b817-4c29-9537-f5c2d8f7a4df">
+
+<sup>_[Example of Test Details Page for Test Category: "CR" & Product Category: "STICK VACUUM (CORDLESS)" ](#myfootnote1)_</sup>
 
 -----------------------------------------
 <div align="center">
