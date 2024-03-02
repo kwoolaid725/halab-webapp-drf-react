@@ -14,10 +14,10 @@
 
 ## Table of Contents
 
-- [Tech Stacks](#tech-stacks)
+- [Tech Stack](#tech-stack)
 
 - [Visual Overview: Example Pages of the Web Application](#hypothetical-web-application-for-a-home-appliance-ha-lab-or-company)
-  - [Lab Test Data Input Page 🔬](#-lab-test-data-input-page--)
+  - [Interactive Lab Test Data Input/Display Page🔬](#-interactive-lab-test-data-inputdisplay-page--)
   - [Data Visualization Page 📊](#-data-visualization-page--)
   - [Demo Videos 📹](#-demo-videos--)
     
@@ -34,7 +34,7 @@
    - [Admin Page for Authorized Users to Edit](#admin-page-for-authorized-users-to-edit)
 
 
-## Tech Stacks
+## Tech Stack
 
 ![Halab-Webapp drawio](https://github.com/kwoolaid725/LG-WebApp-ver2-drf-react/assets/107806433/fdfb308e-bb40-4751-a8ea-fe78ca71e5a6)
  
@@ -44,7 +44,7 @@
 
 -------------------------------------------
 <div align="center">
-  <h3>&lt; Lab Test Data Input Page 🔬 &gt;</h3>
+  <h3>&lt; Interactive Lab Test Data Input/Display Page 🔬 &gt;</h3>
 </div>
 
 <img width="850" alt="image" style="border: 1px solid red;" src="https://github.com/kwoolaid725/halab-webapp-drf-react/assets/107806433/44f40035-b817-4c29-9537-f5c2d8f7a4df">
